@@ -22,10 +22,10 @@ It packages:
 
 ## Teammate Setup
 
-Your **workspace folder** is wherever you keep all your project repositories — it could be `~/work`, `~/projects`, `~/code`, or anything else. Clone this repo directly into it:
+Your **workspace folder** is wherever you keep all your project repositories — it could be `~/work`, `~/projects`, `~/code`, or anything else. Clone this repo in the root of your workspace folder:
 
 ```sh
-git clone https://github.com/fahadyaqub/agents-workbench.git ~/work/agents-workbench
+git clone https://github.com/fahadyaqub/agents-workbench.git
 ```
 
 Then ask an agent to:
