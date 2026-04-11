@@ -19,20 +19,6 @@ Project-level `AGENTS.md` files remain authoritative for project-specific contex
    - `shared/workflows/`
 6. If the current project has its own `AGENTS.md`, treat that file as the project-specific overlay
 
-## Domain Selection
-
-Infer the best domain from the task whenever possible.
-Ask the user to choose a domain only when the task is genuinely ambiguous and domain choice will materially change the result.
-
-Default domain behavior:
-- Engineering, debugging, planning, bug fixing: `domains/software-engineering.md`
-- Product strategy, roadmap, prioritization, and requirement shaping: `domains/product-management.md`
-- Product flows, interaction design, design systems, UX structure: `domains/software-designer.md`
-- UI, product design, frontend polish: `domains/frontend-uiux.md`
-- Testing, validation, release confidence: `domains/software-qa.md`
-- System design, boundaries, long-term technical direction: `domains/software-architect.md`
-- Sales, marketing, finance work: load the matching business domain file
-
 ## Priority
 
 When multiple instructions apply, use this priority order:
