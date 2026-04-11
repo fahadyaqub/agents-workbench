@@ -25,7 +25,7 @@ It packages:
 Your **workspace folder** is wherever you keep all your project repositories — it could be `~/work`, `~/projects`, `~/code`, or anything else. Clone this repo directly into it:
 
 ```sh
-git clone <repo-url> ~/work/agents-workbench
+git clone https://github.com/fahadyaqub/agents-workbench.git ~/work/agents-workbench
 ```
 
 Then ask an agent to:
