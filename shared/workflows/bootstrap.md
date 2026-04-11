@@ -1,97 +1,147 @@
 # Workflow: Bootstrap
 
-Use this workflow to initialize and maintain the workspace-level agent system.
+**Roles**: Fullstack Developer · IT Architect · Product Manager
 
-## Goals
+**This workflow covers**: Initializing the agents-workbench system in a workspace for the first time, and maintaining it when setup items are pending.
+**This workflow does NOT cover**: Setting up an individual project (use `new-project.md`), creating new workflows or domains (use `new-workflow.md` or `new-domain.md`).
 
-- Ensure the workspace root has parent-level pointer files into `agents-workbench/`
-- Set up personal local overlays
-- Detect missing project-level agent entrypoints
-- Preserve existing project agent and workflow docs
-- Standardize on `AGENTS.md` as the canonical instructions file where appropriate
+---
 
-## Local Setup
+## Trigger Phrases
 
-1. Ensure the workspace root contains these pointer files:
-   - `AGENTS.md` -> points to `agents-workbench/AGENTS.md`
-   - `CLAUDE.md` -> points to `agents-workbench/AGENTS.md`
-   - `CODEX.md` -> points to `agents-workbench/AGENTS.md`
-2. If `local/setup.toml` is missing, initialize:
-   - `local/setup.toml`
-   - `local/who-i-am.md`
-   - `local/personal-memory.md`
-3. If `who_i_am.status` is `pending`, ask the user to complete or ignore it
-4. If `project_bootstrap.status` is `pending`, inspect immediate child folders of the workspace root
-5. If `unified_agent_entrypoint.status` is `pending`, inspect `AGENTS.md`, `CLAUDE.md`, and `CODEX.md` usage in each project
+- "set up the workbench"
+- "initialize the workspace"
+- "run bootstrap"
+- "setup is pending"
+- "agents-workbench is not set up yet"
 
-Recommended setup prompts:
-- For personal profile: `Set up your local "who I am" profile now, or ignore it for now?`
-- For workspace pointers: `Create the parent AGENTS.md, CLAUDE.md, and CODEX.md pointer files for this workspace now?`
-- For missing project entrypoints: `Some projects in this workspace are missing AGENTS.md. Do you want to add a project-level AGENTS.md entrypoint where missing?`
-- For unified project files: `Make AGENTS.md the single source of truth in this project? I can merge useful content from CLAUDE.md and CODEX.md into it, then replace those files with short pointers.`
+---
 
-## Project Scan Rules
+## Prime Directive
 
-When scanning projects in the workspace root:
-- First classify each immediate child folder as either:
-  - a direct project repository
-  - a project group folder that contains multiple project repositories
-  - a non-project folder that should be ignored
-- For direct project repositories:
-  - Check for existing `AGENTS.md`
-  - Check for existing `CLAUDE.md` and `CODEX.md`
-  - Check for relevant workflow or instruction docs already present
-- For project group folders:
-  - Scan one level deeper for likely project repositories
-  - Apply the same checks to each nested project repository
-- Never overwrite existing docs blindly
+**Never overwrite existing files without reading them first.**
 
-Suggested signals for detecting a project repository:
-- `.git/`
-- `package.json`
-- `pyproject.toml`
-- `Cargo.toml`
-- `go.mod`
-- `README.md` plus clear source directories
-- existing `AGENTS.md`, `CLAUDE.md`, or `CODEX.md`
+Projects may contain agent instructions, workflow docs, and memory that represent significant prior work.
+The bootstrap process is additive. It fills gaps — it does not replace what is already there.
+If any file conflicts → stop and ask the user before changing it.
 
-Suggested signals for detecting a project group folder:
-- contains multiple subfolders that each look like project repositories
-- top-level folder appears organizational rather than a single runnable repo
-- may contain a mix of docs, infra, and multiple app or service folders
+---
+
+## Prerequisites
+
+- The `agents-workbench/` directory exists in the workspace root
+- `shared/manifest.md` is readable
+
+---
+
+## Step 1: Check Workspace Root Pointers
+
+Verify the workspace root contains these three files pointing to `agents-workbench/AGENTS.md`:
+- `AGENTS.md`
+- `CLAUDE.md`
+- `CODEX.md`
+
+If any are missing → create them as pointer stubs (content: "See `agents-workbench/AGENTS.md`").
+If any exist with real content → read them before doing anything. Migrate useful content before replacing.
+
+---
+
+## Step 2: Initialize Local Files
+
+Check whether `local/setup.toml` exists.
+
+If missing → initialize all three local files from templates:
+- `local/setup.toml` from `templates/local/setup.template.toml`
+- `local/who-i-am.md` from `templates/local/who-i-am.template.md`
+- `local/personal-memory.md` from `templates/local/personal-memory.template.md`
+
+If `local/setup.toml` exists → read it and check the status of each setup item.
+
+---
+
+## Step 3: Work Through Pending Setup Items
+
+For each item in `local/setup.toml` with `status = "pending"`:
+
+**`who_i_am` is pending:**
+Ask the user: "Set up your local who-I-am profile now, or skip it for now?"
+If they complete it → mark `complete`.
+If they skip it → mark `ignored`.
+
+**`project_bootstrap` is pending:**
+Proceed to Step 4 (project scan).
+
+**`unified_agent_entrypoint` is pending:**
+Proceed to Step 5 (entrypoint audit).
+
+Once a setup item is marked `complete` or `ignored` → do not prompt for it again unless the user resets it manually in `local/setup.toml`.
+
+---
+
+## Step 4: Scan Projects (if `project_bootstrap` is pending)
+
+Scan each immediate child of the workspace root. Classify each as:
+
+**Direct project repository** — signals: `.git/`, `package.json`, `pyproject.toml`, `Cargo.toml`, `go.mod`, `README.md` with source directories, or existing `AGENTS.md`/`CLAUDE.md`
+
+**Project group folder** — signals: contains multiple subfolders that each look like project repositories; top-level folder is organizational, not a single runnable repo
+
+**Non-project folder** — assets, backups, general docs, or similar content without project signals
+
+For project group folders → scan one level deeper and apply the same classification to each nested folder.
+Do not recurse beyond two levels without asking the user.
+
+For each identified project:
+- Check whether `AGENTS.md` exists
+- Check whether `CLAUDE.md` and `CODEX.md` exist
+- Note any existing workflow or instruction docs
+
+If projects are missing `AGENTS.md` → ask: "Some projects are missing AGENTS.md. Do you want me to add project-level entrypoints where missing?"
+
+If yes → run `new-project.md` for each missing project.
+If no → mark `project_bootstrap` as `ignored`.
+
+After completing or skipping → mark `project_bootstrap` as `complete` in `local/setup.toml` and record the scan date and lists of managed/ignored projects.
+
+---
+
+## Step 5: Audit Entrypoints (if `unified_agent_entrypoint` is pending)
+
+For each project with both `AGENTS.md` and `CLAUDE.md` or `CODEX.md`:
+1. Read all three files
+2. Check whether `CLAUDE.md` or `CODEX.md` contain real instructions (not already a stub)
+
+If they contain real instructions → ask: "Make `AGENTS.md` the single source of truth? I can migrate content from `CLAUDE.md`/`CODEX.md` and replace them with stubs."
+
+If yes → migrate and replace.
+If no → mark `unified_agent_entrypoint` as `ignored`.
+
+After completing or skipping → mark `unified_agent_entrypoint` as `complete`.
+
+---
 
 ## Merge Policy
 
-- Existing project `AGENTS.md` files are authoritative for project-specific context
-- Preserve all useful content from existing `AGENTS.md`, `CLAUDE.md`, `CODEX.md`, and workflow docs
-- If a project already has strong instructions, add only missing integration notes
-- If files conflict, stop and ask the user before changing them
-- Prefer additive sections and compatibility stubs over rewrites
+When merging content into `AGENTS.md`:
+- Preserve the project's original wording and intent
+- Add missing integration notes; do not rewrite what already works
+- If content conflicts → stop and ask the user. Do not resolve conflicts silently.
 
-## Canonical File Policy
+---
 
-The preferred standard inside projects is:
-- `AGENTS.md` is the canonical instructions file
-- `CLAUDE.md` is a short compatibility stub that points to `AGENTS.md`
-- `CODEX.md` is a short compatibility stub that points to `AGENTS.md`
+## When to Stop and Escalate
 
-If `CLAUDE.md` or `CODEX.md` contain meaningful instructions:
-1. Merge unique, useful content into `AGENTS.md`
-2. Preserve the project's intent and wording where possible
-3. Replace the agent-specific file with a short pointer stub only after migration is complete
+Stop and ask the user if:
+- A file conflict cannot be resolved by reading both versions
+- The workspace structure is unusual (deeply nested, symlinks, or unusual organization)
+- An existing project has instructions that contradict the workspace-level guidance
 
-## Completion Rules
+---
 
-- Once a setup item is marked `complete` or `ignored`, stop prompting for it
-- Do not rescan all projects on every run after `project_bootstrap` has been resolved
-- If the user later wants to revisit setup, they can reset the relevant status in `local/setup.toml`
+## Completion Criteria
 
-## Nested Workspace Rule
-
-Support nested repositories inside project group folders, but keep the scan bounded.
-
-- Default scan depth:
-  - workspace root direct children
-  - one nested level inside folders identified as project groups
-- Do not recurse indefinitely by default
-- If the workspace contains unusually deep nesting, ask the user before broadening the scan
+Bootstrap is complete when:
+- All three workspace root pointer files exist
+- `local/setup.toml`, `local/who-i-am.md`, and `local/personal-memory.md` exist
+- All setup items in `local/setup.toml` are marked `complete` or `ignored`
+- The scan date and project lists are recorded in `local/setup.toml`

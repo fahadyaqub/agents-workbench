@@ -2,15 +2,8 @@
 
 **Roles**: Fullstack Developer · IT Architect · Product Manager · Product Owner / Delivery PM
 
-Use this workflow when planning a new feature before writing any code.
-
----
-
-## Goal
-
-Produce a clear, agreed plan that an agent or engineer can execute without re-asking the same questions.
-
-A good plan answers: what, why, where, how, and what could go wrong.
+**This workflow covers**: Planning a specific new feature from intent to confirmed, executable implementation plan.
+**This workflow does NOT cover**: Broad technical direction or architectural decisions (use `planning.md`), research needed before a decision (use `research.md`), executing the implementation (use the plan produced here).
 
 ---
 
@@ -21,92 +14,132 @@ A good plan answers: what, why, where, how, and what could go wrong.
 - "design [feature]"
 - "let's spec out [X]"
 - "I want to add [X] to the project"
+- "what would it take to build [X]"
+
+---
+
+## Prime Directive
+
+**Do not start designing until you understand the user problem, not just the requested feature.**
+
+The request "add a retry button" is not a feature spec. The problem "users lose uploads when the connection drops and have no way to recover" is.
+Design the solution to the problem, not the surface of the request.
+If the user problem is not clear → ask before proceeding.
+
+---
+
+## Prerequisites
+
+Before starting:
+- There is a clear user-facing behavior or outcome that needs to exist
+- The project codebase is accessible for reading
 
 ---
 
 ## Step 1: Clarify the Outcome
 
-Before designing anything, get agreement on:
+Get explicit answers to:
+1. What problem does this feature solve for the user? (Not what it does — why it matters)
+2. What does "done" look like? (Observable behavior, not implementation)
+3. What is explicitly out of scope? (Say it now to prevent scope creep mid-build)
+4. What constraints exist? (Timeline, existing architecture, dependencies, team size)
 
-1. **What is the user trying to accomplish?** (not what they're asking to build)
-2. **What does "done" look like?** (observable behavior, not implementation)
-3. **What is explicitly out of scope?** (prevents scope creep mid-build)
-4. **What constraints exist?** (timeline, existing architecture, dependencies, team size)
-
-If any of these are unclear, ask. Do not proceed to Step 2 with ambiguous answers.
+If any of these are unclear → ask before proceeding to Step 2.
+Do not design a feature before the problem is defined.
 
 ---
 
 ## Step 2: Read the Affected System
 
-Before proposing anything:
+Before proposing any implementation:
 
-1. Read the relevant parts of the codebase — don't design blind
-2. Identify which files, services, or components will be touched
-3. Check for existing patterns that should be followed
-4. Check for existing abstractions that can be reused
-5. Note anything that looks fragile or risky in the area
+1. Read the relevant parts of the codebase — the files, services, and components this feature will touch
+2. Identify existing patterns that should be followed
+3. Identify existing abstractions that can be reused
+4. Note anything that looks fragile or risky in the area
 
-Document what you found. The plan should reflect actual code, not assumptions.
+The plan must reflect actual code, not assumptions. If this step reveals unexpected complexity → surface it before proceeding.
 
 ---
 
 ## Step 3: Write the Plan
 
-Structure the plan as:
+Structure the plan with these sections:
 
-### What
-One-paragraph description of the feature and its user-facing behavior.
+**What**
+One paragraph: what does this feature do from the user's perspective?
 
-### Why
-The business or user reason this feature matters. If this is unclear, stop and ask.
+**Why**
+The user problem or business reason. If this is unclear → stop and ask.
 
-### Approach
-Concrete description of the implementation:
-- Which files/components change
+**Approach**
+Concrete implementation description:
+- Which files or components change
 - What new code is introduced
 - What existing code is modified
-- Data model changes (if any)
+- Data model or schema changes (if any)
 - API changes (if any)
 
-Keep this specific. "Refactor the service layer" is not a plan. "Add a `retryUpload()` method to `UploadService` that..." is a plan.
+Specific is better than vague. "Add a `retryUpload()` method to `UploadService`" is a plan. "Improve the upload flow" is not.
 
-### Phases (if needed)
-Break large features into phases where:
-- Each phase ships independently
-- Each phase is testable
-- Dependencies between phases are explicit
+**Phases** (if the feature is large)
+Break into phases where each:
+- Ships independently
+- Is testable on its own
+- Has explicit dependencies on other phases
 
-### Risks and Open Questions
+**Risks and Open Questions**
 - What could go wrong
-- What decisions are deferred or unclear
-- What assumptions the plan makes that need validation
+- What decisions are deferred or need validation
+- What assumptions the plan makes that could be wrong
 
 ---
 
-## Step 4: Get Alignment
+## Step 4: Reflection Check
 
-Present the plan before writing code.
+Before presenting the plan, verify:
+- Can a different agent or engineer follow this plan and build the same thing?
+- Does it respect the existing architecture instead of redesigning around it?
+- Are the risky parts identified explicitly?
+- Is anything in the plan actually an assumption rather than a confirmed fact?
 
-If the user confirms: proceed.
-If the user changes scope: update the plan, then proceed.
-If the plan exposes a blocker (missing API, unclear requirement): resolve it before coding.
-
-Do not start implementation on an unconfirmed plan.
+If any answer is no → revise before presenting.
 
 ---
 
-## Step 5: Execute Against the Plan
+## Step 5: Get Alignment
+
+Present the plan. Do not start implementation without confirmation.
+
+If confirmed → proceed to implementation.
+If scope changes → update the plan, then proceed.
+If a blocker is found (missing API, unclear requirement, unresolved dependency) → resolve it before building.
+
+---
+
+## Step 6: Execute Against the Plan
 
 - Work phase by phase if the feature is staged
-- If you discover something that changes the plan mid-implementation, stop and state it clearly
-- Small deviations from the plan are fine — inform the user after. Large deviations need re-alignment first.
+- If you discover something mid-implementation that materially changes the plan → stop and state it. Do not silently diverge.
+- Small deviations are fine — inform the user after. Large deviations need re-alignment first.
 
 ---
 
-## What Makes a Good Plan
+## When to Stop and Escalate
 
-- It can be handed to a different agent and they'd build the same thing
-- It doesn't require re-reading the whole codebase to understand
-- It identifies the risky parts explicitly
-- It respects the existing architecture instead of redesigning around it
+Stop and raise with the user if:
+- Step 2 reveals the affected area is significantly more complex than expected
+- The plan keeps expanding — this may be two features, not one
+- A risk identified in Step 3 has no clear mitigation
+
+---
+
+## Completion Criteria
+
+Feature planning is complete when:
+- The user problem is clearly stated
+- The implementation plan is specific enough to execute without re-asking questions
+- Risks and open questions are documented
+- The plan is confirmed by the user
+
+After confirmation: switch to implementation. Return to this plan if scope needs to be re-evaluated.

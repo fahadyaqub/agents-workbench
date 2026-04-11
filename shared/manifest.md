@@ -58,6 +58,37 @@ Load relevant workflow docs based on the task:
 - Creating a new workflow: `shared/workflows/new-workflow.md`
 - Improving or maintaining the workbench itself: `shared/workflows/improve-workbench.md`
 
+## Trigger Learning
+
+Workflow trigger phrases are not fixed. They grow over time as new natural phrases are discovered.
+
+### When no trigger phrase matches
+
+Do not fail silently. Instead:
+
+1. Read the user's message and all available context (prior conversation, files open, task described)
+2. Infer which workflow best fits the intent — use the workflow descriptions above, not just the trigger list
+3. Apply that workflow
+4. Tell the user briefly: *"Treating this as a [workflow name] task."*
+
+If the intent is genuinely ambiguous between two workflows → ask one short question to resolve it before proceeding.
+
+### When to add a new trigger phrase
+
+Add the unmatched phrase to the relevant workflow's `## Trigger Phrases` section when any of these are true:
+
+- **User corrects the workflow**: the user says "I meant the [X] workflow" or "you should have used [X] for that" → add the phrase they used to that workflow's triggers
+- **Self-identification mid-task**: mid-task you realize the request clearly maps to a specific workflow that wasn't loaded → note the original phrase and add it
+- **Pattern repeat**: the same phrase or close variant has been used twice without triggering → add it proactively
+
+### How to add a trigger phrase
+
+1. Open the relevant workflow file
+2. Add the new phrase to its `## Trigger Phrases` list
+3. Tell the user: *"Added '[phrase]' to [workflow].md triggers so it loads automatically next time."*
+
+Keep added phrases natural — match how the user actually said it, not a formal rephrasing of it.
+
 ## Memory Rules
 
 - Shared durable knowledge belongs in `shared/memory/`

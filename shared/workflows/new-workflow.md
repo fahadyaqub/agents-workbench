@@ -2,113 +2,286 @@
 
 **Roles**: Expert Programmer · System Design Reviewer · Product Manager
 
-> These are the default roles for creating a workflow. But the right roles depend on what the workflow is *about*.
-> Step 1 below covers how to determine and confirm the correct roles for the specific workflow being created.
+> These are the default roles for creating a workflow. Step 1 covers how to determine and confirm the right roles for the specific workflow being created.
 
 ---
 
-## When to Create a New Workflow
+## Trigger Phrases
 
-Create a workflow when:
-- A task type is done repeatedly and the process is non-obvious
-- Agents need to follow a specific sequence to avoid mistakes
-- The steps involve multiple tools, files, or external systems
-- The team has learned from failures and wants to encode the right approach
+- "create a new workflow"
+- "add a workflow for [X]"
+- "we need a workflow for [X]"
+- "there's no workflow for [X]"
+- "build a workflow for [X]"
+- "write a workflow for [X]"
 
-Do NOT create a workflow just to document something obvious.
-If an agent would do the right thing without guidance, the workflow adds noise.
+---
+
+## Scope Boundary
+
+**This workflow covers:** Creating a new file in `shared/workflows/` from scratch — from identifying the need to registering it in the manifest.
+
+**This workflow does NOT cover:**
+- Editing an existing workflow (edit the file directly, optionally using `improve-workbench.md`)
+- Creating a new domain file (use `new-domain.md`)
+- Project-specific instructions (those belong in the project's `AGENTS.md`)
+
+---
+
+## Prime Directive
+
+**Write for execution, not documentation.**
+
+A workflow that reads like a list of good intentions but leaves agents to figure out the specifics has failed.
+The test: can two different agents follow this workflow independently and produce the same result?
+If the answer is no — the steps are too vague, the branches are implicit, or the completion criteria are missing.
+
+---
+
+## Prerequisites
+
+Before creating a new workflow file:
+
+1. Check `shared/workflows/` — does a workflow already cover this task?
+2. Check `shared/manifest.md` — is there a routing entry that would already handle it?
+
+If a workflow already exists for this task → extend it instead of creating a new one. Stop here.
+If the task is genuinely new and recurring → proceed.
 
 ---
 
 ## Step 1: Determine the Roles
 
-Before writing anything, identify which roles will execute this workflow.
+1. Read `shared/domains/` to understand what roles exist
+2. Ask: who would do this work in practice, and what judgment do they need?
+3. Match the workflow's task type to the roles that best fit:
+   - A debugging workflow needs someone who reads code deeply (Expert Programmer) and someone who verifies nothing regressed (Reproduction Tester)
+   - A planning workflow needs someone who assesses architecture (IT Architect) and someone who keeps work tied to outcomes (Product Manager)
+4. Propose the roles to the user with a brief reason for each, then wait for confirmation
 
-1. Read the available domain files in `shared/domains/` to understand what roles exist
-2. Match the workflow's task type to the roles that best fit it:
-   - Who would be doing this work in practice?
-   - Which roles have the right judgment for the decisions this workflow involves?
-   - Are there roles from multiple domains that each cover a distinct part of the workflow?
-3. Propose the roles to the user with a brief reason for each
+**Example proposal:**
+> "For a `deploy-checklist` workflow I'd suggest Expert Programmer (owns the technical steps) and Reproduction and Regression Tester (owns the verification steps). Does that fit, or should we adjust?"
 
-**Example proposal format:**
-> "For a `deploy-checklist` workflow I'd suggest: **Expert Programmer** (owns the technical steps), **Reproduction and Regression Tester** (owns the verification steps). Does that match how you'd use it, or should we add/swap a role?"
+If the user is unsure → suggest the closest match and proceed. Roles can be updated later.
 
-4. Wait for confirmation or correction before proceeding
-5. If the user is unsure, suggest the closest match and proceed — roles can be revised later
-
-Once confirmed, add the roles as the `**Roles**:` line at the top of the new file.
+Once confirmed → add the `**Roles**:` line at the top of the file.
 
 ---
 
-## Step 2: Name It
+## Step 2: Write It as a Human SOP First
 
-The filename should match a natural trigger phrase — what would someone say to invoke this workflow?
+Before structuring anything, describe how a human would do this task from start to finish.
+Write it conversationally — what would you tell a new team member?
 
-- `debugging-sentry.md` → "debug sentry", "check sentry"
-- `feature-planning.md` → "plan a feature", "design this feature"
-- `deploy-checklist.md` → "run deploy checklist", "prep for deploy"
-
-Use lowercase, hyphen-separated words. One concept per file.
+This step surfaces the real decision points, tools, and sequence before you formalize anything.
+Discard this draft after Step 3. It is thinking material, not the final file.
 
 ---
 
-## Step 3: Write the Goal
+## Step 3: Write the Scope Boundary
 
-One sentence. What does this workflow produce when complete?
+Write two short lists at the top of the file:
 
----
+```
+**This workflow covers:** [what it starts from, what it produces, what task type]
 
-## Step 4: Write the Steps
+**This workflow does NOT cover:**
+- [adjacent task] (use [other-workflow.md] instead)
+- [out-of-scope edge case]
+```
 
-Each step should specify:
-- What to do
-- What to look at, read, or run
-- What to decide or produce before moving to the next step
-
-Steps should be specific enough that two different agents would produce the same result.
-Avoid vague steps like "investigate the issue" — say what to read, run, or inspect.
+If you cannot define a clear scope boundary → the workflow may not be ready to write yet. Surface this to the user.
 
 ---
 
-## Step 5: Add Decision Rules
+## Step 4: Write the Prime Directive (If a Common Failure Mode Exists)
 
-Where the path branches, state explicitly which branch to take and why.
-Don't leave branching implicit — agents will guess wrong.
+A Prime Directive is the one rule that, if ignored, causes the whole workflow to fail.
+Place it before the steps.
 
----
-
-## Step 6: Add a Completion Rule
-
-When is the workflow done? What does "complete" look like?
-A workflow without a completion condition runs forever.
+Use it only when there is a known, recurring failure mode for this task type.
+Not every workflow needs one. If you can't name the failure mode specifically → skip it.
 
 ---
 
-## Step 7: Add It to the Manifest
+## Step 5: Write the Trigger Phrases
 
-In `shared/manifest.md`, add the new workflow under **Workflow Inference** with:
-- The filename
-- The trigger phrases that should load it
+List natural phrases a user would say to invoke this workflow.
+
+```
+- "check sentry"
+- "fetch sentry issues"
+```
+
+Keep them natural — match how the team actually talks.
+After creating the file → add it to `shared/manifest.md` under **Workflow Inference**.
+
+Trigger lists are living. Start with the phrases you know. New ones are added over time via the trigger learning mechanism in `shared/manifest.md`.
 
 ---
 
-## Quality Rules
+## Step 6: Write the Prerequisites / Entry Gate
 
-- If a step depends on external tools, name them explicitly (Sentry, SigNoz, git, etc.)
-- Keep the workflow focused on one task type — split into two files if scope creeps
-- Do not duplicate guidance already in a domain file — reference the role behavior instead
+State what must be true before the workflow starts.
+If prerequisites aren't met → the agent stops and says so, not improvises.
+
+Add a prerequisites section only when starting mid-workflow causes real damage or wasted work.
+
+---
+
+## Step 7: Write the Steps
+
+**One directive per step.** If a step says "do X and Y" → split it.
+
+**Use if-then format for every branch:**
+
+Bad: "Check if the issue is reproducible."
+Good:
+> If the issue reproduces reliably → proceed to Step 3.
+> If you cannot reproduce it → tell the user and stop.
+
+**Name what each step produces** before the next step begins: a hypothesis, a confirmed file, a written plan.
+
+**State what to read, run, or inspect** — not just what to think about:
+
+Bad: "Investigate the root cause."
+Good: "Read the stack trace. Run `git log --since='<date>' --oneline`. Check for prior fix attempts."
+
+**Add anti-patterns** where the common mistake is obvious.
+
+**Add reflection checkpoints** before high-risk steps:
+> Before proceeding: confirm X. If you can't → return to Step N.
+
+---
+
+## Step 8: Add Cross-References
+
+- **Before this workflow**: if another workflow must run first, say so at the top
+- **After this workflow**: if another typically follows, say so at the end
+- **Instead of this workflow**: if a more specific workflow handles a sub-case, redirect there
+
+---
+
+## Step 9: Write the Escalation / Stop Conditions
+
+When should the agent stop and surface to the user rather than continuing?
+
+Conditions must be concrete and observable — not vague ("if things feel unclear").
+
+For this workflow specifically, escalate if:
+- The scope boundary cannot be defined after two attempts — the need may not be clear enough yet
+- The workflow keeps growing past 200 lines — it may be two workflows
+- The steps require so much project-specific context they can't be written generically — this belongs in the project's `AGENTS.md`, not here
+
+---
+
+## Step 10: Write the Completion Criteria
+
+What does "done" look like? The agent should be able to check this list and know whether to stop.
+
+---
+
+## Step 11: Add an Output Template (If the Workflow Produces a Document)
+
+If the workflow produces a structured file, show a skeleton. See `debugging-sentry.md` for an example.
+
+---
+
+## Output Template
+
+Every workflow file produced by this workflow should follow this skeleton:
+
+```markdown
+# Workflow: [Name]
+
+**Roles**: [Role 1] · [Role 2]
+
+**This workflow covers:** [scope]
+**This workflow does NOT cover:** [out-of-scope, with redirects]
+
+---
+
+## Trigger Phrases
+
+- "[phrase 1]"
+- "[phrase 2]"
+
+---
+
+## Prime Directive (if applicable)
+
+**[One sentence governing rule.]**
+
+[2–3 sentences explaining the failure mode it prevents.]
+
+---
+
+## Prerequisites (if applicable)
+
+[What must be true before starting. If-then gates.]
+
+---
+
+## Step 1: [Name]
+
+[Single directive. If-then for branches. Names the output produced.]
+
+---
+
+## Step N: ...
+
+---
+
+## When to Stop and Escalate
+
+Stop and tell the user if:
+- [concrete observable condition]
+- [concrete observable condition]
+
+---
+
+## Completion Criteria
+
+[This workflow] is complete when:
+- [checkable condition]
+- [checkable condition]
+```
+
+---
 
 ## Length Guidelines
 
-- Simple, linear workflows: 15–30 lines
-- Multi-step workflows with branching: 50–100 lines
-- Complex workflows with sub-steps: up to 150 lines, consider splitting
+| Workflow type | Target length |
+|---|---|
+| Simple, linear, few tools | 20–40 lines |
+| Multi-step with branching | 60–120 lines |
+| Complex with sub-steps and templates | Up to 200 lines — consider splitting |
+
+---
+
+## Quality Check
+
+Walk through it with a real task before publishing:
+- Can you follow each step without re-reading the task description?
+- Does each step produce a clear output before the next begins?
+- Are branch conditions explicit enough that two agents make the same choice?
+- Are escalation conditions concrete enough to trigger reliably?
+- Would a human expert do anything this doesn't capture?
+
+If any answer is no → fix it before publishing.
 
 ---
 
 ## After Creating the Workflow
 
-- Walk through it mentally with a real task — does each step produce a clear output?
-- If it replaces a process previously scattered across project-level docs, link back from those docs
-- Add an entry to `shared/memory/decisions.md` noting why this process was formalized
+1. Add it to `shared/manifest.md` under **Workflow Inference** with trigger phrases
+2. If it replaces a scattered process in project-level docs → link back from those docs
+3. Add an entry to `shared/memory/decisions.md` noting why this process was formalized and what problem it solves
+
+---
+
+## Cross-References
+
+- **Related**: `new-domain.md` — same process, different artifact
+- **For editing existing workflows**: use `improve-workbench.md` instead
+- **For project-specific instructions**: add to the project's `AGENTS.md`, not here

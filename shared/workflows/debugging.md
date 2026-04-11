@@ -2,9 +2,22 @@
 
 **Roles**: Expert Programmer · Reproduction and Regression Tester
 
+**This workflow covers**: Investigating an unknown bug from symptom to root cause.
+**This workflow does NOT cover**: Fixing the bug (use `bugfix.md`), Sentry-specific triage (use `debugging-sentry.md`), performance/latency issues (use `debugging-signoz.md`).
+
 ---
 
-## The Prime Directive
+## Trigger Phrases
+
+- "debug this"
+- "figure out why [X] is broken"
+- "something is wrong with [X]"
+- "investigate [issue]"
+- "why is [X] happening"
+
+---
+
+## Prime Directive
 
 **Never lose the original problem.**
 
@@ -17,90 +30,105 @@ If you are three steps deep into "why isn't the logging working" instead of "why
 
 ---
 
+## Prerequisites
+
+Before starting, you must have:
+- A description of the broken behavior (what is happening)
+- A description of the expected behavior (what should happen)
+
+If neither is clear, ask the user before proceeding.
+
+---
+
 ## Step 1: Restate the Problem
 
-Before doing anything, write down in one sentence:
+Write down in one sentence:
 - What is broken
 - What the expected behavior is
 - What the actual behavior is
 
-If you can't write this clearly, ask the user before proceeding. Starting without a clear problem statement is the fastest way to drift.
+If you can't write this clearly → ask the user. Do not proceed with a fuzzy problem statement.
 
 ---
 
 ## Step 2: Reproduce It
 
-Get the bug to happen reliably before investigating why.
+Find the smallest input or action that triggers the bug reliably.
 
-- Find the smallest input or action that triggers it
-- If you can't reproduce it, say so — don't investigate a ghost
-- Reproduction is done when you can trigger the failure on demand
+- If you can reproduce it → proceed to Step 3.
+- If you cannot reproduce it → tell the user. Do not investigate a bug you can't trigger.
+
+Reproduction is done when you can trigger the failure on demand.
 
 ---
 
 ## Step 3: Read Before Touching
 
-Before changing anything:
+Before changing or adding anything:
 
-1. Read the affected code — understand what it's supposed to do
-2. Check recent git history — did this break after a specific commit?
-3. Look at error messages, stack traces, and logs that already exist
-4. Form a hypothesis before adding any new instrumentation
+1. Read the affected code — understand what it is supposed to do
+2. Run `git log --oneline -20` on the affected files — did this break after a specific commit?
+3. Check what error messages, stack traces, and logs already exist
+4. Form a hypothesis about the root cause
 
-**Use what's already there first.** Only add logging if the existing signals are genuinely insufficient.
+If existing signals are sufficient to form a hypothesis → proceed to Step 5.
+If they are not → proceed to Step 4.
 
 ---
 
 ## Step 4: Add Targeted Instrumentation (Only If Needed)
 
-If existing signals aren't enough to locate the bug:
+Add the minimum number of log statements needed to test the hypothesis.
 
-- Add the minimum number of log statements to test your hypothesis
-- Put them at the specific decision point you're investigating — not scattered throughout the class
-- Use a comment like `// DEBUG: remove after fix` so it's obvious they're temporary
-- Do not refactor error handling, restructure logging infrastructure, or add new monitoring while debugging — that's a separate task
+- Place them at the specific decision point being investigated — not scattered throughout the class
+- Use `console.debug()` or `console.trace()` instead of `console.log()` — this distinguishes agent-added instrumentation from user-added logs, which are typically `console.log`. Not a hard rule, but a useful convention.
+- Mark each one with `// DEBUG: remove after fix`
+- Do not refactor error handling, restructure logging infrastructure, or improve monitoring while debugging — that is a separate task
 
 **One hypothesis → one round of targeted logging → re-deploy → check results.**
 
-If the logs don't tell you what you need after one round, form a new hypothesis and repeat — don't keep layering more logging on top.
+If results confirm the hypothesis → proceed to Step 5.
+If results are inconclusive → form a new hypothesis and repeat Step 4 once more.
+If after two rounds the cause is still unclear → escalate (see below).
 
 ---
 
 ## Step 5: Isolate the Cause
 
-Work from the outside in:
-1. Is the problem in the input (bad data coming in)?
-2. Is the problem in the logic (wrong processing)?
-3. Is the problem in the output (wrong result produced, right logic)?
-4. Is the problem in a dependency (service, DB, external API misbehaving)?
+Work from the outside in. For each layer, eliminate it before moving to the next:
 
-For each, eliminate it as quickly as possible. Move to the next when ruled out.
+1. **Input** — is the problem bad data coming in?
+2. **Logic** — is the processing producing a wrong result?
+3. **Output** — is the result right but being presented or stored incorrectly?
+4. **Dependency** — is a service, DB, or external API misbehaving?
 
----
-
-## Step 6: Fix It
-
-Once the root cause is clear:
-- Change the smallest surface area that fixes the root cause
-- Do not clean up surrounding code, improve logging, or refactor while fixing
-- Those are separate tasks — mixing them obscures what fixed the bug
+When you can state the root cause in one sentence → proceed to `bugfix.md`.
 
 ---
 
-## Step 7: Verify and Clean Up
+## Step 6: Hand Off to Bug Fix
 
-- Verify the fix resolves the original problem
-- Remove all temporary debug logging added during investigation
-- If any logging should stay permanently (it's genuinely useful), move it to a proper place as a separate, deliberate commit — not mixed into the bug fix
+Once root cause is confirmed, switch to `bugfix.md`.
+
+Do not start fixing inside this workflow. Keep investigation and fixing separate — mixing them makes both harder to verify.
 
 ---
 
 ## When to Stop and Escalate
 
-Stop and tell the user if:
-- You've added two rounds of instrumentation and still can't locate the cause
-- The investigation is requiring changes to more than 3 files with no clear fix in sight
+Stop and tell the user if any of these are true:
+- Two rounds of instrumentation and the cause is still unknown
+- The investigation requires changes to more than 3 files with no root cause in sight
 - Supporting work (logging, error handling) is now more complex than the original bug
 - You've lost confidence in what the original bug actually was
 
 These are signals the problem is bigger than a single debug session. Reset with the user rather than going deeper.
+
+---
+
+## Completion Criteria
+
+Debugging is complete when:
+- The root cause can be stated in one sentence
+- The root cause has been confirmed (not just hypothesized) — reproducing it at the identified location is sufficient
+- You are ready to hand off to `bugfix.md`
