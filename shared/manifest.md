@@ -65,14 +65,27 @@ Workflow trigger phrases are not fixed. They grow over time as new natural phras
 
 ### When no trigger phrase matches
 
-Do not fail silently. Instead:
+Default assumption: it is a regular task. Do not force a workflow match.
 
-1. Read the user's message and all available context (prior conversation, files open, task described)
-2. Infer which workflow best fits the intent — use the workflow descriptions above, not just the trigger list
-3. Apply that workflow
-4. Tell the user briefly: *"Treating this as a [workflow name] task."*
+Most user messages are one-off instructions — "fix this", "add a button", "what does this do", "make this faster". These are not workflow triggers even if the topic overlaps with a workflow.
 
-If the intent is genuinely ambiguous between two workflows → ask one short question to resolve it before proceeding.
+Only consider routing to a workflow if the message contains a strong process signal — a word or phrase that suggests the user wants to start a structured, multi-step operation rather than just get something done inline:
+
+- **Investigation**: "debug", "figure out why", "investigate", "trace this", "something is wrong with"
+- **Review**: "review this", "audit this", "check this before committing"
+- **Planning**: "plan", "spec out", "design", "how should we approach", "what's the architecture for"
+- **Research**: "research", "compare", "evaluate options", "what are the options for"
+- **Setup**: "set up", "bootstrap", "initialize", "add to the workspace"
+- **Commit / push**: "commit", "push", "land this change", "is this ready to commit"
+- **Workbench**: "create a workflow", "add a domain", "improve the workbench"
+
+If a signal is present and the message clearly describes starting a process, infer the closest workflow, apply it, and tell the user briefly: *"Treating this as a [workflow name] task."*
+
+If still ambiguous after checking for signals — just do the task. Do not ask the user to pick a workflow.
+
+### When to remove a trigger phrase
+
+If the user says the workflow was not what they intended — "I didn't mean to trigger a workflow", "I just wanted to do X", "that was overkill", "I meant this as a simple task" — remove the phrase that caused the match from that workflow's `## Trigger Phrases` list immediately. Tell the user: *"Removed '[phrase]' from [workflow].md triggers."*
 
 ### When to add a new trigger phrase
 
