@@ -22,17 +22,7 @@ It packages:
 - project templates
 - setup and bootstrap guidance
 
-## Repository Layout
-
-- `AGENTS.md` is the tracked bootstrap entrypoint inside this repo
-- teammates clone this repo into their workspace folder alongside their other projects
-- setup then creates parent-level pointer files in the workspace root
-- `CLAUDE.md` and `CODEX.md` are compatibility stubs
-- `shared/` contains the shared system
-- `templates/` contains starter files for local setup and project bootstrap
-- `local/` is reserved for per-user local files and is intentionally not committed
-
-## Teammate Setup
+## Setup
 
 Your **workspace folder** is wherever you keep all your project repositories — it could be `~/work`, `~/projects`, `~/code`, or anything else. Clone this repo in the root of your workspace folder:
 
@@ -52,6 +42,16 @@ That setup will:
 - scan for projects in the workspace and bootstrap them
 
 **Bootstrap scan depth**: the bootstrap scans one level into the workspace root and one level deeper for grouped project folders (e.g. `{workspace}/company/repo`). It will not recurse further without asking. This keeps setup fast and predictable.
+
+## Repository Layout
+
+- `AGENTS.md` is the tracked bootstrap entrypoint inside this repo
+- teammates clone this repo into their workspace folder alongside their other projects
+- setup then creates parent-level pointer files in the workspace root
+- `CLAUDE.md` and `CODEX.md` are compatibility stubs
+- `shared/` contains the shared system
+- `templates/` contains starter files for local setup and project bootstrap
+- `local/` is reserved for per-user local files and is intentionally not committed
 
 ## Shared Areas
 
@@ -94,12 +94,18 @@ No command vocabulary to memorize. Say what you mean.
 
 ## Local Files
 
-Users should create their own local files in `local/`, such as:
+These are user- or task-specific files and should not be committed to the shared repo.
+
+Use `local/` for per-user setup and memory:
 - `setup.toml`
 - `who-i-am.md`
 - `personal-memory.md`
 
-These should not be committed to the shared repo.
+Use `workspace/` for task-specific working files created by agents or users during active work:
+- scratch notes
+- task plans
+- temporary reports
+- one-off artifacts that help complete a task but should not live in the shared system
 
 ## Canonical File Policy
 

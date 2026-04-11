@@ -109,3 +109,8 @@ Examples of project group folders:
 
 Bootstrap and new-project setup should handle both structures.
 Do not assume every immediate child of the workspace root is itself a project repository.
+
+Within the `agents-workbench` repository itself, `workspace/` is the standard task-working area for agents and users:
+- use it for scratch notes, temporary plans, one-off reports, and task-specific artifacts
+- treat its contents as disposable working files unless the user explicitly asks to promote something into tracked docs
+- do not commit `workspace/` contents unless the user explicitly asks for that
