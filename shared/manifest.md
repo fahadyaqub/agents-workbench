@@ -53,6 +53,7 @@ Load relevant workflow docs based on the task:
 - Planning and architecture: `shared/workflows/planning.md`
 - Planning a new feature: `shared/workflows/feature-planning.md`
 - Research tasks: `shared/workflows/research.md`
+- Preparing, validating, committing, and pushing a change: `shared/workflows/commit-and-push.md`
 - New repository setup or project creation: `shared/workflows/new-project.md`
 - Creating or expanding a domain file: `shared/workflows/new-domain.md`
 - Creating a new workflow: `shared/workflows/new-workflow.md`

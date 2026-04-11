@@ -94,9 +94,17 @@ Do not recurse beyond two levels without asking the user.
 For each identified project:
 - Check whether `AGENTS.md` exists
 - Check whether `CLAUDE.md` and `CODEX.md` exist
+- Check whether `AGENTS.md` contains a `## Protected Branches` section
 - Note any existing workflow or instruction docs
 
 If projects are missing `AGENTS.md` → ask: "Some projects are missing AGENTS.md. Do you want me to add project-level entrypoints where missing?"
+
+If projects have `AGENTS.md` but no protected branches defined → ask once, collectively:
+"The following projects don't have protected branches defined: [list]. What are the protected branches for each? Or should I apply workspace defaults (main, master, prod, production, release, rd*)?"
+
+If the user provides specifics → add a `## Protected Branches` section to each project's `AGENTS.md`.
+If the user says use defaults → add the default list to each project's `AGENTS.md` with a note it follows workspace defaults.
+If the user skips → add a note to each `AGENTS.md`: "Protected branches: not defined — workspace defaults apply."
 
 If yes → run `new-project.md` for each missing project.
 If no → mark `project_bootstrap` as `ignored`.
@@ -145,3 +153,4 @@ Bootstrap is complete when:
 - `local/setup.toml`, `local/who-i-am.md`, and `local/personal-memory.md` exist
 - All setup items in `local/setup.toml` are marked `complete` or `ignored`
 - The scan date and project lists are recorded in `local/setup.toml`
+- Every managed project's `AGENTS.md` defines protected branches (or explicitly states workspace defaults apply)

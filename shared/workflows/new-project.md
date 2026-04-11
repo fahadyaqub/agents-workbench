@@ -104,7 +104,32 @@ Keep it portable:
 
 ---
 
-## Step 6: Update the Workspace Setup
+## Step 6: Define Protected Branches
+
+Ask the user: "Which branches are protected in this project? I'll add them to AGENTS.md so agents never commit or push to them directly."
+
+If the user provides a list → add it to `AGENTS.md` under a `## Protected Branches` section:
+
+```markdown
+## Protected Branches
+
+Agents must never commit or push directly to these branches without explicit user instruction:
+- `main`
+- `prod`
+- `release`
+
+All other branches are safe to work on freely.
+```
+
+If the user says "use the defaults" or doesn't know → apply the workspace default rule from `shared/core/permissions.md`:
+- Protected: `main`, `master`, `production`, `prod`, `release`, and any branch starting with `rd`
+- Add this to `AGENTS.md` with a note that it follows workspace defaults
+
+If the user says to skip it → note it in `AGENTS.md` as "protected branches: not defined — workspace defaults apply".
+
+---
+
+## Step 7: Update the Workspace Setup
 
 After creating or updating the project files:
 
@@ -119,6 +144,7 @@ Before finishing, verify:
 - Can a new team member clone this repo and immediately understand what it is and how agents should work in it?
 - Are all existing instructions preserved (nothing was overwritten without migrating)?
 - Are the files portable (no personal paths or private dependencies)?
+- Are protected branches defined (or workspace defaults explicitly acknowledged)?
 
 ---
 
@@ -135,6 +161,7 @@ Stop and ask the user if:
 
 New project setup is complete when:
 - `AGENTS.md` exists and contains project purpose, stack, important paths, and working rules
+- `AGENTS.md` defines protected branches (or explicitly states workspace defaults apply)
 - `CLAUDE.md` and `CODEX.md` exist as stubs (or are confirmed not needed)
 - No existing useful content was lost
 - The project is listed in `local/setup.toml`

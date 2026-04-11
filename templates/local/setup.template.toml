@@ -13,3 +13,8 @@ ignored_projects = []
 status = "pending"
 mode = "stub"
 migrated_files = []
+
+[protected_branches_audit]
+status = "pending"
+projects_with_branches_defined = []
+projects_using_defaults = []
