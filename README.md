@@ -31,15 +31,15 @@ git clone https://github.com/fahadyaqub/agents-workbench.git
 Then ask an agent to:
 
 ```text
-setup the workbench in ~/work
+setup the workbench in {your workspace path}
 ```
 
-Replace `~/work` with your actual workspace path. That setup will:
+That setup will:
 - create `AGENTS.md`, `CLAUDE.md`, and `CODEX.md` as pointer stubs in the workspace root
 - initialize `agents-workbench/local/` from templates if needed
 - scan for projects in the workspace and bootstrap them
 
-**Bootstrap scan depth**: the bootstrap scans one level into the workspace root and one level deeper for grouped project folders (e.g. `~/work/company/repo`). It will not recurse further without asking. This keeps setup fast and predictable.
+**Bootstrap scan depth**: the bootstrap scans one level into the workspace root and one level deeper for grouped project folders (e.g. `{workspace}/company/repo`). It will not recurse further without asking. This keeps setup fast and predictable.
 
 ## Shared Areas
 
