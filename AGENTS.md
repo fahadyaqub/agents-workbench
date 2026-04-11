@@ -1,21 +1,22 @@
 # Agents Workbench Bootstrap
 
-This file is the root bootstrap for Agents Workbench.
+This file is the tracked bootstrap for Agents Workbench.
+In a real workspace, the parent `AGENTS.md` should point to this file.
 
 Use `AGENTS.md` as the canonical agent instructions file.
 Project-level `AGENTS.md` files remain authoritative for project-specific context and constraints.
 
 ## Load Order
 
-1. Read `AGENTS/shared/manifest.md`
-2. Read `AGENTS/local/setup.toml` if it exists
-3. If local setup is incomplete, follow `AGENTS/shared/workflows/bootstrap.md`
+1. Read `shared/manifest.md`
+2. Read `local/setup.toml` if it exists
+3. If local setup is incomplete, follow `shared/workflows/bootstrap.md`
 4. Read these local overlays if they exist:
-   - `AGENTS/local/who-i-am.md`
-   - `AGENTS/local/personal-memory.md`
+   - `local/who-i-am.md`
+   - `local/personal-memory.md`
 5. Infer the relevant domain and workflow from the user's request and load matching files from:
-   - `AGENTS/shared/domains/`
-   - `AGENTS/shared/workflows/`
+   - `shared/domains/`
+   - `shared/workflows/`
 6. If the current project has its own `AGENTS.md`, treat that file as the project-specific overlay
 
 ## Domain Selection

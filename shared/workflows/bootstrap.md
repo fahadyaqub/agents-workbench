@@ -4,6 +4,7 @@ Use this workflow to initialize and maintain the workspace-level agent system.
 
 ## Goals
 
+- Ensure the workspace root has parent-level pointer files into `agents-workbench/`
 - Set up personal local overlays
 - Detect missing project-level agent entrypoints
 - Preserve existing project agent and workflow docs
@@ -11,16 +12,21 @@ Use this workflow to initialize and maintain the workspace-level agent system.
 
 ## Local Setup
 
-1. If `local/setup.toml` is missing, initialize:
+1. Ensure the workspace root contains these pointer files:
+   - `AGENTS.md` -> points to `agents-workbench/AGENTS.md`
+   - `CLAUDE.md` -> points to `agents-workbench/AGENTS.md`
+   - `CODEX.md` -> points to `agents-workbench/AGENTS.md`
+2. If `local/setup.toml` is missing, initialize:
    - `local/setup.toml`
    - `local/who-i-am.md`
    - `local/personal-memory.md`
-2. If `who_i_am.status` is `pending`, ask the user to complete or ignore it
-3. If `project_bootstrap.status` is `pending`, inspect immediate child folders of the workspace root
-4. If `unified_agent_entrypoint.status` is `pending`, inspect `AGENTS.md`, `CLAUDE.md`, and `CODEX.md` usage in each project
+3. If `who_i_am.status` is `pending`, ask the user to complete or ignore it
+4. If `project_bootstrap.status` is `pending`, inspect immediate child folders of the workspace root
+5. If `unified_agent_entrypoint.status` is `pending`, inspect `AGENTS.md`, `CLAUDE.md`, and `CODEX.md` usage in each project
 
 Recommended setup prompts:
 - For personal profile: `Set up your local "who I am" profile now, or ignore it for now?`
+- For workspace pointers: `Create the parent AGENTS.md, CLAUDE.md, and CODEX.md pointer files for this workspace now?`
 - For missing project entrypoints: `Some projects in this workspace are missing AGENTS.md. Do you want to add a project-level AGENTS.md entrypoint where missing?`
 - For unified project files: `Make AGENTS.md the single source of truth in this project? I can merge useful content from CLAUDE.md and CODEX.md into it, then replace those files with short pointers.`
 

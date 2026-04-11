@@ -1,4 +1,4 @@
-AGENTS/local/*
-!AGENTS/local/.gitkeep
+local/*
+!local/.gitkeep
 
 .DS_Store

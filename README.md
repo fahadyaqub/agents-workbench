@@ -12,22 +12,44 @@ It packages:
 
 ## Repository Layout
 
-- `AGENTS.md` is the root bootstrap entrypoint
-- `CLAUDE.md` and `CODEX.md` are compatibility stubs that point to `AGENTS.md`
-- `AGENTS/shared/` contains the shared system
-- `AGENTS/templates/` contains starter files for local setup and project bootstrap
-- `AGENTS/local/` is reserved for per-user local files and is intentionally not committed
+- `AGENTS.md` is the tracked bootstrap entrypoint inside this repo
+- teammates clone this repo into their main workspace, typically as `work/agents-workbench`
+- setup then creates parent-level pointer files in the workspace root
+- `CLAUDE.md` and `CODEX.md` are compatibility stubs
+- `shared/` contains the shared system
+- `templates/` contains starter files for local setup and project bootstrap
+- `local/` is reserved for per-user local files and is intentionally not committed
+
+## Teammate Setup
+
+Clone the repo into the workspace root:
+
+```sh
+git clone <repo-url> ~/work/agents-workbench
+```
+
+Then ask an agent to:
+
+```text
+setup the workbench in ~/work
+```
+
+That setup should:
+- create `~/work/AGENTS.md` as a pointer to `~/work/agents-workbench/AGENTS.md`
+- create `~/work/CLAUDE.md` as a pointer to `~/work/agents-workbench/CLAUDE.md`
+- create `~/work/CODEX.md` as a pointer to `~/work/agents-workbench/CODEX.md`
+- initialize `~/work/agents-workbench/local/` from templates if needed
 
 ## Shared Areas
 
-- `AGENTS/shared/core/` holds general behavior, communication, and permission rules
-- `AGENTS/shared/domains/` holds domain-specific operating modes
-- `AGENTS/shared/workflows/` holds reusable task workflows
-- `AGENTS/shared/memory/` holds durable shared memory
+- `shared/core/` holds general behavior, communication, and permission rules
+- `shared/domains/` holds domain-specific operating modes
+- `shared/workflows/` holds reusable task workflows
+- `shared/memory/` holds durable shared memory
 
 ## Local Files
 
-Users should create their own local files in `AGENTS/local/`, such as:
+Users should create their own local files in `local/`, such as:
 - `setup.toml`
 - `who-i-am.md`
 - `personal-memory.md`
