@@ -50,7 +50,14 @@ That setup will:
 
 ## Workflows
 
-This system runs on trigger phrases, not commands. Instead of memorizing `/simplify` or `/batch`, you say what you mean — "clean this up", "this is too nested", "migrate all of these in parallel" — and the agent routes to the right workflow.
+This system runs on trigger phrases, not commands. Instead of memorizing a command vocabulary, you say what you mean and the agent routes to the right workflow:
+
+| Instead of a command... | Just say... |
+|---|---|
+| `/debug` | "debug this", "something is wrong with X", "figure out why X is broken" |
+| `/commit` | "commit", or "commit code", "land this change", "is this ready to commit" |
+| `/plan` | "how should we approach X", "let's plan X" |
+| `/research` | "research this", "compare X vs Y", "what are the options for X" |
 
 If a phrase isn't recognized, the agent infers the closest match, tells you, and adds the phrase to the trigger list so it works automatically next time. The vocabulary grows from real usage. You can also add triggers manually to any workflow file under `## Trigger Phrases`.
 
