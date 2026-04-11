@@ -1,24 +1,23 @@
 # Agents Workbench
 
-Agents Workbench is a reusable operating layer for AI agents across projects, teams, and workflows.
-This is a living, growing system — it improves as the team learns.
+Agents Workbench is a shared set of instructions, workflows, and conventions, and working memory for AI agents. It covers product, engineering, sales, marketing, and finance — anyone on the team using an AI agent can use it.
 
 **Key features:**
 - **Agent agnostic** — works with Claude, Gemini, Codex, or any agent that reads markdown instruction files
-- **Agemt token efficiency** — shared context, so agents start sharp, and keeps responses focused and on-topic
-- **Explain once** — project stack, funcotinality, your style, and your rules; the workbench carries that context automatically
-- **Reduce repeated mistakes** — lessons, corrections, and conventions are written down once and applied everywhere
-- **Reduce file clutter** — one shared system replaces scattered "how to" `.md` files duplicated across every project for every agent
-- **Team and personal layers coexist** — shared conventions apply to everyone; personal preferences and overrides live in `local/` and never pollute the shared repo
-- **Built-in safety** — protected branches are defined per project and enforced by every agent before any commit or push, with sane workspace-level defaults so nothing falls through the cracks
-- **Natural language routing** — no commands to memorize; say what you mean and the agent routes to the right workflow; unrecognized phrases get added to the trigger list automatically
-- **Works out of the box** — clone it and you're ready to go; predefined workflows, roles, and instructions mean agents are productive without any customization
-- **Grows and improves over time** — workflows, trigger phrases, personalities, roles, and team knowledge accumulates in one place
+- **Token efficient** — shared context so agents start sharp and keep responses focused and on-topic
+- **Explain once** — project stack, functionality, your style, and your rules; the workbench carries that context automatically
+- **Fewer mistakes** — lessons, corrections, and conventions are written down once and applied everywhere
+- **Less clutter** — one shared system replaces scattered `.md` files duplicated across every project for every agent
+- **Layered** — shared conventions apply to everyone; personal preferences and overrides live in `local/` and never pollute the shared repo
+- **Safe by default** — protected branches are defined per project and enforced by every agent before any commit or push, with sane workspace-level defaults
+- **No commands** — say what you mean and the agent routes to the right workflow; unrecognized phrases get added to the trigger list automatically
+- **Ready on day one** — clone it and you're ready to go; predefined workflows, roles, and instructions mean agents are productive without any customization
+- **Evolving** — This is a living system — it grows and improves as the team uses it.
 
 It packages:
 - shared core instructions
-- domain, and role files
-- workflows
+- domain and role files covering engineering, design, QA, architecture, sales, marketing, finance, and product
+- workflows for common tasks across all functions
 - shared memory
 - project templates
 - setup and bootstrap guidance
@@ -67,10 +66,10 @@ This system runs on trigger phrases, not commands. Instead of memorizing a comma
 
 | Instead of a command... | Just say... |
 |---|---|
-| `/debug` | "debug this", "something is wrong with X", "figure out why X is broken" |
+| `/debug` | "debug X", "something is wrong with X", "figure out why X is broken" |
 | `/commit` | "commit", or "commit code", "land this change", "is this ready to commit" |
 | `/plan` | "how should we approach X", "let's plan X" |
-| `/research` | "research this", "compare X vs Y", "what are the options for X" |
+| `/research` | "research X", "Evaluate X", "compare X vs Y", "what are the options for X",  | 
 
 If a phrase isn't recognized, the agent infers the closest match, tells you, and adds the phrase to the trigger list so it works automatically next time. The vocabulary grows from real usage. You can also add triggers manually to any workflow file under `## Trigger Phrases`.
 
