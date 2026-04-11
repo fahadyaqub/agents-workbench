@@ -1,0 +1,4 @@
+AGENTS/local/*
+!AGENTS/local/.gitkeep
+
+.DS_Store

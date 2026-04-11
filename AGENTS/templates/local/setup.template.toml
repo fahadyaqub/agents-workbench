@@ -1,0 +1,15 @@
+version = 1
+
+[who_i_am]
+status = "pending"
+
+[project_bootstrap]
+status = "pending"
+last_scan_at = ""
+managed_projects = []
+ignored_projects = []
+
+[unified_agent_entrypoint]
+status = "pending"
+mode = "stub"
+migrated_files = []
