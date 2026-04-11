@@ -50,7 +50,11 @@ That setup will:
 
 ## Workflows
 
-Agents recognize natural trigger phrases for each workflow. Say what you want to do — the agent will route to the right workflow automatically. If a phrase isn't recognized, the agent will infer the closest match and tell you, then add the phrase to the trigger list for next time.
+This system runs on trigger phrases, not commands. Instead of memorizing `/simplify` or `/batch`, you say what you mean — "clean this up", "this is too nested", "migrate all of these in parallel" — and the agent routes to the right workflow.
+
+If a phrase isn't recognized, the agent infers the closest match, tells you, and adds the phrase to the trigger list so it works automatically next time. The vocabulary grows from real usage. You can also add triggers manually to any workflow file under `## Trigger Phrases`.
+
+No command vocabulary to memorize. Say what you mean.
 
 | Workflow | What it covers |
 |---|---|
