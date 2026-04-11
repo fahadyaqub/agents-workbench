@@ -95,11 +95,11 @@ Add the unmatched phrase to the relevant workflow's `## Trigger Phrases` section
 - **Self-identification mid-task**: mid-task you realize the request clearly maps to a specific workflow that wasn't loaded → note the original phrase and add it
 - **Pattern repeat**: the same phrase or close variant has been used twice without triggering → add it proactively
 
-### How to add a trigger phrase
+### How to add or remove a trigger phrase
 
 1. Open the relevant workflow file
-2. Add the new phrase to its `## Trigger Phrases` list
-3. Tell the user: *"Added '[phrase]' to [workflow].md triggers so it loads automatically next time."*
+2. Add or remove the phrase in its `## Trigger Phrases` list
+3. Tell the user what changed and show the full updated trigger list for that workflow
 
 Keep added phrases natural — match how the user actually said it, not a formal rephrasing of it.
 
