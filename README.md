@@ -5,14 +5,15 @@ This is a living, growing system — it improves as the team learns.
 
 **Key features:**
 - **Agent agnostic** — works with Claude, Gemini, Codex, or any agent that reads markdown instruction files
-- **Agemt token efficiency** — shared context, so agents start sharp, and keeps responses tight and on-topic
+- **Agemt token efficiency** — shared context, so agents start sharp, and keeps responses focused and on-topic
 - **Explain once** — project stack, funcotinality, your style, and your rules; the workbench carries that context automatically
 - **Reduce repeated mistakes** — lessons, corrections, and conventions are written down once and applied everywhere
 - **Reduce file clutter** — one shared system replaces scattered "how to" `.md` files duplicated across every project for every agent
 - **Team and personal layers coexist** — shared conventions apply to everyone; personal preferences and overrides live in `local/` and never pollute the shared repo
 - **Built-in safety** — protected branches are defined per project and enforced by every agent before any commit or push, with sane workspace-level defaults so nothing falls through the cracks
 - **Natural language routing** — no commands to memorize; say what you mean and the agent routes to the right workflow; unrecognized phrases get added to the trigger list automatically
-- **Grows and improves over time** — workflows, trigger phrases, personalities, roles,and team knowledge accumulates in one place
+- **Works out of the box** — clone it and you're ready to go; predefined workflows, roles, and instructions mean agents are productive without any customization
+- **Grows and improves over time** — workflows, trigger phrases, personalities, roles, and team knowledge accumulates in one place
 
 It packages:
 - shared core instructions
