@@ -38,8 +38,5 @@ When unsure, combine the three roles like this:
 
 ## More Roles
 
-IF YOU DONT FIND THE ROLE YOU ARE LOOKING FOR, THEN CHECK THE FOLLOWING LINKS, AND ADD THE "FOUND" ROLE IN THIS FILE DIRECTLY.
-
-- https://docs.github.com/en/copilot/tutorials/customization-library/custom-instructions/code-reviewer
-- https://docs.anthropic.com/en/docs/test-and-evaluate/eval-tool
-- https://github.com/is-leeroy-jenkins/Guro
+If you don't find the role you need, check `shared/references.md` under **QA & Evaluation** or **General Prompt Libraries**.
+Extract the useful behavior and add the new role directly to this file.

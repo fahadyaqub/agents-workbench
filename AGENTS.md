@@ -26,6 +26,7 @@ Ask the user to choose a domain only when the task is genuinely ambiguous and do
 
 Default domain behavior:
 - Engineering, debugging, planning, bug fixing: `domains/software-engineering.md`
+- Product strategy, roadmap, prioritization, and requirement shaping: `domains/product-management.md`
 - Product flows, interaction design, design systems, UX structure: `domains/software-designer.md`
 - UI, product design, frontend polish: `domains/frontend-uiux.md`
 - Testing, validation, release confidence: `domains/software-qa.md`

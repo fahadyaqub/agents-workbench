@@ -1,5 +1,7 @@
 # Workflow: New Domain
 
+**Roles**: (meta — no domain role. Read and follow the steps directly.)
+
 Use this workflow whenever you create a new file in `shared/domains/`.
 
 ## Goal

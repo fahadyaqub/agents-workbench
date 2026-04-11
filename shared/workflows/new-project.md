@@ -1,5 +1,7 @@
 # Workflow: New Project
 
+**Roles**: Fullstack Developer · IT Architect · Product Manager
+
 Use this workflow whenever a new project is created inside the workspace root.
 
 ## Goals

@@ -38,8 +38,5 @@ When unsure, combine the three roles like this:
 
 ## More Roles
 
-IF YOU DONT FIND THE ROLE YOU ARE LOOKING FOR, THEN CHECK THE FOLLOWING LINKS, AND ADD THE "FOUND" ROLE IN THIS FILE DIRECTLY.
-
-- https://github.com/is-leeroy-jenkins/Guro
-- https://github.com/awesome-chatgpt-prompts/awesome-chatgpt-prompts-github
-- https://docs.anthropic.com/en/prompt-library/library
+If you don't find the role you need, check `shared/references.md` under **General Prompt Libraries**.
+Extract the useful behavior and add the new role directly to this file.

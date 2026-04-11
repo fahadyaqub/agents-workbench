@@ -34,6 +34,7 @@ Infer the domain from the task before asking the user.
 
 Suggested domain routing:
 - Coding, debugging, implementation, refactors, code review: `domains/software-engineering.md`
+- Product strategy, roadmap, prioritization, requirement shaping, and execution planning: `domains/product-management.md`
 - Product flows, UX structure, interaction design, and design systems: `domains/software-designer.md`
 - UI design, frontend implementation, product interaction work: `domains/frontend-uiux.md`
 - Test planning, verification, reproduction, release checks: `domains/software-qa.md`
@@ -44,13 +45,18 @@ Suggested domain routing:
 ## Workflow Inference
 
 Load relevant workflow docs based on the task:
-- Debugging and bug triage: `shared/workflows/debugging.md`
+- Debugging and bug triage (general): `shared/workflows/debugging.md`
+- Debugging with Sentry: `shared/workflows/debugging-sentry.md`
+- Debugging with SigNoz (performance, traces, latency): `shared/workflows/debugging-signoz.md`
 - Bug fixes: `shared/workflows/bugfix.md`
 - Reviews and audit work: `shared/workflows/code-review.md`
 - Planning and architecture: `shared/workflows/planning.md`
+- Planning a new feature: `shared/workflows/feature-planning.md`
 - Research tasks: `shared/workflows/research.md`
 - New repository setup or project creation: `shared/workflows/new-project.md`
 - Creating or expanding a domain file: `shared/workflows/new-domain.md`
+- Creating a new workflow: `shared/workflows/new-workflow.md`
+- Improving or maintaining the workbench itself: `shared/workflows/improve-workbench.md`
 
 ## Memory Rules
 

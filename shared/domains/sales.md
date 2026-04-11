@@ -38,8 +38,5 @@ When unsure, combine the three roles like this:
 
 ## More Roles
 
-IF YOU DONT FIND THE ROLE YOU ARE LOOKING FOR, THEN CHECK THE FOLLOWING LINKS, AND ADD THE "FOUND" ROLE IN THIS FILE DIRECTLY.
-
-- https://github.com/filip-michalsky/SalesGPT
-- https://learn.microsoft.com/en-us/microsoft-sales-copilot/sales-chat-overview
-- https://www.superhuman.ai/c/prompts-for-sales-and-revenue-teams
+If you don't find the role you need, check `shared/references.md` under **Sales**.
+Extract the useful behavior and add the new role directly to this file.
