@@ -96,11 +96,17 @@ For each identified project:
 - Check whether `AGENTS.md` contains a reference to the workspace-level `AGENTS.md` at the top (the workbench link)
 - Check whether `CLAUDE.md` and `CODEX.md` exist
 - Check whether `AGENTS.md` contains a `## Protected Branches` section
+- Check whether `AGENTS.md` contains real project guidance or is only a thin pointer
 - Note any existing workflow or instruction docs
 
 If projects are missing `AGENTS.md` → ask: "Some projects are missing AGENTS.md. Do you want me to add project-level entrypoints where missing?"
 
-If projects have `AGENTS.md` but are missing the workbench reference line → add it at the top of the file without touching any other content. Use `../AGENTS.md` for direct projects, `../../AGENTS.md` for group-nested projects.
+If projects have `AGENTS.md` but are missing the workbench reference line → add it near the top of the file without touching any other content. Use `../AGENTS.md` for direct projects, `../../AGENTS.md` for group-nested projects.
+
+If projects have `AGENTS.md` but it is only a thin pointer:
+- expand it into a short project-level adapter
+- keep shared guidance in the parent workbench
+- keep project-specific facts, paths, and safety rules in the local file so IDE agents can use it as the nearest reliable entrypoint
 
 If projects have `AGENTS.md` but no protected branches defined → ask once, collectively:
 "The following projects don't have protected branches defined: [list]. What are the protected branches for each? Or should I apply workspace defaults (main, master, prod, production, release, rd*)?"

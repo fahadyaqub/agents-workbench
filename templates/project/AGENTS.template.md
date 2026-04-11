@@ -5,11 +5,29 @@ This file contains project-specific guidance for agents working in this reposito
 Use `AGENTS.md` as the canonical instructions file for this project.
 If `CLAUDE.md` or `CODEX.md` exist, they should point here and should not contain separate instructions.
 
+This file should be a real project entrypoint for IDE agents, not just a pointer.
+Keep the most important project facts and safety rules here so tools that load the nearest `AGENTS.md` can work correctly immediately.
+
 ## Scope
 
 This file is for repository-specific instructions only.
-If a workspace-level `AGENTS.md` exists, treat it as a general overlay.
+If a parent or workspace-level `AGENTS.md` exists, read it as shared guidance first.
+Treat that parent file as the shared workspace overlay, then apply this file for repo-specific behavior.
 This file remains authoritative for project-specific behavior inside this repo.
+
+## Workspace Integration
+
+- Read the nearest parent `AGENTS.md` if one exists
+- Use the shared workbench guidance from the workspace before applying these project rules
+- If this repository is part of an `agents-workbench` workspace, keep shared conventions in the workbench and keep this file focused on local project needs
+- Do not duplicate large shared instruction blocks here unless IDE compatibility requires a short local summary
+
+## IDE Loading Notes
+
+- Assume some tools will read this file before anything else
+- Put the most important project facts and safety rules near the top
+- Prefer short, explicit instructions over long narrative explanation
+- When in doubt, keep shared rules in the workbench and project-specific rules here
 
 ## Project Context
 
@@ -24,6 +42,7 @@ This file remains authoritative for project-specific behavior inside this repo.
 - Add repo-specific testing expectations
 - Add deployment or environment caveats
 - Add project-specific approval or safety rules
+- Add project-specific protected branches if they differ from workspace defaults
 
 ## Important Paths
 

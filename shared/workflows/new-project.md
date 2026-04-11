@@ -67,6 +67,7 @@ If files exist → proceed to Step 4 (merge and augment, not replace).
 If `AGENTS.md` is missing:
 - Create it from `templates/project/AGENTS.template.md`
 - Fill in what can be inferred from the project structure (purpose, stack, important paths)
+- Make it a short real project entrypoint for IDE agents, not a bare pointer file
 
 If `CLAUDE.md` is missing:
 - Create it from `templates/project/CLAUDE.template.md` as a stub pointing to `AGENTS.md`
@@ -78,7 +79,7 @@ If `CODEX.md` is missing:
 
 ## Step 4: Add Workbench Reference
 
-Ensure `AGENTS.md` contains a reference to the workspace-level `AGENTS.md` at the very top of the file — before any project-specific content.
+Ensure `AGENTS.md` contains a reference to the workspace-level `AGENTS.md` near the very top of the file — before most project-specific content.
 
 The reference path depends on where the project lives in the workspace:
 - Project is a direct child of the workspace root → `../AGENTS.md`
@@ -91,6 +92,9 @@ The line to add:
 ```
 
 If the line already exists → skip. Do not add it twice.
+
+Do not stop at the reference line alone.
+`AGENTS.md` should still contain local project facts, paths, and safety rules so IDE agents can use it as a reliable nearest entrypoint.
 
 ---
 
@@ -115,10 +119,12 @@ In `AGENTS.md`, ensure the following are present:
 - Important file paths and entry points
 - Project-specific working rules (anything agents must know that isn't obvious from the code)
 - References to any existing workflow docs in the project
+- A short workspace integration note if the repo lives under a shared parent `AGENTS.md`
 
 Keep it portable:
 - Do not hardcode personal machine paths
 - Do not require another teammate's private workspace setup
+- Do not rely on a pointer-only file when a short local adapter would make IDE behavior more reliable
 
 ---
 
