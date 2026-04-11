@@ -76,7 +76,25 @@ If `CODEX.md` is missing:
 
 ---
 
-## Step 4: Migrate Existing Content (Existing Project)
+## Step 4: Add Workbench Reference
+
+Ensure `AGENTS.md` contains a reference to the workspace-level `AGENTS.md` at the very top of the file — before any project-specific content.
+
+The reference path depends on where the project lives in the workspace:
+- Project is a direct child of the workspace root → `../AGENTS.md`
+- Project is inside a group folder (one level deeper) → `../../AGENTS.md`
+
+The line to add:
+
+```markdown
+> Always read `../AGENTS.md` (or `../../AGENTS.md` if nested) before starting any task in this project. It contains shared instructions, workflows, and conventions that apply across all projects.
+```
+
+If the line already exists → skip. Do not add it twice.
+
+---
+
+## Step 5: Migrate Existing Content (Existing Project)
 
 If `CLAUDE.md` or `CODEX.md` contain real instructions (not already a stub):
 1. Read the full content
@@ -89,7 +107,7 @@ If the content conflicts with something in `AGENTS.md` → stop and ask the user
 
 ---
 
-## Step 5: Fill in Project Basics
+## Step 6: Fill in Project Basics
 
 In `AGENTS.md`, ensure the following are present:
 - Project purpose (one paragraph — what does this project do?)
@@ -104,7 +122,7 @@ Keep it portable:
 
 ---
 
-## Step 6: Define Protected Branches
+## Step 7: Define Protected Branches
 
 Ask the user: "Which branches are protected in this project? I'll add them to AGENTS.md so agents never commit or push to them directly."
 
@@ -129,7 +147,7 @@ If the user says to skip it → note it in `AGENTS.md` as "protected branches: n
 
 ---
 
-## Step 7: Update the Workspace Setup
+## Step 8: Update the Workspace Setup
 
 After creating or updating the project files:
 
