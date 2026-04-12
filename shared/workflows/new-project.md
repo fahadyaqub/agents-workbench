@@ -84,7 +84,7 @@ The reference path depends on where the project lives in the workspace:
 The line to add:
 
 ```markdown
-> Always read `../AGENTS.md` (or `../../AGENTS.md` if nested) before starting any task in this project. It contains shared instructions, workflows, and conventions that apply across all projects.
+> Always read `../AGENTS.md` (or `../../AGENTS.md` if nested) before starting any task in this project, if it exists. It contains shared instructions, workflows, and conventions that apply across all projects.
 ```
 
 If the line already exists → skip. Do not add it twice.
