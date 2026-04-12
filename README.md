@@ -3,7 +3,7 @@
 Agents Workbench is a shared set of instructions, workflows, and conventions, and working memory for AI agents. It covers product, engineering, sales, marketing, and finance — anyone on the team using an AI agent can use it.
 
 **Key features:**
-- **Agent agnostic** — works with Claude, Gemini, Codex, or any agent that reads markdown instruction files
+- **Agent agnostic** — works with Claude, Gemini, Codex, or any agent tool; each agent reads its own native file (`CLAUDE.md`, `GEMINI.md`, `CODEX.md`, etc.) which redirects to `AGENTS.md`; adding support for a new agent takes one command
 - **Token efficient** — shared context so agents start sharp and keep responses focused and on-topic
 - **Explain once** — project stack, functionality, your style, and your rules; the workbench carries that context automatically
 - **Fewer mistakes** — lessons, corrections, and conventions are written down once and applied everywhere
@@ -37,7 +37,8 @@ setup the workbench in {your workspace path}
 ```
 
 That setup will:
-- create `AGENTS.md`, `CLAUDE.md`, and `CODEX.md` as pointer stubs in the workspace root
+- create `AGENTS.md` plus a stub file for every supported agent (`CLAUDE.md`, `GEMINI.md`, `CODEX.md`, etc.) in the workspace root
+- create the same stub files in every project folder, each pointing to the project's own `AGENTS.md`
 - initialize `agents-workbench/local/` from templates if needed
 - scan for projects in the workspace and bootstrap them
 
@@ -45,10 +46,10 @@ That setup will:
 
 ## Repository Layout
 
-- `AGENTS.md` is the tracked bootstrap entrypoint inside this repo
+- `AGENTS.md` is the single source of truth — all agents ultimately read this
+- `CLAUDE.md`, `GEMINI.md`, `CODEX.md` are compatibility stubs — each agent reads its native file, which redirects here
 - teammates clone this repo into their workspace folder alongside their other projects
-- setup then creates parent-level pointer files in the workspace root
-- `CLAUDE.md` and `CODEX.md` are compatibility stubs
+- setup creates the same stub files in the workspace root and every project folder
 - `shared/` contains the shared system
 - `templates/` contains starter files for local setup and project bootstrap
 - `local/` is reserved for per-user local files and is intentionally not committed
@@ -91,7 +92,7 @@ No command vocabulary to memorize. Say what you mean.
 | `debugging-signoz.md` | Debugging from SigNoz traces and latency data |
 | `bugfix.md` | Implementing and landing a fix after root cause is known |
 | `commit-and-push.md` | Committing and pushing changes safely |
-| `add-agent.md` | Adding a new AI agent tool as a compatible stub across all projects |
+| `new-agent.md` | Adding a new AI agent tool as a compatible stub across all projects |
 
 ## Local Files
 
@@ -110,12 +111,11 @@ Use `workspace/` for task-specific working files created by agents or users duri
 
 ## Canonical File Policy
 
-Within projects, prefer:
-- `AGENTS.md` as the single source of truth
-- `CLAUDE.md` as a compatibility stub
-- `CODEX.md` as a compatibility stub
+`AGENTS.md` is the single source of truth in every project. All other agent files (`CLAUDE.md`, `GEMINI.md`, `CODEX.md`, and any future additions) are compatibility stubs — they exist only to redirect the agent to `AGENTS.md`.
 
-If agent-specific files contain meaningful instructions, merge that guidance into `AGENTS.md` first, then replace them with stubs.
+If any stub file contains real instructions, merge them into `AGENTS.md` first, then replace the stub.
+
+To add support for a new agent tool, say: `"add [AgentName] to compatible agents"` — the `new-agent.md` workflow handles the rest.
 
 ## Protected Branches
 

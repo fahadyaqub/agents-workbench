@@ -58,7 +58,7 @@ Load relevant workflow docs based on the task:
 - Creating or expanding a domain file: `shared/workflows/new-domain.md`
 - Creating a new workflow: `shared/workflows/new-workflow.md`
 - Improving or maintaining the workbench itself: `shared/workflows/improve-workbench.md`
-- Adding support for a new AI agent tool: `shared/workflows/add-agent.md`
+- Adding support for a new AI agent tool: `shared/workflows/new-agent.md`
 
 ## Trigger Learning
 

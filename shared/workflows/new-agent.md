@@ -1,4 +1,4 @@
-# Workflow: Add Compatible Agent
+# Workflow: New Agent
 
 **Roles**: IT Architect · Fullstack Developer
 
