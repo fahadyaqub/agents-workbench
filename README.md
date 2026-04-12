@@ -15,13 +15,13 @@ After cloing, just ask any agent to:,
 ```text
 setup the workbench in {your workspace path}
 ```
+And you are done.
 
 That setup will:
 - create `AGENTS.md` plus a stub file for every supported agent (`CLAUDE.md`, `GEMINI.md`, `CODEX.md`, etc.) in the workspace root. 
-- initialize `agents-workbench/local/` from templates if needed
+- initialize setup in `agents-workbench/local/`
 - scan for projects in the workspace and bootstrap them
 
-And you are done.
 Once setup, all ai agents, working on any of the projects in this directory, now have a shared knowledge base. This includes, agent personalities, personas, how to communicate, what not do to, permissions, and a shared knowledge of your workspace. 
 
 All agents now share the same memory as well, so mistakes and improvements made by one agent, are also known to others.
