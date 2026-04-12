@@ -36,10 +36,9 @@ If any file conflicts → stop and ask the user before changing it.
 
 ## Step 1: Check Workspace Root Pointers
 
-Verify the workspace root contains these three files pointing to `agents-workbench/AGENTS.md`:
-- `AGENTS.md`
-- `CLAUDE.md`
-- `CODEX.md`
+Read `shared/core/compatible-agents.md` to get the current list of supported agent stub filenames.
+
+Verify the workspace root contains `AGENTS.md` plus a stub file for every supported agent.
 
 If any are missing → create them as pointer stubs (content: "See `agents-workbench/AGENTS.md`").
 If any exist with real content → read them before doing anything. Migrate useful content before replacing.
@@ -94,7 +93,7 @@ Do not recurse beyond two levels without asking the user.
 For each identified project:
 - Check whether `AGENTS.md` exists
 - Check whether `AGENTS.md` contains a reference to the workspace-level `AGENTS.md` at the top (the workbench link)
-- Check whether `CLAUDE.md` and `CODEX.md` exist
+- Check whether a stub file exists for every agent listed in `shared/core/compatible-agents.md`
 - Check whether `AGENTS.md` contains a `## Protected Branches` section
 - Check whether `AGENTS.md` contains real project guidance or is only a thin pointer
 - Note any existing workflow or instruction docs

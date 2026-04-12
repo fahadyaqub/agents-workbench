@@ -69,11 +69,7 @@ If `AGENTS.md` is missing:
 - Fill in what can be inferred from the project structure (purpose, stack, important paths)
 - Make it a short real project entrypoint for IDE agents, not a bare pointer file
 
-If `CLAUDE.md` is missing:
-- Create it from `templates/project/CLAUDE.template.md` as a stub pointing to `AGENTS.md`
-
-If `CODEX.md` is missing:
-- Create it from `templates/project/CODEX.template.md` as a stub pointing to `AGENTS.md`
+Read `shared/core/compatible-agents.md` to get the current list of supported agent stub filenames. For each agent in the list, if its stub file is missing → create it from the corresponding template in `templates/project/`.
 
 ---
 

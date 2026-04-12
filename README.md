@@ -91,6 +91,7 @@ No command vocabulary to memorize. Say what you mean.
 | `debugging-signoz.md` | Debugging from SigNoz traces and latency data |
 | `bugfix.md` | Implementing and landing a fix after root cause is known |
 | `commit-and-push.md` | Committing and pushing changes safely |
+| `add-agent.md` | Adding a new AI agent tool as a compatible stub across all projects |
 
 ## Local Files
 
