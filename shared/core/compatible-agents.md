@@ -23,10 +23,36 @@ All stubs use the same content (from `templates/project/CLAUDE.template.md` or e
 
 Do not add or modify agent instructions in this file.
 
-Immediately read `AGENTS.md` in this directory and continue applying instructions there.
-Do not stop at this pointer.
+## Mandatory First Action — Before Your First Reply
+
+Complete these steps before writing any response or starting any task:
+
+1. Read `AGENTS.md` in this directory
+2. Follow the `../AGENTS.md` pointer in that file — keep reading up the chain until you reach a file that does not redirect further
+3. At the end of the chain you will reach `agents-workbench/AGENTS.md` — follow its load order
+4. If any setup item in `agents-workbench/local/setup.toml` is `pending`, pause and run the bootstrap workflow before continuing
 
 If this file needs changes, update `AGENTS.md` instead.
+```
+
+### Workspace-Root Stub Content
+
+Stubs at the workspace root (one hop from `agents-workbench/`) use this stronger variant that skips the intermediate chain and points directly to the workbench:
+
+```markdown
+# Workspace Agent Entry Point
+
+Do not add or modify agent instructions in this file.
+
+## Mandatory First Action — Before Your First Reply
+
+Complete these steps before writing any response or starting any task:
+
+1. Read `agents-workbench/AGENTS.md` — this is the shared workspace entry point
+2. Follow its load order: read `shared/manifest.md`, then `local/setup.toml`
+3. If any setup item in `agents-workbench/local/setup.toml` is `pending`, pause and run the bootstrap workflow before continuing
+
+If this file needs changes, update `agents-workbench/AGENTS.md` instead.
 ```
 
 ## Adding a New Agent

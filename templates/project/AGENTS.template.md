@@ -1,19 +1,21 @@
 # Project Agent Instructions
 
-> Always read `../AGENTS.md` before starting any task in this project, if it exists. It contains shared instructions, workflows, and conventions that apply across all projects.
-
-This file contains project-specific guidance for agents working in this repository.
-
 ## First Action
 
-Before doing any task work or replying to the user:
-- Read `../AGENTS.md` if it exists
-- Continue following any pointer chain until you reach the shared workspace instructions
-- If the shared workspace instructions include a setup gate, follow it before normal task routing
-- If setup is still marked `pending`, pause normal task work and either complete bootstrap or confirm the user wants setup ignored
+## Mandatory First Action — Before Your First response, including greetings
 
-Use `AGENTS.md` as the canonical instructions file for this project.
-If `CLAUDE.md` or `CODEX.md` exist, they should point here and should not contain separate instructions.
+Complete these steps before writing any response or starting any task:
+
+Look for the closest "agents-workbench" directory.
+If not found in current working directory, only then look for it in the parent directory, then, if still not found, then look for it in the parent's parent directory.
+Once found, read  `AGENTS.md` inside "agents-workbench" -- and follow every instruction to the letter, without fail. Reading this file, and following its instructions is important before you do anything else. Its a setep file, it will tell you what to do for this specific user. Do not do anything else. Do not respond, do not test or check anything, until you have read, and followed the steps listed in that "AGENTS.md" file 
+
+----
+
+## About this file
+
+Use this `AGENTS.md` as the canonical instructions file for this project.
+If `CLAUDE.md`, `CODEX.md` or any other agent specific instruction file exists, they should point here and should not contain separate instructions.
 
 This file should be a real project entrypoint for IDE agents, not just a pointer.
 Keep the most important project facts and safety rules here so tools that load the nearest `AGENTS.md` can work correctly immediately.

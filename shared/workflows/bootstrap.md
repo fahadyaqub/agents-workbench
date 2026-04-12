@@ -40,8 +40,11 @@ Read `shared/core/compatible-agents.md` to get the current list of supported age
 
 Verify the workspace root contains `AGENTS.md` plus a stub file for every supported agent.
 
-If any are missing → create them as pointer stubs (content: "See `agents-workbench/AGENTS.md`").
+If any are missing → create them using the **Workspace-Root Stub Content** from `shared/core/compatible-agents.md`. These stubs point directly to `agents-workbench/AGENTS.md` and include the mandatory first-action block.
+
 If any exist with real content → read them before doing anything. Migrate useful content before replacing.
+
+If any exist as pointer stubs but are missing the mandatory first-action block → update them to use the workspace-root stub format from `shared/core/compatible-agents.md`.
 
 ---
 
@@ -64,7 +67,17 @@ For each item in `local/setup.toml` with `status = "pending"`:
 
 **`who_i_am` is pending:**
 
-Do not ask a vague opt-in question. Ask these three things, one at a time:
+First, read `local/who-i-am.md` if it exists. Check for the following required fields:
+
+- **Name** — a personal name (first name is enough); not a role or title
+- **Role/title** — what they do professionally
+- **Daily tasks** — what they spend their time on
+
+A field is present only if it contains a real value. Do not infer name from role. Do not assume the file is complete because it has content — check each field explicitly.
+
+For each required field that is missing or empty, ask the corresponding question below. Do not ask for fields that are already present. If all required fields are present, mark `who_i_am` as `complete` in `local/setup.toml` and skip to the next pending item.
+
+Do not ask a vague opt-in question. Ask these things, one at a time, only for what is missing:
 
 **Q1 — Name:**
 *"What's your name?"*
@@ -131,6 +144,7 @@ For each identified project:
 - Check whether `AGENTS.md` contains a reference to `../AGENTS.md` at the top (the parent link)
 - Check whether `AGENTS.md` contains an explicit startup gate near the top that tells agents to read `../AGENTS.md` before any reply, continue the pointer chain into the workbench, and follow any shared setup gate before normal task work
 - Check whether a stub file exists for every agent listed in `shared/core/compatible-agents.md`
+- Check whether each stub file contains the mandatory first-action block (a numbered checklist under a heading like "Mandatory First Action") — if missing, update the stub from the project template in `templates/project/` without touching any other project files
 - Check whether `AGENTS.md` contains a `## Protected Branches` section
 - Check whether `AGENTS.md` contains real project guidance or is only a thin pointer
 - Note any existing workflow or instruction docs
@@ -205,3 +219,5 @@ Bootstrap is complete when:
 - Every project group folder that contains managed projects has an `AGENTS.md` bridge to its parent
 - Every managed project's `AGENTS.md` contains a reference to `../AGENTS.md` at the top
 - Every managed project's `AGENTS.md` defines protected branches (or explicitly states workspace defaults apply)
+- Every managed project's agent stub files (CLAUDE.md, CODEX.md, GEMINI.md) contain the mandatory first-action block
+- The workspace root stub files contain the mandatory first-action block using the workspace-root format

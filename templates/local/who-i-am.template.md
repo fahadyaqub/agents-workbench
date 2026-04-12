@@ -1,6 +1,6 @@
 # Who I Am
 
-Filled in during bootstrap. The agent asks three short questions — role, daily tasks, and an optional guided section. Takes about 2 minutes.
+Filled in during bootstrap. The agent asks three short questions — users name, role, daily tasks, and an optional guided section. Takes about 2 minutes.
 
 Every agent that works in this workspace reads this file before starting work.
 
