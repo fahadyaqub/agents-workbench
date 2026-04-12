@@ -1,6 +1,16 @@
 # Project Agent Instructions
 
+> Always read `../AGENTS.md` before starting any task in this project, if it exists. It contains shared instructions, workflows, and conventions that apply across all projects.
+
 This file contains project-specific guidance for agents working in this repository.
+
+## First Action
+
+Before doing any task work or replying to the user:
+- Read `../AGENTS.md` if it exists
+- Continue following any pointer chain until you reach the shared workspace instructions
+- If the shared workspace instructions include a setup gate, follow it before normal task routing
+- If setup is still marked `pending`, pause normal task work and either complete bootstrap or confirm the user wants setup ignored
 
 Use `AGENTS.md` as the canonical instructions file for this project.
 If `CLAUDE.md` or `CODEX.md` exist, they should point here and should not contain separate instructions.
@@ -11,13 +21,13 @@ Keep the most important project facts and safety rules here so tools that load t
 ## Scope
 
 This file is for repository-specific instructions only.
-If a parent or workspace-level `AGENTS.md` exists, read it as shared guidance first.
+If `../AGENTS.md` exists, read it as shared guidance first.
 Treat that parent file as the shared workspace overlay, then apply this file for repo-specific behavior.
 This file remains authoritative for project-specific behavior inside this repo.
 
 ## Workspace Integration
 
-- Read the nearest parent `AGENTS.md` if one exists
+- Read `../AGENTS.md` if it exists
 - Use the shared workbench guidance from the workspace before applying these project rules
 - If this repository is part of an `agents-workbench` workspace, keep shared conventions in the workbench and keep this file focused on local project needs
 - Do not duplicate large shared instruction blocks here unless IDE compatibility requires a short local summary

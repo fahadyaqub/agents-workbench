@@ -2,7 +2,9 @@
 
 This file is the registry of all AI agent tools supported by agents-workbench.
 
-For each supported agent, a compatibility stub file is created in every project folder and the workspace root. The stub does nothing except redirect the agent to `AGENTS.md`, which is the single source of truth. This is what makes the system agent-agnostic.
+For each supported agent, a compatibility stub file is created in every project folder and the workspace root. The stub should do one thing clearly: redirect the agent to `AGENTS.md` and instruct it to keep following the bootstrap chain there. This is what makes the system agent-agnostic.
+
+In some environments, the workspace-root `AGENTS.md` is the first and only file injected automatically. Treat that root pointer as a bootstrap bridge, not a passive note.
 
 ## Currently Supported Agents
 
@@ -21,7 +23,8 @@ All stubs use the same content (from `templates/project/CLAUDE.template.md` or e
 
 Do not add or modify agent instructions in this file.
 
-Use `AGENTS.md` as the single source of truth for all agent guidance in this project.
+Immediately read `AGENTS.md` in this directory and continue applying instructions there.
+Do not stop at this pointer.
 
 If this file needs changes, update `AGENTS.md` instead.
 ```

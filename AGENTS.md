@@ -6,6 +6,13 @@ In a real workspace, the parent `AGENTS.md` should point to this file.
 Use `AGENTS.md` as the canonical agent instructions file.
 Project-level `AGENTS.md` files remain authoritative for project-specific context and constraints.
 
+## First Action
+
+If you were sent here by a workspace pointer or compatibility stub, do not stop at the redirect.
+Treat this file as active instructions and immediately inspect `local/setup.toml`.
+
+If `local/setup.toml` is missing, or any setup item is marked `pending`, pause normal task work and follow `shared/workflows/bootstrap.md` before continuing.
+
 ## Load Order
 
 1. Read `shared/manifest.md`
@@ -47,3 +54,14 @@ Per-agent memory (e.g. Claude's native memory, Cursor's memory file) is siloed t
 When you learn something durable during a task — a principle that should apply everywhere, a decision that was made and should not be re-litigated — write it to the appropriate file in `shared/memory/` before the session ends.
 
 Do not write to per-agent memory for anything that other agents or team members should also know.
+
+## Project Refresh Rule
+
+This rule applies only when a task makes a material change to:
+- `shared/manifest.md`
+- `shared/workflows/bootstrap.md`
+- `shared/workflows/new-project.md`
+
+If any of those files change, before ending the task, re-check all managed projects in `local/setup.toml` and make sure they still satisfy the current project-level requirements defined by `shared/workflows/bootstrap.md` and `shared/workflows/new-project.md`.
+
+If any managed project is out of sync with those current instructions, update it before finishing the task.

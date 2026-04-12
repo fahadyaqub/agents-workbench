@@ -73,24 +73,39 @@ Read `shared/core/compatible-agents.md` to get the current list of supported age
 
 ---
 
-## Step 4: Add Workbench Reference
+## Step 4: Add Parent Bridge, Workbench Reference, and Startup Gate
 
-Ensure `AGENTS.md` contains a reference to the workspace-level `AGENTS.md` near the very top of the file — before most project-specific content.
+First, check the project's parent folder.
 
-The reference path depends on where the project lives in the workspace:
-- Project is a direct child of the workspace root → `../AGENTS.md`
-- Project is inside a group folder (one level deeper) → `../../AGENTS.md`
+If the parent folder is the workspace root:
+- it should already contain `AGENTS.md`
+- do not create another bridge there
+
+If the parent folder is a project group folder one level below the workspace root:
+- ensure it contains an `AGENTS.md` bridge file
+- that bridge file should tell agents to read `../AGENTS.md` and continue following the chain upward
+- keep it as a pure bridge file, not a place for project-specific instructions
+
+Then ensure the project's own `AGENTS.md` contains a reference to its parent `AGENTS.md` near the very top of the file — before most project-specific content.
 
 The line to add:
 
 ```markdown
-> Always read `../AGENTS.md` (or `../../AGENTS.md` if nested) before starting any task in this project, if it exists. It contains shared instructions, workflows, and conventions that apply across all projects.
+> Always read `../AGENTS.md` before starting any task in this project, if it exists. It contains shared instructions, workflows, and conventions that apply across all projects.
 ```
 
 If the line already exists → skip. Do not add it twice.
 
 Do not stop at the reference line alone.
 `AGENTS.md` should still contain local project facts, paths, and safety rules so IDE agents can use it as a reliable nearest entrypoint.
+
+Also ensure the file contains an explicit startup gate near the top, not just the reference line. The gate should tell the agent:
+- before any reply or task work, read `../AGENTS.md`
+- continue following the instruction chain until it reaches the shared workspace entrypoint
+- if the shared workspace entrypoint includes a setup gate, follow it before normal task routing
+- if setup is `pending`, pause normal task work and either complete bootstrap or confirm the user wants setup ignored
+
+This gate is intentionally duplicated in the local project entrypoint. Do not rely on a computed `../../AGENTS.md` path or on the parent pointer line alone.
 
 ---
 

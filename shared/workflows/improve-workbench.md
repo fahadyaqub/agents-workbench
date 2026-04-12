@@ -138,6 +138,11 @@ If the change was internal (a refinement to an existing file with no new user-fa
 - Was a new local file introduced that future users will need? → Add a template for it under `templates/local/`.
 - Was the format of an existing local file changed? → Update the corresponding template to match.
 
+### Project refresh
+- Did you make a material change to `shared/manifest.md`, `shared/workflows/bootstrap.md`, or `shared/workflows/new-project.md`? → Re-check all managed projects in `local/setup.toml`
+- Make sure those managed projects still satisfy the current project-level requirements defined by `bootstrap.md` and `new-project.md`
+- If any managed project is now out of sync, update it before finishing the task
+
 ### personal-memory.md and template
 - Was a new category of persistent data introduced (new tool type, new credential format)? → Add the format to both `local/personal-memory.md` and `templates/local/personal-memory.template.md`.
 

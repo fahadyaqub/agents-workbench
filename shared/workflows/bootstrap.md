@@ -63,9 +63,40 @@ If `local/setup.toml` exists → read it and check the status of each setup item
 For each item in `local/setup.toml` with `status = "pending"`:
 
 **`who_i_am` is pending:**
-Ask the user: "Set up your local who-I-am profile now, or skip it for now?"
-If they complete it → mark `complete`.
-If they skip it → mark `ignored`.
+
+Do not ask a vague opt-in question. Ask these three things, one at a time:
+
+**Q1 — Name:**
+*"What's your name?"*
+Used to address you directly. First name is enough.
+
+**Q2 — Role/title:**
+*"What's your role or title?"*
+This is the single most informative thing an agent can know. One line is enough.
+
+**Q3 — Daily tasks:**
+*"What are your main day-to-day tasks?"*
+A few lines or a short bullet list. What do you actually spend your time doing?
+
+**Q4 — Anything else? (optional, guided)**
+Do not ask an open-ended question here — most people won't know what to say. Instead, offer a few concrete prompts and let them pick what applies:
+
+*"Anything else you'd like agents to know? A few starting points if helpful:*
+- *Brief or detailed answers?*
+- *Explain things as you go, or just do the work?*
+- *Always ask before making changes, or use your judgment?*
+- *Any tools, workflows, or habits you already use with AI?*
+- *Biggest frustration with AI agents so far?*
+*You can answer any of these, add your own, or skip entirely."*
+
+Infer anything you can from Q1 and Q2 before asking Q3 — if their role and tasks make their preferences obvious, note those inferences in the profile rather than asking the user to state them explicitly.
+
+After getting answers, write the profile to `local/who-i-am.md` in plain prose — not a form, not a list of headers. Write it as a short brief an agent would read before starting work.
+
+Example:
+> Senior software Engineer, 10+ years across the full stack. Day-to-day: architecture decisions, code reviews, shipping features, team management. Prefers brief, direct answers — no filler. Wants agents to use judgment rather than ask for approval on every step.
+
+If the user skips → mark `ignored` and do not prompt again.
 
 **`project_bootstrap` is pending:**
 Proceed to Step 4 (project scan).
@@ -90,9 +121,15 @@ Scan each immediate child of the workspace root. Classify each as:
 For project group folders → scan one level deeper and apply the same classification to each nested folder.
 Do not recurse beyond two levels without asking the user.
 
+For each project group folder that contains managed projects:
+- ensure the group folder itself contains an `AGENTS.md` bridge file
+- the bridge should point to `../AGENTS.md`
+- keep it as a bridge only, not a place for project-specific rules
+
 For each identified project:
 - Check whether `AGENTS.md` exists
-- Check whether `AGENTS.md` contains a reference to the workspace-level `AGENTS.md` at the top (the workbench link)
+- Check whether `AGENTS.md` contains a reference to `../AGENTS.md` at the top (the parent link)
+- Check whether `AGENTS.md` contains an explicit startup gate near the top that tells agents to read `../AGENTS.md` before any reply, continue the pointer chain into the workbench, and follow any shared setup gate before normal task work
 - Check whether a stub file exists for every agent listed in `shared/core/compatible-agents.md`
 - Check whether `AGENTS.md` contains a `## Protected Branches` section
 - Check whether `AGENTS.md` contains real project guidance or is only a thin pointer
@@ -100,7 +137,11 @@ For each identified project:
 
 If projects are missing `AGENTS.md` → ask: "Some projects are missing AGENTS.md. Do you want me to add project-level entrypoints where missing?"
 
-If projects have `AGENTS.md` but are missing the workbench reference line → add it near the top of the file without touching any other content. Use `../AGENTS.md` for direct projects, `../../AGENTS.md` for group-nested projects.
+If a project group folder is missing its bridge `AGENTS.md` → create one that points to `../AGENTS.md`.
+
+If projects have `AGENTS.md` but are missing the parent link line → add it near the top of the file without touching any other content. The line should point to `../AGENTS.md`.
+
+If projects have `AGENTS.md` but are missing the explicit startup gate → add it near the top of the file without removing local project guidance. The gate should require agents to read `../AGENTS.md` before replying, continue the instruction chain into the workbench, and follow any shared setup gate before normal task work.
 
 If projects have `AGENTS.md` but it is only a thin pointer:
 - expand it into a short project-level adapter
@@ -161,5 +202,6 @@ Bootstrap is complete when:
 - `local/setup.toml`, `local/who-i-am.md`, and `local/personal-memory.md` exist
 - All setup items in `local/setup.toml` are marked `complete` or `ignored`
 - The scan date and project lists are recorded in `local/setup.toml`
-- Every managed project's `AGENTS.md` contains a reference to the workspace-level `AGENTS.md` at the top
+- Every project group folder that contains managed projects has an `AGENTS.md` bridge to its parent
+- Every managed project's `AGENTS.md` contains a reference to `../AGENTS.md` at the top
 - Every managed project's `AGENTS.md` defines protected branches (or explicitly states workspace defaults apply)

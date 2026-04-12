@@ -1,10 +1,10 @@
 # Who I Am
 
-Fill this in with a brief personal profile for the user who works with these agents.
+Filled in during bootstrap. The agent asks three short questions — role, daily tasks, and an optional guided section. Takes about 2 minutes.
 
-Suggested sections:
-- Role and background
-- Typical kinds of work
-- Communication preferences
-- Decision-making style
-- What the agents should optimize for
+Every agent that works in this workspace reads this file before starting work.
+
+---
+
+<!-- Your profile will be written here by the agent during bootstrap.     -->
+<!-- To redo this, set [who_i_am] status = "pending" in local/setup.toml  -->

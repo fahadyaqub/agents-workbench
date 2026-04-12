@@ -19,7 +19,8 @@ And you are done.
 
 That setup will:
 - create `AGENTS.md` plus a stub file for every supported agent (`CLAUDE.md`, `GEMINI.md`, `CODEX.md`, etc.) in the workspace root. 
-- initialize setup in `agents-workbench/local/`
+- create bridge `AGENTS.md` files in project-group folders when repos are nested one level below the workspace root.
+- initialize setup in `agents-workbench/local/`. Who you are, etc.
 - scan for projects in the workspace and bootstrap them
 
 Once setup, all ai agents, working on any of the projects in this directory, now have a shared knowledge base. This includes, agent personalities, personas, how to communicate, what not do to, permissions, and a shared knowledge of your workspace. 
@@ -139,6 +140,7 @@ It packages:
 - `CLAUDE.md`, `GEMINI.md`, `CODEX.md` are compatibility stubs — each agent reads its native file, which redirects here
 - teammates clone this repo into their workspace folder alongside their other projects
 - setup creates the same stub files in the workspace root and every project folder
+- if repos live inside a project-group folder, setup creates a bridge `AGENTS.md` in that folder so child repos can always hand off to `../AGENTS.md`
 - `shared/` contains the shared system
 - `templates/` contains starter files for local setup and project bootstrap
 - `local/` is reserved for per-user local files and is intentionally not committed

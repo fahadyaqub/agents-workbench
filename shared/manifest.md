@@ -2,6 +2,14 @@
 
 This file defines how the shared agent system should be loaded and used.
 
+## Immediate Setup Check
+
+This manifest is an execution checklist, not background reference material.
+As soon as you load it, inspect `local/setup.toml` before doing normal task routing.
+
+If `local/setup.toml` is missing, initialize local files from `templates/local/`.
+If any setup item is `pending`, stop regular task flow and follow `shared/workflows/bootstrap.md`.
+
 ## Always Load
 
 Read these files for all work:
@@ -19,7 +27,7 @@ Then read:
 
 If `local/setup.toml` is missing, initialize local files from `templates/local/`.
 
-If any setup item in `local/setup.toml` is `pending`, follow `shared/workflows/bootstrap.md`.
+If any setup item in `local/setup.toml` is `pending`, follow `shared/workflows/bootstrap.md` before any domain or workflow routing.
 
 Setup items may be marked:
 - `pending`
