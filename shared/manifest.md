@@ -41,6 +41,12 @@ Suggested domain routing:
 - Architecture, systems design, interfaces, tradeoff analysis: `domains/software-architect.md`
 - Commercial writing, positioning, funnel work: `domains/sales.md` or `domains/marketing.md`
 - Budgets, pricing, forecasting, unit economics: `domains/finance.md`
+- Research, knowledge synthesis, literature review, source evaluation: `domains/research-academic.md`
+- Teaching, lesson creation, curriculum design, educational content: `domains/research-academic.md`
+- Academic writing, scientific communication, report generation: `domains/research-academic.md`
+- Digital art, illustration, generative AI image or video creation: `domains/creative-arts.md`
+- Short-form video content, social media creative content, YouTube/TikTok production: `domains/creative-arts.md`
+- Creative direction, visual identity, style-consistent content production: `domains/creative-arts.md`
 
 ## Workflow Inference
 

@@ -86,6 +86,38 @@ When a domain file says "check references", look here first. If you find a usefu
 
 ---
 
+## Creative Arts & Digital Media
+
+- **Awesome Generative AI** — curated list of tools, models, and resources for generative image, video, and audio creation
+  https://github.com/steven2358/awesome-generative-ai
+
+- **Awesome AI Art** — community collection of prompting guides, style references, and model comparisons for AI image generation
+  https://github.com/amritpandey23/Awesome-AI-Art
+
+- **Runway ML Docs** — official documentation and prompt guidance for Runway Gen-3 AI video generation
+  https://docs.runwayml.com
+
+- **Midjourney Prompt Guide** — official community prompting reference for Midjourney image generation
+  https://docs.midjourney.com/docs/prompts
+
+- **YouTube Creator Academy** — official YouTube guidance on thumbnails, titles, descriptions, and channel growth
+  https://creatoracademy.youtube.com
+
+- **awesome-chatgpt-prompts (Creative roles)** — includes "Act as an Artist Advisor", "Act as a Film Critic", and similar creative role prompts
+  https://github.com/awesome-chatgpt-prompts/awesome-chatgpt-prompts-github
+
+---
+
+## Research & Academic
+
+- **Awesome Research Tools** — curated list of tools and resources for academic research, literature review, and knowledge management
+  https://github.com/emptymalei/awesome-research
+
+- **Anthropic Prompt Library (Education)** — includes prompts for tutoring, lesson planning, and explaining complex topics
+  https://docs.anthropic.com/en/prompt-library/library
+
+---
+
 ## Maintenance
 
 When adding a new domain file, add its reference sources here under a matching heading.
