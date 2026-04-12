@@ -2,26 +2,6 @@
 
 Agents Workbench is a shared set of instructions, workflows, and conventions, and working memory for AI agents. It covers product, engineering, sales, marketing, and finance — anyone on the team using an AI agent can use it.
 
-**Key features:**
-- **Agent agnostic** — works with Claude, Gemini, Codex, or any agent tool; each agent reads its own native file (`CLAUDE.md`, `GEMINI.md`, `CODEX.md`, etc.) which redirects to `AGENTS.md`; adding support for a new agent takes one command
-- **Token efficient** — shared context so agents start sharp and keep responses focused and on-topic
-- **Explain once** — project stack, functionality, your style, and your rules; the workbench carries that context automatically
-- **Fewer mistakes** — lessons, corrections, and conventions are written down once and applied everywhere
-- **Less clutter** — one shared system replaces scattered `.md` files duplicated across every project for every agent
-- **Layered** — shared conventions apply to everyone; personal preferences and overrides live in `local/` and never pollute the shared repo
-- **Safe by default** — protected branches are defined per project and enforced by every agent before any commit or push, with sane workspace-level defaults
-- **No commands** — say what you mean and the agent routes to the right workflow; unrecognized phrases get added to the trigger list automatically
-- **Ready on day one** — clone it and you're ready to go; predefined workflows, roles, and instructions mean agents are productive without any customization
-- **Evolving** — This is a living system — it grows and improves as the team uses it.
-
-It packages:
-- shared core instructions
-- domain and role files covering engineering, design, QA, architecture, sales, marketing, finance, product, research & academic, and creative arts & digital media
-- workflows for common tasks across all functions
-- shared memory
-- project templates
-- setup and bootstrap guidance
-
 ## Setup
 
 Your **workspace folder** is wherever you keep all your project repositories — it could be `~/work`, `~/projects`, `~/code`, or anything else. Clone this repo in the root of your workspace folder:
@@ -135,6 +115,26 @@ create a domain for [X]
 This triggers `new-domain` workflow, which determines the right roles, sources reference material, and registers the domain in the manifest.
 
 ---
+
+**Key features:**
+- **Agent agnostic** — works with Claude, Gemini, Codex, or any agent tool; each agent reads its own native file (`CLAUDE.md`, `GEMINI.md`, `CODEX.md`, etc.) which redirects to `AGENTS.md`; adding support for a new agent takes one command
+- **Token efficient** — shared context so agents start sharp and keep responses focused and on-topic
+- **Explain once** — project stack, functionality, your style, and your rules; the workbench carries that context automatically
+- **Fewer mistakes** — lessons, corrections, and conventions are written down once and applied everywhere
+- **Less clutter** — one shared system replaces scattered `.md` files duplicated across every project for every agent
+- **Layered** — shared conventions apply to everyone; personal preferences and overrides live in `local/` and never pollute the shared repo
+- **Safe by default** — protected branches are defined per project and enforced by every agent before any commit or push, with sane workspace-level defaults
+- **No commands** — say what you mean and the agent routes to the right workflow; unrecognized phrases get added to the trigger list automatically
+- **Ready on day one** — clone it and you're ready to go; predefined workflows, roles, and instructions mean agents are productive without any customization
+- **Evolving** — This is a living system — it grows and improves as the team uses it.
+
+It packages:
+- shared core instructions
+- domain and role files covering engineering, design, QA, architecture, sales, marketing, finance, product, research & academic, and creative arts & digital media
+- workflows for common tasks across all functions
+- shared memory
+- project templates
+- setup and bootstrap guidance
 
 ## Repository Layout
 
