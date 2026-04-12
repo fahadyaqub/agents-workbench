@@ -155,6 +155,9 @@ If a project group folder is missing its bridge `AGENTS.md` → create one that 
 
 If projects have `AGENTS.md` but are missing the parent link line → add it near the top of the file without touching any other content. The line should point to `../AGENTS.md`.
 
+`templates/project/AGENTS.template.md` is the source of truth for the standardized project handoff block at the top of each project `AGENTS.md`.
+When adding or refreshing the parent link, startup gate, or nearby canonical-entrypoint wording in an existing project, copy and merge that top-of-file block from the template. Do not copy wording from another project and do not invent an alternate version.
+
 If projects have `AGENTS.md` but are missing the explicit startup gate → add it near the top of the file without removing local project guidance. The gate should require agents to read `../AGENTS.md` before replying, continue the instruction chain into the workbench, and follow any shared setup gate before normal task work.
 
 If projects have `AGENTS.md` but it is only a thin pointer:

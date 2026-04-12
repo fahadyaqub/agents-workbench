@@ -6,7 +6,9 @@ In a real workspace, the parent `AGENTS.md` should point to this file.
 Use `AGENTS.md` as the canonical agent instructions file.
 Project-level `AGENTS.md` files remain authoritative for project-specific context and constraints.
 
-## First Action
+## Mandatory First Action — Before Your First Reply
+
+Complete these steps before writing any response or starting any task:
 
 If you were sent here by a workspace pointer or compatibility stub, do not stop at the redirect.
 Treat this file as active instructions and immediately inspect `local/setup.toml`.
@@ -41,6 +43,10 @@ Within projects, prefer one shared agent instructions file:
 - `AGENTS.md` is the canonical file
 - `CLAUDE.md` and `CODEX.md` should be compatibility stubs that point to `AGENTS.md`
 - Do not keep separate conflicting instructions across these files
+
+## Protected Branches
+
+Protected branches are not defined locally for the `agents-workbench` repository. Workspace defaults apply: `main`, `master`, `production`, `prod`, `release`, and any branch starting with `rd`.
 
 ## Memory
 

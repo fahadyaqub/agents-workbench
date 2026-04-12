@@ -23,16 +23,16 @@ All stubs use the same content (from `templates/project/CLAUDE.template.md` or e
 
 Do not add or modify agent instructions in this file.
 
-## Mandatory First Action — Before Your First Reply
+## Mandatory First Action — Before Your First response, including greetings
 
 Complete these steps before writing any response or starting any task:
 
-1. Read `AGENTS.md` in this directory
-2. Follow the `../AGENTS.md` pointer in that file — keep reading up the chain until you reach a file that does not redirect further
-3. At the end of the chain you will reach `agents-workbench/AGENTS.md` — follow its load order
-4. If any setup item in `agents-workbench/local/setup.toml` is `pending`, pause and run the bootstrap workflow before continuing
+Look for the closest "agents-workbench" directory.
+If not found in current working directory, only then look for it in the parent directory, then, if still not found, then look for it in the parent's parent directory.
+Once found, read  `AGENTS.md` inside "agents-workbench" -- and follow every instruction to the letter, without fail. Reading this file, and following its instructions is important before you do anything else. Its a setep file, it will tell you what to do for this specific user. Do not do anything else. Do not respond, do not test or check anything, until you have read, and followed the steps listed in that "AGENTS.md" file 
 
-If this file needs changes, update `AGENTS.md` instead.
+Do not add or modify agent instructions in this file.
+Do not make changes to this file, make all your changes in `AGENTS.md` instead, which is shared by all agents.
 ```
 
 ### Workspace-Root Stub Content
@@ -44,15 +44,14 @@ Stubs at the workspace root (one hop from `agents-workbench/`) use this stronger
 
 Do not add or modify agent instructions in this file.
 
-## Mandatory First Action — Before Your First Reply
+## Mandatory First Action — Before Your First response, including greetings
 
 Complete these steps before writing any response or starting any task:
 
-1. Read `agents-workbench/AGENTS.md` — this is the shared workspace entry point
-2. Follow its load order: read `shared/manifest.md`, then `local/setup.toml`
-3. If any setup item in `agents-workbench/local/setup.toml` is `pending`, pause and run the bootstrap workflow before continuing
+Look for the closest "agents-workbench" directory.
+If not found in current working directory, only then look for it in the parent directory, then, if still not found, then look for it in the parent's parent directory.
+Once found, read  `AGENTS.md` inside "agents-workbench" -- and follow every instruction to the letter, without fail. Reading this file, and following its instructions is important before you do anything else. Its a setep file, it will tell you what to do for this specific user. Do not do anything else. Do not respond, do not test or check anything, until you have read, and followed the steps listed in that "AGENTS.md" file 
 
-If this file needs changes, update `agents-workbench/AGENTS.md` instead.
 ```
 
 ## Adding a New Agent

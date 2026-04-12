@@ -88,24 +88,19 @@ If the parent folder is a project group folder one level below the workspace roo
 
 Then ensure the project's own `AGENTS.md` contains a reference to its parent `AGENTS.md` near the very top of the file — before most project-specific content.
 
-The line to add:
+`templates/project/AGENTS.template.md` is the source of truth for this top-of-file project handoff block.
 
-```markdown
-> Always read `../AGENTS.md` before starting any task in this project, if it exists. It contains shared instructions, workflows, and conventions that apply across all projects.
-```
-
-If the line already exists → skip. Do not add it twice.
+When updating an existing project:
+- merge the parent-link line, startup gate, and nearby canonical-entrypoint wording from the template near the top of the file
+- preserve any existing project-specific guidance that already works
+- do not add the parent-link line twice
+- do not copy wording from another project
+- do not invent an alternate startup gate
 
 Do not stop at the reference line alone.
 `AGENTS.md` should still contain local project facts, paths, and safety rules so IDE agents can use it as a reliable nearest entrypoint.
 
-Also ensure the file contains an explicit startup gate near the top, not just the reference line. The gate should tell the agent:
-- before any reply or task work, read `../AGENTS.md`
-- continue following the instruction chain until it reaches the shared workspace entrypoint
-- if the shared workspace entrypoint includes a setup gate, follow it before normal task routing
-- if setup is `pending`, pause normal task work and either complete bootstrap or confirm the user wants setup ignored
-
-This gate is intentionally duplicated in the local project entrypoint. Do not rely on a computed `../../AGENTS.md` path or on the parent pointer line alone.
+This startup gate is intentionally duplicated in the local project entrypoint. Do not rely on a computed `../../AGENTS.md` path or on the parent pointer line alone.
 
 ---
 
