@@ -30,12 +30,6 @@ Your **workspace folder** is wherever you keep all your project repositories —
 git clone https://github.com/fahadyaqub/agents-workbench.git
 ```
 
-Then ask an agent to:
-
-```text
-setup the workbench in {your workspace path}
-```
-
 That setup will:
 - create `AGENTS.md` plus a stub file for every supported agent (`CLAUDE.md`, `GEMINI.md`, `CODEX.md`, etc.) in the workspace root
 - create the same stub files in every project folder, each pointing to the project's own `AGENTS.md`
@@ -43,6 +37,104 @@ That setup will:
 - scan for projects in the workspace and bootstrap them
 
 **Bootstrap scan depth**: the bootstrap scans one level into the workspace root and one level deeper for grouped project folders (e.g. `{workspace}/company/repo`). It will not recurse further without asking. This keeps setup fast and predictable.
+
+After cloing, just ask any agent to:, 
+
+```text
+setup the workbench in {your workspace path}
+```
+
+And you are done.
+Once setup, all your agents now have a shared knowledge base. This includes, agent personalities, personas, how to communicate, what not do to, permissions, and a shared knowledge of your workspace. 
+
+All agents now share the same memory as well, so mistakes and improvements made by one agent, are also known to others.
+
+## How to use
+Other than the shared knowledgebase and active memory, you can ask agents to perform repeated tasks using simple text phrases.
+
+For example:
+
+```text
+prepare a PR for this change
+```
+
+This will trigger the `commit-and-push.md` workflow, which will:
+1. Review the changes
+2. Run unit tests (if setup)
+3. Warn if you are not in a protected branch (pause for explicit approval).
+4. Create the commit
+5. Push the changes to the remote repository
+
+There are several predefined "tasks" that this system can do out of the box, but you can always add your own to the list.
+
+## Workflows
+
+Tasks are predefined workflows that can be triggered by a phrase. 
+
+This system runs on trigger phrases, not commands. Instead of memorizing a command vocabulary, you say what you mean and the agent routes to the right workflow:
+
+| Instead of a command... | Just say... |
+|---|---|
+| `/debug` | "debug X", "something is wrong with X", "figure out why X is broken" |
+| `/plan` | "how should we approach X", "let's plan X" |
+| `/research` | "research X", "Evaluate X", "compare X vs Y", "what are the options for X",  | 
+
+If a phrase isn't recognized, the agent infers the closest match, tells you, and adds the phrase to the trigger list so it works automatically next time. The vocabulary grows from real usage. You can also add triggers manually to any workflow file under `## Trigger Phrases`.
+
+No command vocabulary to memorize. Say what you mean.
+
+## Creating a Workflow
+
+Ask your agent to "create workflow" and agent creates it. The full spec is in `shared/workflows/new-workflow.md`. Key things the system handles during creation:
+
+- **Roles and domain** — determined from first principles based on the type of work. New domain and role files are created if needed.
+- **Output folder** — configurable. Defaults to `workspace/` with date and topic-named subfolders if not specified.
+- **Scheduling** — workflows can run daily, weekly, or on a custom schedule. The schedule can be set at creation time.
+- **Run modes** — drip (one item per run), burst (N items per run), batch (all at once), or drip with approval (one per run, waits for sign-off before advancing).
+- **Tool and credential setup** — external dependencies are identified, researched, and set up once. Credentials are stored in `local/personal-memory.md` and reused on every subsequent run.
+
+The complete and always up-to-date workflow list lives in `shared/manifest.md` under **Workflow Inference**.
+
+## Core Workflows
+
+A few workflows are central to how the workbench itself grows and is maintained:
+
+| Workflow | What it does |
+|---|---|
+| `bootstrap.md` | First-time setup — scans the workspace, creates stub files for every project, initializes local config |
+| `new-project.md` | Adds a new project to the workspace — creates the project's `AGENTS.md` and all agent stubs, and makes sure agents working on the project have automatic access to this workbench and knowledgebase |
+| `new-workflow.md` | Creates a new workflow — handles domain/role setup, platform research, scheduling, tooling, and end-to-end process mapping |
+| `new-agent.md` | Adds support for a new AI agent tool across all projects in the workspace with one command |
+| `improve-workbench.md` | Improves or maintains the workbench itself — adding guidance, fixing gaps, updating memory |
+
+These are the starting points for extending the system. Everything else in `shared/workflows/` covers day-to-day tasks (debugging, research, planning, code review, etc.) and user-created workflows built on top.
+
+## Domains
+
+Domains define what kind of work is being done and what roles are responsible for it. When a task comes in, the agent infers the domain and loads the matching file — which tells it how to think, what judgment to apply, and which roles to adopt.
+
+Domains examples:
+
+| Domain | Covers |
+|---|---|
+| `software-engineering.md` | Implementation, debugging, refactoring, code quality |
+| `software-qa.md` | Test planning, verification, release checks |
+| `product-management.md` | Strategy, roadmap, prioritization, requirements |
+| `marketing.md` | Positioning, campaigns, channel execution |
+| `sales.md` | Commercial writing, outreach, revenue work |
+| `finance.md` | Budgets, pricing, forecasting, unit economics |
+| `research-academic.md` | Research, knowledge synthesis, teaching, curriculum design |
+| `creative-arts.md` | Generative AI creation, digital art, short-form video, content production |
+
+New domains are created automatically when a workflow requires one that doesn't exist yet. You can also create one explicitly:
+
+```text
+create a domain for [X]
+```
+
+This triggers `new-domain` workflow, which determines the right roles, sources reference material, and registers the domain in the manifest.
+
+---
 
 ## Repository Layout
 
@@ -61,42 +153,16 @@ That setup will:
 - `shared/workflows/` holds reusable task workflows
 - `shared/memory/` holds durable shared memory
 
-## Workflows
+## Local/Private work areas
 
-This system runs on trigger phrases, not commands. Instead of memorizing a command vocabulary, you say what you mean and the agent routes to the right workflow:
+These are user- or task-specific files and are not be committed to the shared repo.
 
-| Instead of a command... | Just say... |
-|---|---|
-| `/debug` | "debug X", "something is wrong with X", "figure out why X is broken" |
-| `/commit` | "commit", or "commit code", "land this change", "is this ready to commit" |
-| `/plan` | "how should we approach X", "let's plan X" |
-| `/research` | "research X", "Evaluate X", "compare X vs Y", "what are the options for X",  | 
-
-If a phrase isn't recognized, the agent infers the closest match, tells you, and adds the phrase to the trigger list so it works automatically next time. The vocabulary grows from real usage. You can also add triggers manually to any workflow file under `## Trigger Phrases`.
-
-No command vocabulary to memorize. Say what you mean.
-
-The complete and always up-to-date workflow list lives in `shared/manifest.md` under **Workflow Inference**.
-
-**Workflow examples:**
-
-| Workflow | What it covers |
-|---|---|
-| `new-workflow.md` | Creating a new workflow — domain/role creation, platform research, end-to-end process mapping, adjacent workflow recommendations |
-| `research.md` | Technical or product research, with a decision-ready conclusion |
-| `debugging.md` | Investigating a bug or unexpected behavior |
-| `improve-workbench.md` | Improving the workbench itself |
-
-## Local Files
-
-These are user- or task-specific files and should not be committed to the shared repo.
-
-Use `local/` for per-user setup and memory:
+`local/` for per-user setup and memory:
 - `setup.toml`
 - `who-i-am.md`
 - `personal-memory.md`
 
-Use `workspace/` for task-specific working files created by agents or users during active work:
+`workspace/` for task-specific working files created by agents or users during active work:
 - scratch notes
 - task plans
 - temporary reports
