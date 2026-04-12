@@ -34,3 +34,16 @@ Within projects, prefer one shared agent instructions file:
 - `AGENTS.md` is the canonical file
 - `CLAUDE.md` and `CODEX.md` should be compatibility stubs that point to `AGENTS.md`
 - Do not keep separate conflicting instructions across these files
+
+## Memory
+
+Durable knowledge belongs in `shared/memory/`, not in per-agent memory tools.
+
+Per-agent memory (e.g. Claude's native memory, Cursor's memory file) is siloed to one tool. `shared/memory/` is read by every agent that loads this workbench — it is the only memory that is truly shared.
+
+- `shared/memory/global-memory.md` — broad principles and confirmed behaviors that apply across all domains and projects
+- `shared/memory/decisions.md` — specific team-level decisions: what changed, why, and what agents should do differently as a result
+
+When you learn something durable during a task — a principle that should apply everywhere, a decision that was made and should not be re-litigated — write it to the appropriate file in `shared/memory/` before the session ends.
+
+Do not write to per-agent memory for anything that other agents or team members should also know.

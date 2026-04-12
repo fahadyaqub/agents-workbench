@@ -81,13 +81,25 @@ If the change affects `shared/core/` or `shared/manifest.md` → these affect al
 
 ## Step 4: Capture the Decision
 
-After any non-trivial change:
+After any non-cosmetic change (skip for typo fixes, formatting, and dead link removal):
 
-1. Add an entry to `shared/memory/decisions.md`:
-   - Format: `[YYYY-MM-DD] [scope] [active] — what changed. Why: reason.`
-   - Include what agents should do as a result
+1. Consider whether the change warrants an entry in `shared/memory/decisions.md`.
+
+   Only add an entry if an agent would make the wrong choice without knowing it — a rule that isn't obvious from reading the current files. Do not add changelog entries or things derivable from the files themselves.
+
+   Test: *"If an agent reads all current files and follows them, would it still get this wrong?"* If yes → add the entry. If no → skip it.
+
+   Format: `[YYYY-MM-DD] [scope] [active] — rule. Why: reason. What agents should do: action.`
 
 2. If the change fixes a recurring failure → document the failure pattern so the fix can be understood later
+
+3. Consider whether the change surfaced a new **principle** that should apply beyond this specific fix:
+   - If yes → add it to `shared/memory/global-memory.md` using the entry format defined there
+   - If it is specific to this decision → decisions.md is enough
+
+   Ask: *"If a different agent, on a different project, ran into this situation — would this insight help them?"* If yes, it belongs in global-memory.md.
+
+4. Do not write durable insights into per-agent memory tools (Claude's memory, Cursor's memory file, etc.). Those are siloed. `shared/memory/` is what all agents share.
 
 ---
 
