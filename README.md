@@ -76,7 +76,9 @@ If a phrase isn't recognized, the agent infers the closest match, tells you, and
 
 No command vocabulary to memorize. Say what you mean.
 
-The complete and always up-to-date workflow list lives in `shared/manifest.md` under **Workflow Inference**. A few examples:
+The complete and always up-to-date workflow list lives in `shared/manifest.md` under **Workflow Inference**.
+
+**Workflow examples:**
 
 | Workflow | What it covers |
 |---|---|
@@ -84,8 +86,6 @@ The complete and always up-to-date workflow list lives in `shared/manifest.md` u
 | `research.md` | Technical or product research, with a decision-ready conclusion |
 | `debugging.md` | Investigating a bug or unexpected behavior |
 | `improve-workbench.md` | Improving the workbench itself |
-
-New workflows are added to `shared/manifest.md` automatically when created. The README is not updated for individual workflow additions.
 
 ## Local Files
 
