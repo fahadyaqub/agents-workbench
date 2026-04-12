@@ -16,7 +16,7 @@ Agents Workbench is a shared set of instructions, workflows, and conventions, an
 
 It packages:
 - shared core instructions
-- domain and role files covering engineering, design, QA, architecture, sales, marketing, finance, and product
+- domain and role files covering engineering, design, QA, architecture, sales, marketing, finance, product, research & academic, and creative arts & digital media
 - workflows for common tasks across all functions
 - shared memory
 - project templates
@@ -76,23 +76,16 @@ If a phrase isn't recognized, the agent infers the closest match, tells you, and
 
 No command vocabulary to memorize. Say what you mean.
 
+The complete and always up-to-date workflow list lives in `shared/manifest.md` under **Workflow Inference**. A few examples:
+
 | Workflow | What it covers |
 |---|---|
-| `bootstrap.md` | First-time workspace setup |
-| `new-project.md` | Adding a project to the workspace |
-| `new-workflow.md` | Creating a new workflow file |
-| `new-domain.md` | Creating a new domain file |
-| `improve-workbench.md` | Improving the workbench itself |
-| `feature-planning.md` | Planning a feature end-to-end |
-| `planning.md` | General planning and scoping |
-| `research.md` | Technical or product research |
-| `code-review.md` | Reviewing code changes |
+| `new-workflow.md` | Creating a new workflow — domain/role creation, platform research, end-to-end process mapping, adjacent workflow recommendations |
+| `research.md` | Technical or product research, with a decision-ready conclusion |
 | `debugging.md` | Investigating a bug or unexpected behavior |
-| `debugging-sentry.md` | Debugging from a Sentry error report |
-| `debugging-signoz.md` | Debugging from SigNoz traces and latency data |
-| `bugfix.md` | Implementing and landing a fix after root cause is known |
-| `commit-and-push.md` | Committing and pushing changes safely |
-| `new-agent.md` | Adding a new AI agent tool as a compatible stub across all projects |
+| `improve-workbench.md` | Improving the workbench itself |
+
+New workflows are added to `shared/manifest.md` automatically when created. The README is not updated for individual workflow additions.
 
 ## Local Files
 

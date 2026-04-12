@@ -91,6 +91,46 @@ After any non-trivial change:
 
 ---
 
+## Step 4a: Validate Downstream Files
+
+After making any change to the workbench, run through this checklist before calling the work done.
+Not every item will apply — skip those that clearly don't. But check each one explicitly rather than assuming.
+
+### manifest.md
+- Was a new workflow file created? → Add it under **Workflow Inference** with trigger phrases.
+- Was a new domain file created? → Add it under **Domain Inference** with routing signals.
+- Was an existing workflow renamed, split, or removed? → Update or remove its manifest entry.
+
+### AGENTS.md
+- Did the load order change? (new file types, new directories, new reading sequence) → Update the Load Order section.
+- Did the priority rules change? → Update the Priority section.
+- Was a new canonical file introduced? → Add it to the Canonical Files section.
+
+If none of these changed → AGENTS.md does not need updating.
+
+### README.md
+- Was a new domain added? → Add it to the domain list in the intro paragraph.
+- Did the system's core capability change in a way a new user would need to know? → Update the relevant section.
+- Were existing features described inaccurately? → Correct them.
+
+Do NOT update the README for individual workflow additions — the complete workflow list lives in `shared/manifest.md`. The README links there and stays stable.
+
+If the change was internal (a refinement to an existing file with no new user-facing capability) → README does not need updating.
+
+### references.md
+- Was a new domain created without reference sources? → Add a section under the domain name with at least one useful external link.
+- Was a role created using web research? → Add the source to references.md.
+- Are any existing links in the new or edited section dead? → Remove them.
+
+### templates/
+- Was a new local file introduced that future users will need? → Add a template for it under `templates/local/`.
+- Was the format of an existing local file changed? → Update the corresponding template to match.
+
+### personal-memory.md and template
+- Was a new category of persistent data introduced (new tool type, new credential format)? → Add the format to both `local/personal-memory.md` and `templates/local/personal-memory.template.md`.
+
+---
+
 ## Step 5: Verify the Change Doesn't Break Anything
 
 For workflow changes:
@@ -135,6 +175,7 @@ Check during maintenance:
 - Are any domain files missing roles the team regularly needs? Add them.
 - Are any memory entries stale or resolved? Update their status.
 - Are any links in `shared/references.md` dead? Remove them.
+- Run the Step 4a downstream validation checklist — even if no deliberate changes were made, drift accumulates.
 
 ---
 
