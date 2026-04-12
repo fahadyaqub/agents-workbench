@@ -10,24 +10,23 @@ Your **workspace folder** is wherever you keep all your project repositories —
 git clone https://github.com/fahadyaqub/agents-workbench.git
 ```
 
-That setup will:
-- create `AGENTS.md` plus a stub file for every supported agent (`CLAUDE.md`, `GEMINI.md`, `CODEX.md`, etc.) in the workspace root
-- create the same stub files in every project folder, each pointing to the project's own `AGENTS.md`
-- initialize `agents-workbench/local/` from templates if needed
-- scan for projects in the workspace and bootstrap them
-
-**Bootstrap scan depth**: the bootstrap scans one level into the workspace root and one level deeper for grouped project folders (e.g. `{workspace}/company/repo`). It will not recurse further without asking. This keeps setup fast and predictable.
-
 After cloing, just ask any agent to:, 
 
 ```text
 setup the workbench in {your workspace path}
 ```
 
+That setup will:
+- create `AGENTS.md` plus a stub file for every supported agent (`CLAUDE.md`, `GEMINI.md`, `CODEX.md`, etc.) in the workspace root. 
+- initialize `agents-workbench/local/` from templates if needed
+- scan for projects in the workspace and bootstrap them
+
 And you are done.
-Once setup, all your agents now have a shared knowledge base. This includes, agent personalities, personas, how to communicate, what not do to, permissions, and a shared knowledge of your workspace. 
+Once setup, all ai agents, working on any of the projects in this directory, now have a shared knowledge base. This includes, agent personalities, personas, how to communicate, what not do to, permissions, and a shared knowledge of your workspace. 
 
 All agents now share the same memory as well, so mistakes and improvements made by one agent, are also known to others.
+
+**IMPORTANT:** Bootstrap scan depth: the bootstrap scans one level into the workspace root and one level deeper for grouped project folders (e.g. `{workspace}/company/repo`). It will not recurse further without asking. This keeps setup fast and predictable.
 
 ## How to use
 Other than the shared knowledgebase and active memory, you can ask agents to perform repeated tasks using simple text phrases.
@@ -40,16 +39,15 @@ prepare a PR for this change
 
 This will trigger the `commit-and-push.md` workflow, which will:
 1. Review the changes
-2. Run unit tests (if setup)
-3. Warn if you are not in a protected branch (pause for explicit approval).
-4. Create the commit
-5. Push the changes to the remote repository
+2. Cleanup any debug code or logs
+3. Run unit tests (if setup)
+4. Warn if you are not in a protected branch (pause for explicit approval).
+5. Create the commit
+6. Push the changes to the remote repository
 
-There are several predefined "tasks" that this system can do out of the box, but you can always add your own to the list.
+There are several predefined "workflows" that this system can do out of the box, but you can always add your own to the list.
 
 ## Workflows
-
-Tasks are predefined workflows that can be triggered by a phrase. 
 
 This system runs on trigger phrases, not commands. Instead of memorizing a command vocabulary, you say what you mean and the agent routes to the right workflow:
 
@@ -61,11 +59,10 @@ This system runs on trigger phrases, not commands. Instead of memorizing a comma
 
 If a phrase isn't recognized, the agent infers the closest match, tells you, and adds the phrase to the trigger list so it works automatically next time. The vocabulary grows from real usage. You can also add triggers manually to any workflow file under `## Trigger Phrases`.
 
-No command vocabulary to memorize. Say what you mean.
-
 ## Creating a Workflow
 
-Ask your agent to "create workflow" and agent creates it. The full spec is in `shared/workflows/new-workflow.md`. Key things the system handles during creation:
+Ask your agent to "create workflow". 
+The full spec is in `shared/workflows/new-workflow.md`. Key things the system handles during creation:
 
 - **Roles and domain** — determined from first principles based on the type of work. New domain and role files are created if needed.
 - **Output folder** — configurable. Defaults to `workspace/` with date and topic-named subfolders if not specified.
