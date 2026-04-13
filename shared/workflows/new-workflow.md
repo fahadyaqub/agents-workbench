@@ -14,12 +14,15 @@
 - "there's no workflow for [X]"
 - "build a workflow for [X]"
 - "write a workflow for [X]"
+- "publish this workflow"
+- "share this workflow"
+- "release this workflow"
 
 ---
 
 ## Scope Boundary
 
-**This workflow covers:** Creating a new file in `shared/workflows/` from scratch — from identifying the need to registering it in the manifest. Includes creating or extending domain files when the required domain or role does not exist yet.
+**This workflow covers:** Creating a workflow in `local/workflows/` by default for private use, and moving it to `shared/workflows/` only when the user explicitly wants to publish it. Includes creating or extending domain files when the required domain or role does not exist yet.
 
 **This workflow does NOT cover:**
 - Editing an existing workflow (edit the file directly, optionally using `improve-workbench.md`)
@@ -42,11 +45,27 @@ If the answer is no — the steps are too vague, the branches are implicit, or t
 
 Before creating a new workflow file:
 
-1. Check `shared/workflows/` — does a workflow already cover this task?
-2. Check `shared/manifest.md` — is there a routing entry that would already handle it?
+1. Check `local/manifest.toml` — is there already a private registry entry for this workflow?
+1. Check `local/workflows/` — does the user already have a private workflow for this?
+2. Check `shared/workflows/` — does a published workflow already cover this task?
+3. Check `shared/manifest.md` — is there a routing entry that would already handle it?
 
 If a workflow already exists for this task → extend it instead of creating a new one. Stop here.
 If the task is genuinely new and recurring → proceed.
+
+---
+
+## Default Location and Publishing Model
+
+New workflows are local by default.
+
+- Create new workflows in `local/workflows/`
+- If `local/workflows/` does not exist yet → create it when the workflow is first written
+- Register new local workflows in `local/manifest.toml`
+- Do not add local-only workflows to `shared/manifest.md`
+- Only when the user explicitly says "publish", "release", or "share" a workflow → move it to `shared/workflows/`, register it in `shared/manifest.md`, and treat it as part of the shared system
+
+Local-first workflow creation is the default because local scope and shared scope should behave the same way for the user; the only difference is who receives the workflow
 
 ---
 
@@ -564,7 +583,8 @@ List natural phrases a user would say to invoke this workflow.
 ```
 
 Keep them natural — match how the team actually talks.
-After creating the file → add it to `shared/manifest.md` under **Workflow Inference**.
+If the workflow remains in `local/workflows/` → keep the trigger phrases in the file, but do not add it to `shared/manifest.md`.
+If the workflow is published to `shared/workflows/` → add it to `shared/manifest.md` under **Workflow Inference**.
 
 Trigger lists are living. Start with the phrases you know. New ones are added over time via the trigger learning mechanism in `shared/manifest.md`.
 
@@ -734,9 +754,14 @@ If any answer is no → fix it before publishing.
 
 ## After Creating the Workflow
 
-1. Add it to `shared/manifest.md` under **Workflow Inference** with trigger phrases
-2. If it replaces a scattered process in project-level docs → link back from those docs
-3. Add an entry to `shared/memory/decisions.md` noting why this process was formalized and what problem it solves
+1. Save the new workflow in `local/workflows/` by default
+2. Register it in `local/manifest.toml`
+3. If it replaces a scattered process in project-level docs → link back from those docs
+4. If the user later says to publish, release, or share it:
+   - move it to `shared/workflows/`
+   - update `local/manifest.toml` to remove the local-only entry or mark it as shared
+   - add it to `shared/manifest.md` under **Workflow Inference** with trigger phrases
+   - add an entry to `shared/memory/decisions.md` noting why this process was formalized and what problem it solves
 
 ---
 

@@ -1,6 +1,7 @@
 # Shared Decisions
 
-Track durable team-level decisions that affect how agents should work across projects.
+Track shared durable team-level decisions that affect how agents should work across projects.
+Default new decisions to `local/memory/` first. Publish them here only when they should guide other users too.
 
 ## What belongs here
 
@@ -25,4 +26,6 @@ Test before writing: *"If an agent reads all the current files and follows them,
 
 - [2026-04-12] README workflow list [active] — The README is not the authoritative workflow list. Never add new workflows to the README table. Register them in shared/manifest.md only. Why: the README list drifted out of sync and became a maintenance trap. The manifest is the single source of truth.
 
-- [2026-04-12] Shared memory over per-agent memory [active] — Write durable insights to shared/memory/, not into per-agent memory tools (Claude's memory, Cursor's memory file, etc.). Why: per-agent memory is siloed to one tool; shared/memory/ is read by every agent that loads the workbench. What agents should do: after any non-cosmetic workbench change, write new principles to global-memory.md and specific decisions to decisions.md.
+- [2026-04-12] Shared memory over per-agent memory [active] — Write durable insights into workbench-managed memory, not into per-agent memory tools (Claude's memory, Cursor's memory file, etc.). Why: per-agent memory is siloed to one tool; workbench memory is inspectable and can be published intentionally. What agents should do: write new memory to `local/memory/` first, and publish only the entries that should guide other users.
+- [2026-04-13] Workflow lifecycle [active] — New workflows start in `local/workflows/` and only move to `shared/workflows/` when the user explicitly publishes, releases, or shares them. Why: local and shared are scope boundaries, not readiness levels. What agents should do: treat local workflows as fully usable, keep local-only workflows out of `shared/manifest.md`, and register them as shared only after explicit publication.
+- [2026-04-13] Artifact lifecycle [active] — New domains, agent support, and memory should follow the same local-versus-shared lifecycle as workflows. Why: local items are private scope for one user, shared items are published scope for everyone else. What agents should do: treat local artifacts as fully usable, keep them out of shared registries until explicitly published, and never describe local scope as draft quality.

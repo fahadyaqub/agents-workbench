@@ -2,6 +2,8 @@
 
 Agents Workbench is a shared set of instructions, workflows, and conventions, and working memory for AI agents. It covers product, engineering, sales, marketing, and finance — anyone on the team using an AI agent can use it.
 
+It is intentionally zero-install, file-native, and small. The core idea is simple: if agents have durable memory, a common knowledgebase, and a consistent way of working, they can derive most of the rest from the environment they are already operating in.
+
 ## Setup
 
 Your **workspace folder** is wherever you keep all your project repositories — it could be `~/work`, `~/projects`, `~/code`, or anything else. Clone this repo in the root of your workspace folder:
@@ -23,9 +25,9 @@ That setup will:
 - initialize setup in `agents-workbench/local/`. Who you are, etc.
 - scan for projects in the workspace and bootstrap them
 
-Once setup, all ai agents, working on any of the projects in this directory, now have a shared knowledge base. This includes, agent personalities, personas, how to communicate, what not do to, permissions, and a shared knowledge of your workspace. 
+Once setup, all ai agents working on any of the projects in this directory now have a common operating layer. This includes shared instructions, communication rules, permissions, and a shared understanding of your workspace.
 
-All agents now share the same memory as well, so mistakes and improvements made by one agent, are also known to others.
+Memory, workflows, domains, and agent support are private first. Items in `local/` are fully usable for one user; items in `shared/` are the versions intended to be shared with everyone else. `shared/manifest.md` is the published contract; `local/manifest.toml` is the private registry for one user's local artifacts.
 
 **IMPORTANT:** Bootstrap scan depth: the bootstrap scans one level into the workspace root and one level deeper for grouped project folders (e.g. `{workspace}/company/repo`). It will not recurse further without asking. This keeps setup fast and predictable.
 
@@ -65,11 +67,14 @@ If a phrase isn't recognized, the agent infers the closest match, tells you, and
 Ask your agent to "create workflow". 
 The full spec is in `shared/workflows/new-workflow.md`. Key things the system handles during creation:
 
+- **Private scope first** — new workflows start in `local/workflows/` for private use and can later be published for everyone
 - **Roles and domain** — determined from first principles based on the type of work. New domain and role files are created if needed.
 - **Output folder** — configurable. Defaults to `workspace/` with date and topic-named subfolders if not specified.
 - **Scheduling** — workflows can run daily, weekly, or on a custom schedule. The schedule can be set at creation time.
 - **Run modes** — drip (one item per run), burst (N items per run), batch (all at once), or drip with approval (one per run, waits for sign-off before advancing).
 - **Tool and credential setup** — external dependencies are identified, researched, and set up once. Credentials are stored in `local/personal-memory.md` and reused on every subsequent run.
+
+New workflows are created in the private directory `local/workflows/`. They are fully usable there. If the user later asks the agent to "publish", "release", or "share" one, it moves into `shared/workflows/`. The same private-versus-shared model should be used for domains, agent support, and memory.
 
 The complete and always up-to-date workflow list lives in `shared/manifest.md` under **Workflow Inference**.
 
@@ -104,13 +109,13 @@ Domains examples:
 | `research-academic.md` | Research, knowledge synthesis, teaching, curriculum design |
 | `creative-arts.md` | Generative AI creation, digital art, short-form video, content production |
 
-New domains are created automatically when a workflow requires one that doesn't exist yet. You can also create one explicitly:
+New domains are created privately first when a workflow requires one that doesn't exist yet. You can also create one explicitly:
 
 ```text
 create a domain for [X]
 ```
 
-This triggers `new-domain` workflow, which determines the right roles, sources reference material, and registers the domain in the manifest.
+This triggers `new-domain` workflow, which determines the right roles and sources reference material. Private domains stay in `local/domains/` until the user asks to publish them into the shared system.
 
 ---
 
@@ -148,18 +153,23 @@ It packages:
 ## Shared Areas
 
 - `shared/core/` holds general behavior, communication, and permission rules
-- `shared/domains/` holds domain-specific operating modes
-- `shared/workflows/` holds reusable task workflows
-- `shared/memory/` holds durable shared memory
+- `shared/domains/` holds published domain-specific operating modes
+- `shared/workflows/` holds published reusable task workflows
+- `shared/memory/` holds published shared memory
 
 ## Local/Private work areas
 
 These are user- or task-specific files and are not be committed to the shared repo.
 
 `local/` for per-user setup and memory:
+- `manifest.toml` as the private registry of local memory, domains, agents, and workflows
 - `setup.toml`
 - `who-i-am.md`
 - `personal-memory.md`
+- `memory/` for private memory used only by one user
+- `domains/` for private domains used only by one user
+- `agents/` for private agent compatibility additions used only by one user
+- `workflows/` for private workflows used only by one user
 
 `workspace/` for task-specific working files created by agents or users during active work:
 - scratch notes
@@ -173,7 +183,7 @@ These are user- or task-specific files and are not be committed to the shared re
 
 If any stub file contains real instructions, merge them into `AGENTS.md` first, then replace the stub.
 
-To add support for a new agent tool, say: `"add [AgentName] to compatible agents"` — the `new-agent.md` workflow handles the rest.
+To add support for a new agent tool, say: `"add [AgentName] to compatible agents"` — the `new-agent.md` workflow makes it usable locally right away and can publish it later if asked.
 
 ## Protected Branches
 

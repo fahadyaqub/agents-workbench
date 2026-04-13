@@ -11,22 +11,27 @@ Project-level `AGENTS.md` files remain authoritative for project-specific contex
 Complete these steps before writing any response or starting any task:
 
 If you were sent here by a workspace pointer or compatibility stub, do not stop at the redirect.
-Treat this file as active instructions and immediately inspect `local/setup.toml`.
+Treat this file as active instructions and immediately inspect `local/manifest.toml` and `local/setup.toml`.
 
-If `local/setup.toml` is missing, or any setup item is marked `pending`, pause normal task work and follow `shared/workflows/bootstrap.md` before continuing.
+If `local/manifest.toml` or `local/setup.toml` is missing, or any setup item is marked `pending`, pause normal task work and follow `shared/workflows/bootstrap.md` before continuing.
 
 ## Load Order
 
 1. Read `shared/manifest.md`
-2. Read `local/setup.toml` if it exists
-3. If local setup is incomplete, follow `shared/workflows/bootstrap.md`
-4. Read these local overlays if they exist:
+2. Read `local/manifest.toml` if it exists
+3. Read `local/setup.toml` if it exists
+4. If local setup is incomplete, follow `shared/workflows/bootstrap.md`
+5. Read these local overlays if they exist:
    - `local/who-i-am.md`
    - `local/personal-memory.md`
-5. Infer the relevant domain and workflow from the user's request and load matching files from:
+6. Infer the relevant domain and workflow from the user's request and load matching files from:
+   - `local/memory/`
+   - `local/domains/`
+   - `local/agents/`
+   - `local/workflows/`
    - `shared/domains/`
    - `shared/workflows/`
-6. If the current project has its own `AGENTS.md`, treat that file as the project-specific overlay
+7. If the current project has its own `AGENTS.md`, treat that file as the project-specific overlay
 
 ## Priority
 
@@ -50,16 +55,17 @@ Protected branches are not defined locally for the `agents-workbench` repository
 
 ## Memory
 
-Durable knowledge belongs in `shared/memory/`, not in per-agent memory tools.
+Memory is private-scope first.
 
-Per-agent memory (e.g. Claude's native memory, Cursor's memory file) is siloed to one tool. `shared/memory/` is read by every agent that loads this workbench — it is the only memory that is truly shared.
+Default new memory to `local/memory/`. Publish entries into `shared/memory/` only when they are meant to guide other users too.
 
-- `shared/memory/global-memory.md` — broad principles and confirmed behaviors that apply across all domains and projects
-- `shared/memory/decisions.md` — specific team-level decisions: what changed, why, and what agents should do differently as a result
+- `local/memory/` — private user memory used only by one user
+- `shared/memory/global-memory.md` — published principles that are intended to help multiple users and projects
+- `shared/memory/decisions.md` — published team-level decisions: what changed, why, and what agents should do differently as a result
 
-When you learn something durable during a task — a principle that should apply everywhere, a decision that was made and should not be re-litigated — write it to the appropriate file in `shared/memory/` before the session ends.
+When you learn something durable during a task, write it to the appropriate file in `local/memory/` first. Publish it to `shared/memory/` only when it should apply beyond one user's private workbench.
 
-Do not write to per-agent memory for anything that other agents or team members should also know.
+Do not write durable workbench knowledge into per-agent memory tools (Claude memory, Cursor memory, etc.). Keep it in this file system so it can be inspected and promoted intentionally.
 
 ## Project Refresh Rule
 

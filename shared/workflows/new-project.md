@@ -69,7 +69,7 @@ If `AGENTS.md` is missing:
 - Fill in what can be inferred from the project structure (purpose, stack, important paths)
 - Make it a short real project entrypoint for IDE agents, not a bare pointer file
 
-Read `shared/core/compatible-agents.md` to get the current list of supported agent stub filenames. For each agent in the list, if its stub file is missing → create it from the corresponding template in `templates/project/`.
+Read `shared/core/compatible-agents.md` to get the shared list of supported agent stub filenames. Then read `local/manifest.toml` to get any local-only agent additions for this user. For each shared or local agent in the list, if its stub file is missing → create it using the shared template when available, or the local agent record when it is local-only.
 
 ---
 

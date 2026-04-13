@@ -47,7 +47,7 @@ If the question is vague → sharpen it with the user before starting.
 Before going external:
 
 1. Read the relevant project code and docs — the answer may already be there
-2. Check `shared/memory/decisions.md` — has this been decided before?
+2. Check `local/memory/` first, then `shared/memory/decisions.md` — has this been decided before?
 3. Check the project `AGENTS.md` for existing constraints or prior choices
 
 If the answer already exists → report it and stop. Do not re-research what is already known.
@@ -108,7 +108,8 @@ Do not produce an exhaustive notes dump. Filter for what is decision-relevant.
 ## Step 6: Capture Durable Findings
 
 If the research produced a conclusion that will apply across projects or future sessions:
-- Add it to `shared/memory/global-memory.md`
+- Add it to `local/memory/` first
+- Publish it to `shared/memory/global-memory.md` only if it should help other users too
 - Format: `[YYYY-MM-DD] [topic] [active] — finding. Source: link or reference.`
 
 If the finding is project-specific → add it to that project's `AGENTS.md` memory section instead.

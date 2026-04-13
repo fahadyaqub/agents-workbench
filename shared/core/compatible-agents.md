@@ -1,6 +1,6 @@
 # Compatible Agents
 
-This file is the registry of all AI agent tools supported by agents-workbench.
+This file is the shared registry of AI agent tools supported by agents-workbench.
 
 For each supported agent, a compatibility stub file is created in every project folder and the workspace root. The stub should do one thing clearly: redirect the agent to `AGENTS.md` and instruct it to keep following the bootstrap chain there. This is what makes the system agent-agnostic.
 
@@ -58,11 +58,13 @@ Once found, read  `AGENTS.md` inside "agents-workbench" -- and follow every inst
 
 When the user says "add [AgentName] to compatible agents":
 
-1. Ask: "What filename does [AgentName] read by default in a project root?" (e.g. `DEEPSEEK.md`)
-2. Create `templates/project/[FILENAME].template.md` using the stub content above
-3. Add the agent to the table in this file
-4. Create the stub file in the workspace root pointing to `agents-workbench/AGENTS.md`
-5. Create the stub file in every managed project folder (listed in `local/setup.toml`)
-6. Update `shared/workflows/bootstrap.md` Step 1 and Step 4 to include the new filename in its checks
-7. Update `shared/workflows/new-project.md` Step 3 to include the new filename
-8. Tell the user what was created and confirm the agent is now fully supported
+1. Follow `shared/workflows/new-agent.md`
+2. Create the local record in `local/agents/` and register it in `local/manifest.toml`
+3. Create the stub file in the workspace root and in managed projects immediately so the new agent support is usable right away for that user
+4. Only if the user explicitly says to publish it:
+   - create `templates/project/[FILENAME].template.md` using the stub content above
+   - add the agent to the table in this file
+   - make the support discoverable to every user, not just the current one
+   - update `shared/workflows/bootstrap.md` Step 1 and Step 4 to include the new filename in its checks
+   - update `shared/workflows/new-project.md` Step 3 so brand-new projects created by any user get the shared stub automatically
+5. Tell the user what was created and whether it remains local-only or is now shared

@@ -1,5 +1,8 @@
 version = 1
 
+[local_manifest]
+status = "pending"
+
 [who_i_am]
 status = "pending"
 

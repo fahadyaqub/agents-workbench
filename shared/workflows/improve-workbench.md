@@ -36,7 +36,7 @@ If the answer is only "it will stop the thing that just went wrong" → the fix 
 | `shared/core/` | Agent behavior is consistently wrong across multiple projects — a principle is missing or unclear |
 | `shared/domains/` | A domain is missing a useful role, or existing roles are producing consistently wrong behavior |
 | `shared/workflows/` | A process is done repeatedly but not encoded, or an existing workflow is too vague to produce consistent results |
-| `shared/memory/` | A decision was made that agents keep re-litigating |
+| `shared/memory/` | A published decision or principle is missing, stale, or wrong |
 | `shared/references.md` | A new useful external source was found, or a dead link needs removing |
 | `templates/` | A template is missing fields that every new project needs |
 
@@ -83,7 +83,7 @@ If the change affects `shared/core/` or `shared/manifest.md` → these affect al
 
 After any non-cosmetic change (skip for typo fixes, formatting, and dead link removal):
 
-1. Consider whether the change warrants an entry in `shared/memory/decisions.md`.
+1. Consider whether the change warrants an entry in `local/memory/` first, and whether it should later be promoted to `shared/memory/decisions.md`.
 
    Only add an entry if an agent would make the wrong choice without knowing it — a rule that isn't obvious from reading the current files. Do not add changelog entries or things derivable from the files themselves.
 
@@ -94,12 +94,12 @@ After any non-cosmetic change (skip for typo fixes, formatting, and dead link re
 2. If the change fixes a recurring failure → document the failure pattern so the fix can be understood later
 
 3. Consider whether the change surfaced a new **principle** that should apply beyond this specific fix:
-   - If yes → add it to `shared/memory/global-memory.md` using the entry format defined there
-   - If it is specific to this decision → decisions.md is enough
+   - If yes → add it to local memory first, and publish it to `shared/memory/global-memory.md` only if it should help other users
+   - If it is specific to this decision → local decisions memory is enough unless the decision should be shared
 
    Ask: *"If a different agent, on a different project, ran into this situation — would this insight help them?"* If yes, it belongs in global-memory.md.
 
-4. Do not write durable insights into per-agent memory tools (Claude's memory, Cursor's memory file, etc.). Those are siloed. `shared/memory/` is what all agents share.
+4. Do not write durable insights into per-agent memory tools (Claude's memory, Cursor's memory file, etc.). Those are siloed. Use `local/memory/` for local workbench memory, and publish entries into `shared/memory/` only when they should guide other users too.
 
 ---
 

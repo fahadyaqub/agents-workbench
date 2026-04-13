@@ -1,6 +1,7 @@
 # Shared Global Memory
 
-Use this file for durable guidance that should apply across projects, domains, and users.
+Use this file only for shared durable guidance that should apply across projects, domains, and users.
+Default new memory to `local/memory/` first. Publish entries here only when they should apply to other users too.
 
 Entry format:
 - `[YYYY-MM-DD] [scope] [status] statement`
@@ -24,3 +25,7 @@ Examples:
 - `[2026-04-12] [global] [confirmed]` Credentials for non-technical users should be stored directly in local/personal-memory.md. This file is gitignored. Telling a non-technical user to "use environment variables" is security theater — a .env file and a markdown file are both plain text. Match the advice to who will actually use it.
 
 - `[2026-04-12] [global] [confirmed]` Roles and domains must be determined independently before checking existing files. Think: who does this work in the real world, and what domain do they belong to? Only then check shared/domains/. If the domain or role doesn't exist, create it — search references.md first, then the web if needed. Never force-fit an existing role from a different domain.
+
+- `[2026-04-13] [global] [confirmed]` Prefer a zero-install, file-native workbench over custom local runtimes. Shared memory, a shared knowledgebase, and a consistent way of working are the core system; agents should derive execution from the environment and tools they already have before introducing new software requirements.
+
+- `[2026-04-13] [global] [confirmed]` New memory, workflows, domains, and agent support should begin in `local/` and only move into `shared/` when intentionally published. Local and shared are scope boundaries, not quality levels: local items are fully usable for one user; shared items are meant to help everyone.

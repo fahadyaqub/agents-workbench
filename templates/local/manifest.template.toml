@@ -1,0 +1,17 @@
+version = 1
+
+[memory]
+private_dir = "local/memory"
+entries = []
+
+[domains]
+private_dir = "local/domains"
+entries = []
+
+[agents]
+private_dir = "local/agents"
+entries = []
+
+[workflows]
+private_dir = "local/workflows"
+entries = []

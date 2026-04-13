@@ -5,9 +5,9 @@ This file defines how the shared agent system should be loaded and used.
 ## Immediate Setup Check
 
 This manifest is an execution checklist, not background reference material.
-As soon as you load it, inspect `local/setup.toml` before doing normal task routing.
+As soon as you load it, inspect `local/manifest.toml` and `local/setup.toml` before doing normal task routing.
 
-If `local/setup.toml` is missing, initialize local files from `templates/local/`.
+If `local/manifest.toml` or `local/setup.toml` is missing, initialize local files from `templates/local/`.
 If any setup item is `pending`, stop regular task flow and follow `shared/workflows/bootstrap.md`.
 
 ## Always Load
@@ -17,15 +17,20 @@ Read these files for all work:
 - `shared/core/working-style.md`
 - `shared/core/permissions.md`
 - `shared/core/communication.md`
+- `shared/core/design-principles.md`
 
 Then read:
+- `local/manifest.toml` if present
 - `local/setup.toml` if present
 - `local/who-i-am.md` if present
 - `local/personal-memory.md` if present
+- `local/memory/` if present
+- `local/domains/` if present
+- `local/agents/` if present
 
 ## Setup Gate
 
-If `local/setup.toml` is missing, initialize local files from `templates/local/`.
+If `local/manifest.toml` or `local/setup.toml` is missing, initialize local files from `templates/local/`.
 
 If any setup item in `local/setup.toml` is `pending`, follow `shared/workflows/bootstrap.md` before any domain or workflow routing.
 
@@ -39,6 +44,8 @@ If a user explicitly ignores a setup step, stop prompting for it unless the setu
 ## Domain Inference
 
 Infer the domain from the task before asking the user.
+Check `local/domains/` first for user-private domains. Use `shared/domains/` for domains that are meant to be shared across users and projects.
+Use `local/manifest.toml` as the private registry of which local domains exist.
 
 Suggested domain routing:
 - Coding, debugging, implementation, refactors, code review: `domains/software-engineering.md`
@@ -57,6 +64,9 @@ Suggested domain routing:
 - Creative direction, visual identity, style-consistent content production: `domains/creative-arts.md`
 
 ## Workflow Inference
+
+Check `local/workflows/` first for user-private workflows. Use `shared/workflows/` for workflows that are meant to be shared across users and projects.
+Use `local/manifest.toml` as the private registry of which local workflows and agent additions exist.
 
 Load relevant workflow docs based on the task:
 - Debugging and bug triage (general): `shared/workflows/debugging.md`
@@ -120,10 +130,12 @@ Keep added phrases natural — match how the user actually said it, not a formal
 
 ## Memory Rules
 
-- Shared durable knowledge belongs in `shared/memory/`
+- Default new memory belongs in `local/memory/`
+- Published durable knowledge belongs in `shared/memory/`
 - Personal preferences that should not become team defaults belong in `local/personal-memory.md`
 - Project-specific durable knowledge belongs in that project's `AGENTS.md` or related project docs
-- New memory entries should be concise, dated, and durable
+- New memory entries should be concise, dated, durable, and private by default
+- `local/manifest.toml` is the private registry for local memory, domains, agents, and workflows
 
 ## Workspace Structure
 

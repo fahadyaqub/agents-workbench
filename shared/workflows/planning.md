@@ -23,7 +23,7 @@
 **Read the current state before proposing anything.**
 
 Plans that contradict existing architecture, ignore prior decisions, or assume things that aren't true waste everyone's time and create re-work.
-Before making any recommendation, read the relevant code, the project `AGENTS.md`, and `shared/memory/decisions.md`.
+Before making any recommendation, read the relevant code, the project `AGENTS.md`, `local/memory/` if present, and `shared/memory/decisions.md` for published decisions.
 A plan built on assumptions is a guess with structure.
 
 ---
@@ -44,7 +44,7 @@ If any of these are unclear → ask before proceeding.
 Before proposing anything:
 
 1. Read the relevant code, architecture, and project `AGENTS.md`
-2. Check `shared/memory/decisions.md` for prior decisions on the same topic
+2. Check `local/memory/` first, then `shared/memory/decisions.md` for prior decisions on the same topic
 3. Note what already exists that can be extended vs what needs to be built from scratch
 
 If this is a feature plan → use `feature-planning.md` instead. This workflow is for broader technical and strategic planning.
@@ -112,7 +112,7 @@ Do not start execution on an unconfirmed plan.
 Store the plan where the team can reference it (project `AGENTS.md`, a tracking ticket, or a doc).
 Update it when reality changes.
 
-If a significant architectural decision was made during planning → record it in `shared/memory/decisions.md`.
+If a significant architectural decision was made during planning → record it in `local/memory/` first, and publish it to `shared/memory/decisions.md` only if it is meant to guide other users too.
 
 ---
 

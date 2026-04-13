@@ -2,7 +2,7 @@
 
 **Roles**: (meta — no domain role. Read and follow the steps directly.)
 
-**This workflow covers**: Creating a new domain file in `shared/domains/`.
+**This workflow covers**: Creating a new domain file in `local/domains/` by default for private use, and moving it to `shared/domains/` only when the user explicitly wants to publish it.
 **This workflow does NOT cover**: Updating an existing domain file (edit it directly), creating a workflow (use `new-workflow.md`).
 
 ---
@@ -13,6 +13,9 @@
 - "add a domain for [X]"
 - "we need a [X] domain"
 - "there's no domain for [X]"
+- "publish this domain"
+- "share this domain"
+- "release this domain"
 
 ---
 
@@ -29,9 +32,19 @@ If the file is mostly links with no extracted guidance → it has failed its pur
 ## Prerequisites
 
 Before creating the file:
-- Confirm the domain does not already exist in `shared/domains/`
+- Confirm the domain does not already exist in `local/domains/` or `shared/domains/`
 - Confirm the domain is broad enough to apply across multiple projects (not project-specific)
 - If it is project-specific → put the guidance in that project's `AGENTS.md` instead
+
+## Default Location and Publishing Model
+
+New domains are local by default.
+
+- Create new domains in `local/domains/`
+- If `local/domains/` does not exist yet → create it when the domain is first written
+- Register new local domains in `local/manifest.toml`
+- Do not add local-only domains to `shared/manifest.md`
+- Only when the user explicitly says "publish", "release", or "share" a domain → move it to `shared/domains/`, register it in `shared/manifest.md`, and treat it as part of the shared system
 
 ---
 
@@ -100,8 +113,10 @@ Add the domain's sources to `shared/references.md` under a matching heading.
 
 ## Step 6: Register the Domain
 
-1. Add the domain to `shared/manifest.md` under **Domain Inference** with a routing description
-2. Add the domain's source links to `shared/references.md` under a new heading matching the domain name
+1. If the domain remains in `local/domains/` → register it in `local/manifest.toml` and do not add it to `shared/manifest.md`
+2. If the user publishes the domain → update `local/manifest.toml` to remove the local-only entry or mark it shared
+3. Add the domain to `shared/manifest.md` under **Domain Inference** with a routing description
+4. Add the domain's source links to `shared/references.md` under a new heading matching the domain name when the domain is published
 
 ---
 
@@ -130,8 +145,8 @@ A domain file is complete when:
 - Three roles are defined with when-to-use guidance and instruction bullets
 - The default blend section exists
 - The More Roles pointer references `shared/references.md`
-- The domain is registered in `shared/manifest.md`
-- Sources are added to `shared/references.md`
+- If published: the domain is registered in `shared/manifest.md`
+- If published: sources are added to `shared/references.md`
 
 ## Update Rules
 
