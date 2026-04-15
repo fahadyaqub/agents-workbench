@@ -36,6 +36,16 @@ Before starting:
 
 ---
 
+## Local Workflow Area
+
+Use `local/workspaces/feature-planning/` as this workflow's private writable area.
+
+- If the folder does not exist yet → create it before writing workflow-owned notes, plan drafts, or temporary artifacts.
+- Treat it as pre-approved writable space for this workflow. Do not ask for extra permission for writes inside it.
+- Use it for draft plans and working notes until the plan is promoted into a project doc, ticket, or other team-visible location.
+
+---
+
 ## Step 1: Clarify the Outcome
 
 Get explicit answers to:
@@ -92,6 +102,8 @@ Break into phases where each:
 - What could go wrong
 - What decisions are deferred or need validation
 - What assumptions the plan makes that could be wrong
+
+Draft the first version in `local/workspaces/feature-planning/` unless the user already named a specific project doc or ticket as the destination.
 
 ---
 

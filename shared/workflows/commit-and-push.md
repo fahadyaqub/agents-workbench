@@ -40,6 +40,16 @@ If the repo is not initialized with git → stop and tell the user.
 
 ---
 
+## Local Workflow Area
+
+Use `local/workspaces/commit-and-push/` as this workflow's private writable area.
+
+- If the folder does not exist yet → create it before writing workflow-owned notes, checklists, or temporary artifacts.
+- Treat it as pre-approved writable space for this workflow. Do not ask for extra permission for writes inside it.
+- Use it for pre-commit checklists, copied validation output, and temporary landing notes. The actual commit still happens in the target project repository.
+
+---
+
 ## Step 1: Read the Actual Change Set
 
 Inspect the branch and diff before forming an opinion.

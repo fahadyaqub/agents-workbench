@@ -39,6 +39,16 @@ If any of these are unclear → ask before proceeding.
 
 ---
 
+## Local Workflow Area
+
+Use `local/workspaces/planning/` as this workflow's private writable area.
+
+- If the folder does not exist yet → create it before writing workflow-owned notes, plan drafts, or temporary artifacts.
+- Treat it as pre-approved writable space for this workflow. Do not ask for extra permission for writes inside it.
+- Use it for draft plans and supporting notes until the final plan is promoted into a project doc, ticket, or other team-visible location.
+
+---
+
 ## Step 1: Read the Current State
 
 Before proposing anything:
@@ -110,6 +120,7 @@ Do not start execution on an unconfirmed plan.
 ## Step 7: Store and Maintain the Plan
 
 Store the plan where the team can reference it (project `AGENTS.md`, a tracking ticket, or a doc).
+Use `local/workspaces/planning/` for the working draft if you need a private staging area before promoting the plan.
 Update it when reality changes.
 
 If a significant architectural decision was made during planning → record it in `local/memory/` first, and publish it to `shared/memory/decisions.md` only if it is meant to guide other users too.

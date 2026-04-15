@@ -41,6 +41,16 @@ Before starting:
 
 ---
 
+## Local Workflow Area
+
+Use `local/workspaces/debugging-sentry/` as this workflow's private writable area.
+
+- If the folder does not exist yet → create it before writing workflow-owned notes, exported issue lists, or temporary artifacts.
+- Treat it as pre-approved writable space for this workflow. Do not ask for extra permission for writes inside it.
+- Prefer project-native report paths when the project already has them. Use this local workflow area for session notes and as the fallback tracking location when the project does not.
+
+---
+
 ## Step 1: Fetch Issues
 
 Run the project's fetch script if one exists. Otherwise use the Sentry CLI or API.
@@ -113,7 +123,11 @@ If still inconclusive after one round → note this in the tracking file and esc
 
 ## Step 5: Track the Issue
 
-Create a tracking file for any issue you plan to fix or monitor:
+Create a tracking file for any issue you plan to fix or monitor.
+
+Use this order:
+1. If the project already has a native Sentry report path → use it.
+2. Otherwise use `local/workspaces/debugging-sentry/<ISSUE-ID>.md`.
 
 ```
 <project>/sentry-reports/issues/<ISSUE-ID>.md

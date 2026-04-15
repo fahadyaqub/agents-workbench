@@ -48,6 +48,16 @@ New domains are local by default.
 
 ---
 
+## Local Workflow Area
+
+Use `local/workspaces/new-domain/` as this workflow's private writable area.
+
+- If the folder does not exist yet → create it before writing workflow-owned notes, research extracts, or temporary artifacts.
+- Treat it as pre-approved writable space for this workflow. Do not ask for extra permission for writes inside it.
+- Use it for drafts and role-comparison notes only. The actual domain file still belongs in `local/domains/` or `shared/domains/`.
+
+---
+
 ## Step 1: Research the Domain
 
 Search for existing role libraries, prompt collections, and guides for this domain.

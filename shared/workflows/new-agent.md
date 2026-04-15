@@ -36,6 +36,16 @@ New agent support is local by default.
 
 ---
 
+## Local Workflow Area
+
+Use `local/workspaces/new-agent/` as this workflow's private writable area.
+
+- If the folder does not exist yet → create it before writing workflow-owned notes, rollout checklists, or temporary artifacts.
+- Treat it as pre-approved writable space for this workflow. Do not ask for extra permission for writes inside it.
+- Use it for task scratch files only. The actual private agent record still belongs in `local/agents/`, and shared publication changes still go to the shared files they affect.
+
+---
+
 ## Step 1: Identify the Stub Filename
 
 Ask the user:

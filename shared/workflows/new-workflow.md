@@ -22,7 +22,7 @@
 
 ## Scope Boundary
 
-**This workflow covers:** Creating a workflow in `local/workflows/` by default for private use, and moving it to `shared/workflows/` only when the user explicitly wants to publish it. Includes creating or extending domain files when the required domain or role does not exist yet.
+**This workflow covers:** Creating a workflow in `local/workflows/` by default for private use, creating a companion working folder for that workflow in `local/workspaces/`, and moving the workflow to `shared/workflows/` only when the user explicitly wants to publish it. Includes creating or extending domain files when the required domain or role does not exist yet.
 
 **This workflow does NOT cover:**
 - Editing an existing workflow (edit the file directly, optionally using `improve-workbench.md`)
@@ -61,6 +61,9 @@ New workflows are local by default.
 
 - Create new workflows in `local/workflows/`
 - If `local/workflows/` does not exist yet → create it when the workflow is first written
+- For every new workflow file, also create a companion working folder: `local/workspaces/<workflow-slug>/`
+- Use that companion folder as the workflow's default private working area for temp files, generated assets, scratch notes, and other per-workflow artifacts when they should live alongside the workflow
+- Treat `local/workspaces/<workflow-slug>/` as private writable space for that workflow. Agents should create and update files there without asking the user for extra permission on each write.
 - Register new local workflows in `local/manifest.toml`
 - Do not add local-only workflows to `shared/manifest.md`
 - Only when the user explicitly says "publish", "release", or "share" a workflow → move it to `shared/workflows/`, register it in `shared/manifest.md`, and treat it as part of the shared system
@@ -563,6 +566,28 @@ If you cannot define a clear scope boundary → the workflow may not be ready to
 
 ---
 
+## Step 3a: Create the Workflow Working Area
+
+After naming the workflow, create its companion working folder in `local/workspaces/` using the same slug as the workflow filename without `.md`.
+
+Example:
+- Workflow file: `local/workflows/customer-research.md`
+- Working folder: `local/workspaces/customer-research/`
+
+The companion working folder is part of the workflow itself, not a separate approval boundary. Once the workflow is being created or used, agents should freely create and update files inside that folder without asking for write permission each time.
+
+Use this folder as the workflow's default private workspace for:
+- scratch files
+- temporary assets
+- generated supporting files
+- any other workflow-specific artifacts that should stay grouped with the workflow
+
+Do not register the folder separately in `local/manifest.toml`. The workflow file remains the registry entry.
+
+If the workflow is later published to `shared/workflows/`, keep the private working folder in `local/workspaces/` unless the user explicitly asks to publish the working artifacts too.
+
+---
+
 ## Step 4: Write the Prime Directive (If a Common Failure Mode Exists)
 
 A Prime Directive is the one rule that, if ignored, causes the whole workflow to fail.
@@ -669,6 +694,7 @@ Every workflow file produced by this workflow should follow this skeleton:
 **Recurrence**: [e.g., Every weekday (Sun–Thu) at 08:00 — omit if not recurring]
 **Input model**: [per-run / queue:drip / queue:drip+approval / queue:burst(N) / queue:batch — omit if not recurring]
 **Output folder**: [e.g., workspace/ or /path/to/folder — omit if no file output]
+**Working folder**: [e.g., local/workspaces/<workflow-slug>/ — default writable area for workflow-specific temp files and assets; no extra per-write permission prompt]
 
 **This workflow covers:** [scope]
 **This workflow does NOT cover:** [out-of-scope, with redirects]
@@ -755,9 +781,10 @@ If any answer is no → fix it before publishing.
 ## After Creating the Workflow
 
 1. Save the new workflow in `local/workflows/` by default
-2. Register it in `local/manifest.toml`
-3. If it replaces a scattered process in project-level docs → link back from those docs
-4. If the user later says to publish, release, or share it:
+2. Create the companion working folder in `local/workspaces/<workflow-slug>/` and treat it as pre-approved writable space for that workflow
+3. Register it in `local/manifest.toml`
+4. If it replaces a scattered process in project-level docs → link back from those docs
+5. If the user later says to publish, release, or share it:
    - move it to `shared/workflows/`
    - update `local/manifest.toml` to remove the local-only entry or mark it as shared
    - add it to `shared/manifest.md` under **Workflow Inference** with trigger phrases

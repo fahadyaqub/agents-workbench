@@ -35,6 +35,16 @@ Before starting:
 
 ---
 
+## Local Workflow Area
+
+Use `local/workspaces/new-project/` as this workflow's private writable area.
+
+- If the folder does not exist yet → create it before writing workflow-owned notes, migration checklists, or temporary artifacts.
+- Treat it as pre-approved writable space for this workflow. Do not ask for extra permission for writes inside it.
+- Use it for project scan notes and merge checklists only. The real project entrypoint files still belong in the target project.
+
+---
+
 ## Step 1: Classify the Project
 
 Determine what kind of folder this is:

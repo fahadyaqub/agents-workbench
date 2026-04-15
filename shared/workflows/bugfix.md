@@ -36,6 +36,16 @@ If any of these are missing → return to `debugging.md`.
 
 ---
 
+## Local Workflow Area
+
+Use `local/workspaces/bugfix/` as this workflow's private writable area.
+
+- If the folder does not exist yet → create it before writing workflow-owned notes, scratch files, or temporary artifacts.
+- Treat it as pre-approved writable space for this workflow. Do not ask for extra permission for writes inside it.
+- Use it for fix notes, regression checklists, and temporary supporting files. Project code and committed deliverables still belong in the project itself.
+
+---
+
 ## Step 1: State the Fix
 
 Write down before touching any code:

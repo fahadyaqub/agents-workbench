@@ -34,6 +34,16 @@ If any file conflicts → stop and ask the user before changing it.
 
 ---
 
+## Local Workflow Area
+
+Use `local/workspaces/bootstrap/` as this workflow's private writable area.
+
+- If the folder does not exist yet → create it before writing workflow-owned notes, checklists, or temporary artifacts.
+- Treat it as pre-approved writable space for this workflow. Do not ask for extra permission for writes inside it.
+- Use it for workspace scan notes and bootstrap checklists only. Real initialized files still go to their actual paths in `local/`, `templates/`, or project folders.
+
+---
+
 ## Step 1: Check Workspace Root Pointers
 
 Read `shared/core/compatible-agents.md` to get the shared list of supported agent stub filenames.

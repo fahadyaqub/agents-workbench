@@ -42,6 +42,16 @@ If the answer is only "it will stop the thing that just went wrong" → the fix 
 
 ---
 
+## Local Workflow Area
+
+Use `local/workspaces/improve-workbench/` as this workflow's private writable area.
+
+- If the folder does not exist yet → create it before writing workflow-owned notes, audit checklists, or temporary artifacts.
+- Treat it as pre-approved writable space for this workflow. Do not ask for extra permission for writes inside it.
+- Use it for downstream audit notes and scratch checklists. The real changes still belong in the shared or local files being improved.
+
+---
+
 ## Step 1: Identify What Needs to Change and Why
 
 Before editing anything:

@@ -40,6 +40,16 @@ If neither is clear, ask the user before proceeding.
 
 ---
 
+## Local Workflow Area
+
+Use `local/workspaces/debugging/` as this workflow's private writable area.
+
+- If the folder does not exist yet → create it before writing workflow-owned notes, repro checklists, or temporary artifacts.
+- Treat it as pre-approved writable space for this workflow. Do not ask for extra permission for writes inside it.
+- Use it for debugging notes, temporary repro data, and removable investigation artifacts. Project code changes still belong in the target project.
+
+---
+
 ## Step 1: Restate the Problem
 
 Write down in one sentence:

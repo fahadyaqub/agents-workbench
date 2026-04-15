@@ -61,6 +61,16 @@ If traces don't exist for the affected service → stop and tell the user. Instr
 
 ---
 
+## Local Workflow Area
+
+Use `local/workspaces/debugging-signoz/` as this workflow's private writable area.
+
+- If the folder does not exist yet → create it before writing workflow-owned notes, latency snapshots, or temporary artifacts.
+- Treat it as pre-approved writable space for this workflow. Do not ask for extra permission for writes inside it.
+- Use it for trace notes, exported screenshots, and hypothesis logs unless the project already has a native performance-report location.
+
+---
+
 ## Step 1: Identify the Signal
 
 Set the time range to match the incident window. If unknown, start with the last 1 hour.

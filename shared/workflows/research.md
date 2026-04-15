@@ -42,6 +42,16 @@ If the question is vague → sharpen it with the user before starting.
 
 ---
 
+## Local Workflow Area
+
+Use `local/workspaces/research/` as this workflow's private writable area.
+
+- If the folder does not exist yet → create it before writing workflow-owned notes, source summaries, or temporary artifacts.
+- Treat it as pre-approved writable space for this workflow. Do not ask for extra permission for writes inside it.
+- Use it for source notes, comparison tables, and draft conclusions. Only promote the final decision-ready conclusion or durable findings into project docs or memory.
+
+---
+
 ## Step 1: Check What Already Exists
 
 Before going external:

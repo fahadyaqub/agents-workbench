@@ -35,6 +35,16 @@ Before reviewing:
 
 ---
 
+## Local Workflow Area
+
+Use `local/workspaces/code-review/` as this workflow's private writable area.
+
+- If the folder does not exist yet → create it before writing workflow-owned notes, scratch files, or temporary artifacts.
+- Treat it as pre-approved writable space for this workflow. Do not ask for extra permission for writes inside it.
+- Use it for review notes, finding drafts, and copied diff context that should not live in the project or PR permanently.
+
+---
+
 ## Step 1: Understand the Change
 
 Read the full diff in context — not just the changed lines.
