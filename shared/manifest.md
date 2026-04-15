@@ -83,6 +83,7 @@ Load relevant workflow docs based on the task:
 - Creating a new workflow: `shared/workflows/new-workflow.md`
 - Improving or maintaining the workbench itself: `shared/workflows/improve-workbench.md`
 - Adding support for a new AI agent tool: `shared/workflows/new-agent.md`
+- Splitting tasks into separate AI windows/sessions: `shared/workflows/session-handoff.md`
 
 ## Trigger Learning
 
