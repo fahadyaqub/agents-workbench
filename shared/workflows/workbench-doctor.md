@@ -67,7 +67,8 @@ Check these areas explicitly:
 - workspace-root entrypoint files
 - project-group bridge files
 - managed-project compatibility stubs
-- managed-project `AGENTS.md` startup handoff and protected-branch basics
+- managed-project `AGENTS.md` workbench handoff block from `templates/project/AGENTS.template.md`
+- managed-project `AGENTS.md` protected-branch basics
 - `local/manifest.toml` against the actual contents of `local/memory/`, `local/domains/`, `local/agents/`, and `local/workflows/`
 - `local/setup.toml` against the current managed and ignored project list
 - `shared/manifest.md` against the actual shared workflow and domain files
@@ -89,6 +90,7 @@ If the audit contains mechanical drift, fix only the safe, derivable items such 
 - workspace-root entrypoint stubs
 - project-group bridge files
 - project compatibility stubs
+- the missing template handoff block at the top of a project `AGENTS.md`
 - local manifest registry entries
 - stale managed/ignored project lists in `local/setup.toml`
 
@@ -106,7 +108,7 @@ For anything still reported after `--apply`:
 
 Typical manual follow-up:
 
-- project `AGENTS.md` exists but is missing protected branches or a parent-workspace handoff
+- project `AGENTS.md` exists but is missing protected branches or needs a non-trivial handoff merge
 - a shared workflow is missing sections required by the current workflow contract
 - `shared/manifest.md` references do not match the actual shared workflow or domain files
 

@@ -13,30 +13,12 @@ Reading this file, and following its instructions is important before you do any
 
 ## About This File
 
-If `CLAUDE.md`, `CODEX.md`, `GEMINI.md`, or any other agent-specific instruction file exists, it should point here and should not contain separate instructions.
+This file is the single source of truth for **repository-specific instructions**. 
 
-This file should be a real project entrypoint for IDE agents, not just a pointer.
-Keep the most important project facts and safety rules here so tools that load the nearest `AGENTS.md` can work correctly immediately.
-
-## Scope
-
-This file is for repository-specific instructions only.
-Treat the global workbench (located via `~/.agents-workbench`) as the shared workspace overlay, then apply this file for repo-specific behavior.
-This file remains authoritative for project-specific behavior inside this repo.
-
-## Workspace Integration
-
-- Resolve the global workbench path via `~/.agents-workbench`
-- Use the shared workbench guidance from the workspace before applying these project rules
-- If this repository is part of an `agents-workbench` workspace, keep shared conventions in the workbench and keep this file focused on local project needs
-- Do not duplicate large shared instruction blocks here unless IDE compatibility requires a short local summary
-
-## IDE Loading Notes
-
-- Assume some tools will read this file before anything else
-- Put the most important project facts and safety rules near the top
-- Prefer short, explicit instructions over long narrative explanation
-- When in doubt, keep shared rules in the workbench and project-specific rules here
+- **Global rules live in the workbench**: The global workbench handles shared workflows and rules. Do not duplicate shared instruction blocks here.
+- **Local rules live here**: This file is authoritative for local project decisions, tech stack, and constraints.
+- **Redirection**: If `CLAUDE.md`, `CODEX.md`, or similar agent files exist, they should simply contain compatibility stubs pointing here.
+- **Formatting**: Assume IDE tools read this file directly. Keep important safety rules at the top. Prefer short, explicit bullet points.
 
 ## Project Context
 

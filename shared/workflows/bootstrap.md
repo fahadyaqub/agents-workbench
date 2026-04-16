@@ -175,8 +175,7 @@ For each project group folder that contains managed projects:
 
 For each identified project:
 - Check whether `AGENTS.md` exists
-- Check whether `AGENTS.md` contains a reference to `~/.agents-workbench` at the top (the global pointer)
-- Check whether `AGENTS.md` contains an explicit startup gate near the top that tells agents to read `~/.agents-workbench` before any reply, teleport into the workbench, and follow any shared setup gate before normal task work
+- Check whether `AGENTS.md` contains the current workbench handoff block from `templates/project/AGENTS.template.md` near the top
 - Check whether a stub file exists for every agent listed in `shared/core/compatible-agents.md` plus any local-only agent additions registered in `local/manifest.toml`
 - Check whether each stub file contains the mandatory first-action block (a numbered checklist under a heading like "Mandatory First Action") — if missing, update the stub from `templates/project/agent-stub.template.md` without touching any other project files
 - Check whether `AGENTS.md` contains a `## Protected Branches` section
@@ -187,12 +186,10 @@ If projects are missing `AGENTS.md` → ask: "Some projects are missing AGENTS.m
 
 If a project group folder is missing its bridge `AGENTS.md` → create one that points via `~/.agents-workbench`.
 
-If projects have `AGENTS.md` but are missing the global pointer link line → add it near the top of the file without touching any other content. The line should instruct reading `~/.agents-workbench`.
-
 `templates/project/AGENTS.template.md` is the source of truth for the standardized project handoff block at the top of each project `AGENTS.md`.
-When adding or refreshing the parent link, startup gate, or nearby canonical-entrypoint wording in an existing project, copy and merge that top-of-file block from the template. Do not copy wording from another project and do not invent an alternate version.
+When adding or refreshing that workbench handoff block in an existing project, copy and merge that top-of-file block from the template. Do not copy wording from another project and do not invent an alternate version.
 
-If projects have `AGENTS.md` but are missing the explicit startup gate → add it near the top of the file without removing local project guidance. The gate should require agents to read `~/.agents-workbench` before replying, teleport into the workbench, and follow any shared setup gate before normal task work.
+If projects have `AGENTS.md` but are missing that template handoff block → add it near the top of the file without removing local project guidance.
 
 If projects have `AGENTS.md` but it is only a thin pointer:
 - expand it into a short project-level adapter
@@ -254,7 +251,7 @@ Bootstrap is complete when:
 - All setup items in `local/setup.toml` are marked `complete` or `ignored`
 - The scan date and project lists are recorded in `local/setup.toml`
 - Every project group folder that contains managed projects has an `AGENTS.md` bridge to the global pointer
-- Every managed project's `AGENTS.md` contains a reference to `~/.agents-workbench` at the top
+- Every managed project's `AGENTS.md` contains the current workbench handoff block from `templates/project/AGENTS.template.md` near the top
 - Every managed project's `AGENTS.md` defines protected branches (or explicitly states workspace defaults apply)
 - Every managed project's shared and local agent stub files contain the mandatory first-action block
 - The workspace root shared and local stub files contain the mandatory first-action block using the workspace-root format

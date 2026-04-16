@@ -71,6 +71,8 @@ If `local/agents/` does not exist yet → create it when first needed.
 ## Step 3: Apply the Private Support
 
 For the current user's workspace only:
+- before adding stubs to any managed project, verify that the project's `AGENTS.md` still contains the current workbench handoff block from `templates/project/AGENTS.template.md`
+- if that block is missing, merge it near the top without disturbing the project's own instructions
 - create the stub file in the workspace root if needed
 - create the stub file in managed projects where the user wants it
 - treat those local stubs as fully supported and usable immediately
@@ -93,6 +95,7 @@ Simply copy the exact contents of `templates/project/agent-stub.template.md`. Do
 
 - A local record exists under `local/agents/`
 - Local stub support exists where the user wants it in their workspace
+- Managed projects receiving new stubs still contain the template workbench handoff block in `AGENTS.md`
 - If published: `shared/core/compatible-agents.md` is updated
 - If published: `templates/project/[FILENAME].template.md` exists
 - If published: `bootstrap.md` and `new-project.md` are updated to include the new file in checks
