@@ -15,61 +15,56 @@ git clone https://github.com/fahadyaqub/agents-workbench.git
 Open your AI agent, and say:
 > *"Setup the workbench in {your workspace path}"*
 
-The agent will automatically scan your directories, plant lightweight compatibility stubs in your projects, and initialize your private configuration. You're done.
+The agent will automatically scan your directories, plant lightweight compatibility stubs in your projects, and initialize your private configuration.
 
-## What It Does
+## Key Features
 
-- **Agent Agnostic:** Works flawlessly with Claude, Gemini, ChatGPT, or any future agent tool. It dictates the behavior, not the platform.
-- **Single Source of Truth:** Eliminates scattered `.md` files by replacing them with global pointers. Your instructions and memories live in one place.
-- **Natural Language Routing:** No rigid vocabulary or slash commands. Say what you need (e.g., "design social media campaign around this" or "design a software product feature"), and the agent autonomously routes to the correct automated workflow.
-- **Private-First:** Experimental workflows, memory, and scratchpads live in a private local sandbox. Only proven workflows are promoted to the shared team repository.
-- **Safe by Default:** Configures global safety guardrails (like protected branches or read-only folders) so agents never blindly overwrite production files.
+- **Agent Agnostic:** Works flawlessly with Claude, Gemini, ChatGPT, or any future tool.
+- **Single Source of Truth:** Eliminates scattered `.md` files by replacing them with global pointers.
+- **Explain Once, Execute Everywhere:** Instead of writing out a complex, multi-step prompt every time you start a new task, you define that workflow once. Every agent immediately knows how to perform that exact sequence across all of your projects.
 
-## How Domains Work
+## Key Components
 
-Domains define the *mindset* and *rules* an agent should adopt for a specific kind of work. When a task comes in, the agent infers the domain and loads the matching file.
-
-For example, the workbench might contain domains like:
-- `product-management.md` (Strategy, roadmaps, requirement gathering)
-- `marketing.md` (Positioning, campaigns, copywriting)
-- `finance.md` (Budgets, pricing, unit economics)
-- `software-engineering.md` (Implementation, debugging, code quality)
-- `creative-arts.md` (Digital art, video, content production)
-
-An agent uses these domains to know exactly how to think and what judgment to apply without you having to prompt it from scratch.
-
-## Examples
-
-Because the system runs on natural language triggers instead of strict terminal commands, you can just speak plainly:
+**1. Workflows (Task Execution)**
+The workbench relies on automated workflows triggered via plain conversational language instead of strict slash commands:
 
 | Instead of... | Just tell your agent... |
 |---|---|
 | `/debug` | "Figure out why the site is down" or "Debug the login issue" |
 | `/plan` | "Let's plan the Q3 roadmap" or "How should we approach this launch?" |
-| `/research` | "Compare X vs Y" or "What are the market options for X?" |
+| `/design` | "Design a social media campaign" or "Design a software product feature" |
 
-If a phrase isn't recognized, the agent finds the closest workflow, executes it, and saves your phrase to its trigger list so it understands you perfectly next time.
+If a phrase isn't recognized, the agent routes to the closest workflow and saves your exact wording so it understands you perfectly next time.
 
-## How to Use It
+**2. Domains (Agent Mindsets)**
+Behind the scenes, agents dynamically load domain files (e.g., `finance.md`, `marketing.md`, `software-engineering.md`) to adopt the correct mindset before acting. This prevents you from writing massive prompts every time you switch disciplines.
 
-Beyond asking agents to perform regular tasks using the shared intelligence of the workbench, you can directly ask them to expand the workbench's capabilities:
+**3. Local vs. Shared Scopes**
+Everything starts private. Experimental workflows, memories, and scratchpads live in your `local/` sandbox. Tools are only published to the `shared/` team repository once they are proven.
+
+**4. Compatibility Stubs**
+Agents don't wander. A tiny pointer file in every project continuously redirects any compatible agent back to this global instruction base.
+
+## How to Expand It
+
+Beyond performing regular tasks, you can directly instruct your agent to upgrade the workbench itself:
 
 ### 1. Create a New Workflow
 > *"Create a new workflow for [Task]"*
 
-The agent will scaffold the exact roles needed, determine execution steps, set up tools, and drop a fully runnable workflow directly into your private `local/workflows/` directory.
+The agent scaffolds the execution steps, sets up tools, and drops a runnable workflow directly into your private `local/` folder.
 
 ### 2. Add Support for a New Agent
 > *"Add [Agent Name] to compatible agents"*
 
-Instantly generates the compatibility stubs that tie your new agent tool to the global instruction set across all the projects in your workspace.
+Instantly generates the compatibility stubs that tie your new agent software to the global registry.
 
 ### 3. Run Doctor (Update the Workbench)
 > *"Run the workbench doctor"*
 
-If you move files around, install a fresh project, or change folder structures, the doctor audits the workspace drift and safely repairs all the global pointers so your agents never get lost.
+If you move files around or install fresh repositories, the doctor audits and safely repairs all your global project pointers.
 
 ### 4. Share and Publish Workflows
 > *"Publish the local workflow [Name]"*
 
-All new workflows, domains, and memory default to private isolation. Once you prove that a local workflow is powerful, tell the agent to publish it. It will promote the asset to the `shared/` directory, exposing it to the rest of the team.
+Promotes a local workflow from your private sandbox into the `shared/` directory, surfacing it for the rest of your team.
