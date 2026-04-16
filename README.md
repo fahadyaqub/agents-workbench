@@ -146,7 +146,7 @@ It packages:
 - `CLAUDE.md`, `GEMINI.md`, `CODEX.md` are compatibility stubs — each agent reads its native file, which redirects here
 - teammates clone this repo into their workspace folder alongside their other projects
 - setup creates the same stub files in the workspace root and every project folder
-- if repos live inside a project-group folder, setup creates a bridge `AGENTS.md` in that folder so child repos can always hand off to `../AGENTS.md`
+- if repos live inside a project-group folder, setup creates a bridge `AGENTS.md` in that folder to ensure agents are directly routed to the global workbench
 - `shared/` contains the shared system
 - `templates/` contains starter files for local setup and project bootstrap
 - `local/` is reserved for per-user local files and is intentionally not committed
