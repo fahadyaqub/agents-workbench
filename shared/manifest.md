@@ -70,7 +70,7 @@ Use `local/manifest.toml` as the private registry of which local workflows and a
 
 Load relevant workflow docs based on the task:
 - Debugging and bug triage (general): `shared/workflows/debugging.md`
-- Debugging with Sentry: `shared/workflows/debugging-sentry.md`
+- Debugging with Sentry: `shared/workflows/debugging-sentry/debugging-sentry.md`
 - Debugging with SigNoz (performance, traces, latency): `shared/workflows/debugging-signoz.md`
 - Bug fixes: `shared/workflows/bugfix.md`
 - Reviews and audit work: `shared/workflows/code-review.md`
@@ -128,6 +128,16 @@ Add the unmatched phrase to the relevant workflow's `## Trigger Phrases` section
 3. Tell the user what changed and show the full updated trigger list for that workflow
 
 Keep added phrases natural — match how the user actually said it, not a formal rephrasing of it.
+
+## Tool & Agent Sandboxing
+
+- Avoid spreading proprietary hidden folders (like `.cursor`, `.claude`, etc.) across the machine or project root when possible.
+- If an agent tool (Claude Desktop, OpenCode, Aider, etc.) supports overriding its default data directory, configure it on initialization to store its working files, temporary configs, and local state inside `local/agents/<tool-name>/`.
+- Do not rely on native tool-specific memory capabilities to share context between *different* agents (e.g. OpenCode cannot natively read Cursor's internal database). Instead, use the workbench's `local/memory/` and `shared/memory/` as the universal, tool-agnostic knowledge bridge.
+
+## Project Metadata Sandboxing
+
+- Use `local/projects/<project-name>/` to store local metadata, local-only run states, or tool-generated configurations that apply to a specific project but shouldn't be committed to that project's repository.
 
 ## Memory Rules
 

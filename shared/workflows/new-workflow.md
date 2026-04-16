@@ -649,6 +649,15 @@ Good: "Read the stack trace. Run `git log --since='<date>' --oneline`. Check for
 
 ---
 
+## Step 7b: Enforce Workbench Conventions (Paths & Memory)
+
+When writing the workflow, adhere strictly to these two rules:
+
+1. **Relative Paths**: All paths to scripts, other workflows, or local resources MUST be relative — never absolute. For instance, if a workflow executes a script located alongside it, specify the execution path relative to the workflow directory (e.g., `node scripts/fetch-script.js` instead of `/Users/name/work/.../scripts/fetch-script.js`).
+2. **Local Memory Isolation**: Workflows should not write their active state or generated tracking data into a target project's `MEMORY.md` file. Active workflows must maintain their state in the workbench's `local` memory area against the workflow itself: `local/memory/<workflow-slug>.md` (e.g., `local/memory/debugging-sentry.md`).
+
+---
+
 ## Step 8: Add Cross-References
 
 - **Before this workflow**: if another workflow must run first, say so at the top
