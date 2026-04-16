@@ -88,6 +88,7 @@ A few workflows are central to how the workbench itself grows and is maintained:
 | `new-project.md` | Adds a new project to the workspace — creates the project's `AGENTS.md` and all agent stubs, and makes sure agents working on the project have automatic access to this workbench and knowledgebase |
 | `new-workflow.md` | Creates a new workflow — handles domain/role setup, platform research, scheduling, tooling, and end-to-end process mapping |
 | `new-agent.md` | Adds support for a new AI agent tool across all projects in the workspace with one command |
+| `workbench-doctor.md` | Audits the workbench for drift after updates and repairs safe setup mismatches |
 | `improve-workbench.md` | Improves or maintains the workbench itself — adding guidance, fixing gaps, updating memory |
 
 These are the starting points for extending the system. Everything else in `shared/workflows/` covers day-to-day tasks (debugging, research, planning, code review, etc.) and user-created workflows built on top.
