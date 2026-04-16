@@ -20,8 +20,8 @@ The agent will automatically scan your directories, plant lightweight compatibil
 ## Key Features
 
 - **Agent Agnostic:** Works flawlessly with Claude, Gemini, ChatGPT, or any future tool.
-- **Single Source of Truth:** Eliminates scattered `.md` files by replacing them with global pointers.
-- **Explain Once, Execute Everywhere:** Instead of writing out a complex, multi-step prompt every time you start a new task, you define that workflow once. Every agent immediately knows how to perform that exact sequence across all of your projects.
+- **Single Source of Truth:** Shared knowledge and memory across all agents. Eliminates scattered `.md` files by replacing them with one working space.
+- **Explain Once, Execute Everywhere:** Instead of writing out a complex, multi-step prompt every time for repetetive tasks, you define that workflow once. Every agent immediately knows how to perform that exact sequence across all of your projects using a simple phrases.
 
 ## Key Components
 
@@ -34,37 +34,28 @@ The workbench relies on automated workflows triggered via plain conversational l
 | `/plan` | "Let's plan the Q3 roadmap" or "How should we approach this launch?" |
 | `/design` | "Design a social media campaign" or "Design a software product feature" |
 
-If a phrase isn't recognized, the agent routes to the closest workflow and saves your exact wording so it understands you perfectly next time.
+If there isn't an existing workflow that takes care of your current task, you can easily create a new one using a simple phrase:
+> *"Create a new workflow for [Task]"*
+
+The agent scaffolds the execution steps, sets up tools, and drops a runnable workflow directly into your private `local/` folder.
 
 **2. Domains (Agent Mindsets)**
 Behind the scenes, agents dynamically load domain files (e.g., `finance.md`, `marketing.md`, `software-engineering.md`) to adopt the correct mindset before acting. This prevents you from writing massive prompts every time you switch disciplines.
 
 **3. Local vs. Shared Scopes**
-Everything starts private. Experimental workflows, memories, and scratchpads live in your `local/` sandbox. Tools are only published to the `shared/` team repository once they are proven.
-
-**4. Compatibility Stubs**
-Agents don't wander. A tiny pointer file in every project continuously redirects any compatible agent back to this global instruction base.
-
-## How to Expand It
-
-Beyond performing regular tasks, you can directly instruct your agent to upgrade the workbench itself:
-
-### 1. Create a New Workflow
-> *"Create a new workflow for [Task]"*
-
-The agent scaffolds the execution steps, sets up tools, and drops a runnable workflow directly into your private `local/` folder.
-
-### 2. Add Support for a New Agent
-> *"Add [Agent Name] to compatible agents"*
-
-Instantly generates the compatibility stubs that tie your new agent software to the global registry.
-
-### 3. Run Doctor (Update the Workbench)
-> *"Run the workbench doctor"*
-
-If you move files around or install fresh repositories, the doctor audits and safely repairs all your global project pointers.
-
-### 4. Share and Publish Workflows
+Everything starts private. Experimental workflows, memories, and scratchpads live in your `local/` sandbox. Tools are only published to the `shared/` team repository once they are proven:
 > *"Publish the local workflow [Name]"*
 
-Promotes a local workflow from your private sandbox into the `shared/` directory, surfacing it for the rest of your team.
+This promotes a local workflow from your private sandbox into the `shared/` directory, surfacing it for the rest of your team.
+
+**4. Compatibility Stubs & Agents**
+Agents don't wander. A tiny pointer file in every project continuously redirects any compatible agent back to this global instruction base. If you want to use a brand new AI tool across your projects:
+> *"Add [Agent Name] to compatible agents"*
+
+This instantly generates the compatibility stubs that tie your new agent software to the global registry across all your projects.
+
+**5. System Health**
+If you move files around, install fresh repositories, or change folder structures, the global workspace pointers could drift. You can fix this instantly:
+> *"Run the workbench doctor"*
+
+The doctor audits the workspace drift and safely repairs all your global project pointers so your agents never get lost.
