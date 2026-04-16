@@ -25,7 +25,7 @@ The agent will automatically scan your directories, plant lightweight compatibil
 
 ## Key Components
 
-**1. Workflows (Task Execution)**
+### 1. Workflows (Task Execution)
 The workbench relies on automated workflows triggered via plain conversational language instead of strict slash commands:
 
 | Instead of... | Just tell your agent... |
@@ -39,22 +39,22 @@ If there isn't an existing workflow that takes care of your current task, you ca
 
 The agent scaffolds the execution steps, sets up tools, and drops a runnable workflow directly into your private `local/` folder.
 
-**2. Domains (Agent Mindsets)**
+### 2. Domains (Agent Mindsets)
 Behind the scenes, agents dynamically load domain files (e.g., `finance.md`, `marketing.md`, `software-engineering.md`) to adopt the correct mindset before acting. This prevents you from writing massive prompts every time you switch disciplines.
 
-**3. Local vs. Shared Scopes**
+### 3. Local vs. Shared Scopes
 Everything starts private. Experimental workflows, memories, and scratchpads live in your `local/` sandbox. Tools are only published to the `shared/` team repository once they are proven:
 > *"Publish the local workflow [Name]"*
 
 This promotes a local workflow from your private sandbox into the `shared/` directory, surfacing it for the rest of your team.
 
-**4. Compatibility Stubs & Agents**
+### 4. Compatibility Stubs & Agents
 Agents don't wander. A tiny pointer file in every project continuously redirects any compatible agent back to this global instruction base. If you want to use a brand new AI tool across your projects:
 > *"Add [Agent Name] to compatible agents"*
 
 This instantly generates the compatibility stubs that tie your new agent software to the global registry across all your projects.
 
-**5. System Health**
+### 5. System Health
 If you move files around, install fresh repositories, or change folder structures, the global workspace pointers could drift. You can fix this instantly:
 > *"Run the workbench doctor"*
 
