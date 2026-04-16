@@ -44,22 +44,38 @@ Use `local/workspaces/bootstrap/` as this workflow's private writable area.
 
 ---
 
-## Step 1: Check Workspace Root Pointers
+## Step 1: Verify Global Workbench Pointer (Singleton Check)
+
+Before scanning the workspace, the doctor must verify the system global pointer.
+
+Check the contents of the file `~/.agents-workbench` (using an absolute path in the user's home directory).
+
+- If the file **does not exist**:
+  → Create it and write the absolute path of this current `agents-workbench` directory inside it. (e.g. `/Users/name/work/agents-workbench`)
+- If the file **exists but points to a different path**:
+  → **HALT AND ESCALATE.** Tell the user:
+  > *"CONFLICT: Another agents-workbench is actively registered at [Path]. You cannot run two workbenches simultaneously on one machine. To hijack the path and make this current workbench the active one, you must manually update `~/.agents-workbench` to point here."*
+
+Do not proceed with any other bootstrap steps until the pointer matches the current directory.
+
+---
+
+## Step 2: Check Workspace Root Pointers
 
 Read `shared/core/compatible-agents.md` to get the shared list of supported agent stub filenames.
 Then read `local/manifest.toml` to get any local-only agent additions for this user.
 
 Verify the workspace root contains `AGENTS.md` plus a stub file for every shared or local agent supported in this workspace.
 
-If any are missing → create them using the **Workspace-Root Stub Content** from `shared/core/compatible-agents.md`. These stubs point directly to `agents-workbench/AGENTS.md` and include the mandatory first-action block.
+If any are missing → create them by copying the exact contents of `templates/project/agent-stub.template.md`.
 
 If any exist with real content → read them before doing anything. Migrate useful content before replacing.
 
-If any exist as pointer stubs but are missing the mandatory first-action block → update them to use the workspace-root stub format from `shared/core/compatible-agents.md`.
+If any exist as pointer stubs but are missing the mandatory first-action block → update them to match `templates/project/agent-stub.template.md`.
 
 ---
 
-## Step 2: Initialize Local Files
+## Step 3: Initialize Local Files
 
 Check whether `local/manifest.toml` and `local/setup.toml` exist.
 
@@ -74,7 +90,7 @@ If `local/manifest.toml` is missing → initialize it from `templates/local/mani
 
 ---
 
-## Step 3: Work Through Pending Setup Items
+## Step 4: Work Through Pending Setup Items
 
 For each item in `local/setup.toml` with `status = "pending"`:
 
@@ -139,7 +155,7 @@ Once a setup item is marked `complete` or `ignored` → do not prompt for it aga
 
 ---
 
-## Step 4: Scan Projects (if `project_bootstrap` is pending)
+## Step 5: Scan Projects (if `project_bootstrap` is pending)
 
 Scan each immediate child of the workspace root. Classify each as:
 
@@ -154,29 +170,29 @@ Do not recurse beyond two levels without asking the user.
 
 For each project group folder that contains managed projects:
 - ensure the group folder itself contains an `AGENTS.md` bridge file
-- the bridge should point to `../AGENTS.md`
+- the bridge should instruct reading `~/.agents-workbench` rather than relative paths
 - keep it as a bridge only, not a place for project-specific rules
 
 For each identified project:
 - Check whether `AGENTS.md` exists
-- Check whether `AGENTS.md` contains a reference to `../AGENTS.md` at the top (the parent link)
-- Check whether `AGENTS.md` contains an explicit startup gate near the top that tells agents to read `../AGENTS.md` before any reply, continue the pointer chain into the workbench, and follow any shared setup gate before normal task work
+- Check whether `AGENTS.md` contains a reference to `~/.agents-workbench` at the top (the global pointer)
+- Check whether `AGENTS.md` contains an explicit startup gate near the top that tells agents to read `~/.agents-workbench` before any reply, teleport into the workbench, and follow any shared setup gate before normal task work
 - Check whether a stub file exists for every agent listed in `shared/core/compatible-agents.md` plus any local-only agent additions registered in `local/manifest.toml`
-- Check whether each stub file contains the mandatory first-action block (a numbered checklist under a heading like "Mandatory First Action") — if missing, update the stub from the project template in `templates/project/` without touching any other project files
+- Check whether each stub file contains the mandatory first-action block (a numbered checklist under a heading like "Mandatory First Action") — if missing, update the stub from `templates/project/agent-stub.template.md` without touching any other project files
 - Check whether `AGENTS.md` contains a `## Protected Branches` section
 - Check whether `AGENTS.md` contains real project guidance or is only a thin pointer
 - Note any existing workflow or instruction docs
 
 If projects are missing `AGENTS.md` → ask: "Some projects are missing AGENTS.md. Do you want me to add project-level entrypoints where missing?"
 
-If a project group folder is missing its bridge `AGENTS.md` → create one that points to `../AGENTS.md`.
+If a project group folder is missing its bridge `AGENTS.md` → create one that points via `~/.agents-workbench`.
 
-If projects have `AGENTS.md` but are missing the parent link line → add it near the top of the file without touching any other content. The line should point to `../AGENTS.md`.
+If projects have `AGENTS.md` but are missing the global pointer link line → add it near the top of the file without touching any other content. The line should instruct reading `~/.agents-workbench`.
 
 `templates/project/AGENTS.template.md` is the source of truth for the standardized project handoff block at the top of each project `AGENTS.md`.
 When adding or refreshing the parent link, startup gate, or nearby canonical-entrypoint wording in an existing project, copy and merge that top-of-file block from the template. Do not copy wording from another project and do not invent an alternate version.
 
-If projects have `AGENTS.md` but are missing the explicit startup gate → add it near the top of the file without removing local project guidance. The gate should require agents to read `../AGENTS.md` before replying, continue the instruction chain into the workbench, and follow any shared setup gate before normal task work.
+If projects have `AGENTS.md` but are missing the explicit startup gate → add it near the top of the file without removing local project guidance. The gate should require agents to read `~/.agents-workbench` before replying, teleport into the workbench, and follow any shared setup gate before normal task work.
 
 If projects have `AGENTS.md` but it is only a thin pointer:
 - expand it into a short project-level adapter
@@ -197,7 +213,7 @@ After completing or skipping → mark `project_bootstrap` as `complete` in `loca
 
 ---
 
-## Step 5: Audit Entrypoints (if `unified_agent_entrypoint` is pending)
+## Step 6: Audit Entrypoints (if `unified_agent_entrypoint` is pending)
 
 For each project with both `AGENTS.md` and `CLAUDE.md` or `CODEX.md`:
 1. Read all three files
@@ -237,8 +253,8 @@ Bootstrap is complete when:
 - `local/manifest.toml`, `local/setup.toml`, `local/who-i-am.md`, and `local/personal-memory.md` exist
 - All setup items in `local/setup.toml` are marked `complete` or `ignored`
 - The scan date and project lists are recorded in `local/setup.toml`
-- Every project group folder that contains managed projects has an `AGENTS.md` bridge to its parent
-- Every managed project's `AGENTS.md` contains a reference to `../AGENTS.md` at the top
+- Every project group folder that contains managed projects has an `AGENTS.md` bridge to the global pointer
+- Every managed project's `AGENTS.md` contains a reference to `~/.agents-workbench` at the top
 - Every managed project's `AGENTS.md` defines protected branches (or explicitly states workspace defaults apply)
 - Every managed project's shared and local agent stub files contain the mandatory first-action block
 - The workspace root shared and local stub files contain the mandatory first-action block using the workspace-root format

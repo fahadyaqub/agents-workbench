@@ -1,21 +1,19 @@
 # Project Agent Instructions
 
-## First Action
+Use this `AGENTS.md` as the canonical instructions file for this project.
 
-## Mandatory First Action — Before Your First response, including greetings
+## Mandatory First Action — Before Your First Reply, including greetings
 
 Complete these steps before writing any response or starting any task:
 
-Look for the closest "agents-workbench" directory.
-If not found in current working directory, only then look for it in the parent directory, then, if still not found, then look for it in the parent's parent directory.
-Once found, read  `AGENTS.md` inside "agents-workbench" -- and follow every instruction to the letter, without fail. Reading this file, and following its instructions is important before you do anything else. Its a setep file, it will tell you what to do for this specific user. Do not do anything else. Do not respond, do not test or check anything, until you have read, and followed the steps listed in that "AGENTS.md" file 
+1. Read the global pointer file at `~/.agents-workbench` to get the absolute path to the active agent workbench
+2. Once found, read  `AGENTS.md` inside "agents-workbench" and follow every instruction to the letter, without fail. 
 
-----
+Reading this file, and following its instructions is important before you do anything else. Its a setep file, it will tell you what to do for this specific user. Do not do anything else. Do not respond, do not test or check anything, until you have read, and followed the steps listed in that "AGENTS.md" file
 
-## About this file
+## About This File
 
-Use this `AGENTS.md` as the canonical instructions file for this project.
-If `CLAUDE.md`, `CODEX.md` or any other agent specific instruction file exists, they should point here and should not contain separate instructions.
+If `CLAUDE.md`, `CODEX.md`, `GEMINI.md`, or any other agent-specific instruction file exists, it should point here and should not contain separate instructions.
 
 This file should be a real project entrypoint for IDE agents, not just a pointer.
 Keep the most important project facts and safety rules here so tools that load the nearest `AGENTS.md` can work correctly immediately.
@@ -23,13 +21,12 @@ Keep the most important project facts and safety rules here so tools that load t
 ## Scope
 
 This file is for repository-specific instructions only.
-If `../AGENTS.md` exists, read it as shared guidance first.
-Treat that parent file as the shared workspace overlay, then apply this file for repo-specific behavior.
+Treat the global workbench (located via `~/.agents-workbench`) as the shared workspace overlay, then apply this file for repo-specific behavior.
 This file remains authoritative for project-specific behavior inside this repo.
 
 ## Workspace Integration
 
-- Read `../AGENTS.md` if it exists
+- Resolve the global workbench path via `~/.agents-workbench`
 - Use the shared workbench guidance from the workspace before applying these project rules
 - If this repository is part of an `agents-workbench` workspace, keep shared conventions in the workbench and keep this file focused on local project needs
 - Do not duplicate large shared instruction blocks here unless IDE compatibility requires a short local summary

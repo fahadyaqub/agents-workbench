@@ -87,15 +87,7 @@ If the user explicitly says to publish, release, or share this agent support:
 
 Standard stub content:
 
-```markdown
-# Compatibility Stub
-
-Do not add or modify agent instructions in this file.
-
-Use `AGENTS.md` as the single source of truth for all agent guidance in this project.
-
-If this file needs changes, update `AGENTS.md` instead.
-```
+Simply copy the exact contents of `templates/project/agent-stub.template.md`. Do not invent a new stub format.
 
 ## Completion Criteria
 

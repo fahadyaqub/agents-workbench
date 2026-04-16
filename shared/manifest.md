@@ -82,6 +82,7 @@ Load relevant workflow docs based on the task:
 - Creating or expanding a domain file: `shared/workflows/new-domain.md`
 - Creating a new workflow: `shared/workflows/new-workflow.md`
 - Improving or maintaining the workbench itself: `shared/workflows/improve-workbench.md`
+- Workbench health checks, drift repair, and post-update sync: `shared/workflows/workbench-doctor.md`
 - Adding support for a new AI agent tool: `shared/workflows/new-agent.md`
 - Splitting tasks into separate AI windows/sessions: `shared/workflows/session-handoff.md`
 
@@ -103,7 +104,7 @@ Only consider routing to a workflow if the message contains a strong process sig
 - **Research**: "research", "compare", "evaluate options", "what are the options for"
 - **Setup**: "set up", "bootstrap", "initialize", "add to the workspace"
 - **Commit / push**: "commit", "push", "land this change", "is this ready to commit"
-- **Workbench**: "create a workflow", "add a domain", "improve the workbench"
+- **Workbench**: "create a workflow", "add a domain", "improve the workbench", "run doctor", "workbench doctor", "check workbench health"
 
 If a signal is present and the message clearly describes starting a process, infer the closest workflow, apply it, and tell the user briefly: *"Treating this as a [workflow name] task."*
 

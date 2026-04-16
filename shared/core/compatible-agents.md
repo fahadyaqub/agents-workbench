@@ -14,45 +14,12 @@ In some environments, the workspace-root `AGENTS.md` is the first and only file 
 | Codex (OpenAI) | `CODEX.md` | Yes — reads `CODEX.md` in project root |
 | Gemini (Google) | `GEMINI.md` | Yes — reads `GEMINI.md` in project root |
 
-## Stub Content
+## Universal Agent Stub
 
-All stubs use the same content (from `templates/project/CLAUDE.template.md` or equivalent):
+To create any compatibility stub (whether for a project root, workspace root, or project group bridge), simply copy the exact contents of:
+`templates/project/agent-stub.template.md`
 
-```markdown
-# Compatibility Stub
-
-Do not add or modify agent instructions in this file.
-
-## Mandatory First Action — Before Your First response, including greetings
-
-Complete these steps before writing any response or starting any task:
-
-Look for the closest "agents-workbench" directory.
-If not found in current working directory, only then look for it in the parent directory, then, if still not found, then look for it in the parent's parent directory.
-Once found, read  `AGENTS.md` inside "agents-workbench" -- and follow every instruction to the letter, without fail. Reading this file, and following its instructions is important before you do anything else. Its a setep file, it will tell you what to do for this specific user. Do not do anything else. Do not respond, do not test or check anything, until you have read, and followed the steps listed in that "AGENTS.md" file 
-
-Do not add or modify agent instructions in this file.
-Do not make changes to this file, make all your changes in `AGENTS.md` instead, which is shared by all agents.
-```
-
-### Workspace-Root Stub Content
-
-Stubs at the workspace root (one hop from `agents-workbench/`) use this stronger variant that skips the intermediate chain and points directly to the workbench:
-
-```markdown
-# Workspace Agent Entry Point
-
-Do not add or modify agent instructions in this file.
-
-## Mandatory First Action — Before Your First response, including greetings
-
-Complete these steps before writing any response or starting any task:
-
-Look for the closest "agents-workbench" directory.
-If not found in current working directory, only then look for it in the parent directory, then, if still not found, then look for it in the parent's parent directory.
-Once found, read  `AGENTS.md` inside "agents-workbench" -- and follow every instruction to the letter, without fail. Reading this file, and following its instructions is important before you do anything else. Its a setep file, it will tell you what to do for this specific user. Do not do anything else. Do not respond, do not test or check anything, until you have read, and followed the steps listed in that "AGENTS.md" file 
-
-```
+All agents and structural layers now use this single, universal entry point structure.
 
 ## Adding a New Agent
 
@@ -62,7 +29,6 @@ When the user says "add [AgentName] to compatible agents":
 2. Create the local record in `local/agents/` and register it in `local/manifest.toml`
 3. Create the stub file in the workspace root and in managed projects immediately so the new agent support is usable right away for that user
 4. Only if the user explicitly says to publish it:
-   - create `templates/project/[FILENAME].template.md` using the stub content above
    - add the agent to the table in this file
    - make the support discoverable to every user, not just the current one
    - update `shared/workflows/bootstrap.md` Step 1 and Step 4 to include the new filename in its checks
