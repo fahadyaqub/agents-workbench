@@ -8,15 +8,20 @@
 
 ## Trigger Phrases
 
+**To create a new workflow:**
 - "create a new workflow"
 - "add a workflow for [X]"
 - "we need a workflow for [X]"
 - "there's no workflow for [X]"
 - "build a workflow for [X]"
 - "write a workflow for [X]"
+
+**To publish an existing local workflow:**
 - "publish this workflow"
 - "share this workflow"
 - "release this workflow"
+
+*(Note: If the user asks you to "publish" or "share" an existing workflow, do not try to build a new one from scratch! Skip directly to **Phase 4, Step 20** and follow the instructions to move it to the shared folder).*
 
 ---
 
@@ -55,185 +60,63 @@ If the task is genuinely new and recurring → proceed.
 
 ---
 
-## Default Location and Publishing Model
+## Scope & Location
 
-New workflows are local by default.
-
-- Create new workflows in `local/workflows/`
-- If `local/workflows/` does not exist yet → create it when the workflow is first written
-- For every new workflow file, also create a companion working folder: `local/workspaces/<workflow-slug>/`
-- Use that companion folder as the workflow's default private working area for temp files, generated assets, scratch notes, and other per-workflow artifacts when they should live alongside the workflow
-- Treat `local/workspaces/<workflow-slug>/` as private writable space for that workflow. Agents should create and update files there without asking the user for extra permission on each write.
-- Register new local workflows in `local/manifest.toml`
-- Do not add local-only workflows to `shared/manifest.md`
-- Only when the user explicitly says "publish", "release", or "share" a workflow → move it to `shared/workflows/`, register it in `shared/manifest.md`, and treat it as part of the shared system
-
-Local-first workflow creation is the default because local scope and shared scope should behave the same way for the user; the only difference is who receives the workflow
+New workflows are private by default. Create them in `local/workflows/` alongside a private temp space (`local/workspaces/<workflow-slug>/`). Only move to `shared/workflows/` if explicitly told to publish.
 
 ---
 
-## Step 1: Determine the Domain and Roles
+## Phase 1: Research and Planning
 
-**Do not start from the existing domain list.** Determine what is correct first, then check if it exists.
+### Step 1: Determine the Domain and Roles
 
-### 1a — Identify the domain independently
+Do not start by vaguely matching against the existing domain list. Determine what is correct first, then check if it exists:
 
-Describe the task in plain language: *who does this work in the real world, and what field do they belong to?*
+1. **Identify the Domain:** Based on the task, what field or industry does this naturally belong to? Check `shared/domains/`. If a highly similar domain exists, use it. If not, follow `new-domain.md` to create one (or build it inline if it's simple enough).
+2. **Identify the Roles:** What specific real-world expertise is required (think distinct job titles)? Check your chosen domain file. If the roles already exist, use them. If they are missing, define them from first-principles or brief research and inject them into the domain file before continuing.
+3. **Propose to the User:** Before writing the workflow, confirm the domain and roles with the user, providing a one-line reason for your selections.
 
-Examples:
-- "A teacher preparing lesson material" → domain: Education / Academic
-- "A creator making AI-generated videos for social media" → domain: Creative Arts / Digital Media
-- "A developer debugging a production bug" → domain: Software Engineering
-
-Name the domain without looking at `shared/domains/` yet.
-
-### 1b — Identify the roles independently
-
-List the specific real-world roles that would perform this work. Think in terms of job titles, not agent names:
-
-- What expertise does this person need?
-- What judgment calls are theirs to make?
-- Are there 2–3 distinct specialists, or is this one person's job?
-
-Write these down before opening any domain file.
-
-### 1c — Resolve the domain
-
-Check `shared/domains/` for the domain you named.
-
-**If the domain file exists:** proceed to 1d.
-
-**If the domain file does not exist:**
-1. Follow `new-domain.md` to create it — or create it inline if it is simple enough (under 60 lines)
-2. Seed it with the roles identified in 1b
-3. Register it in `shared/manifest.md` under Domain Inference
-4. Continue with this workflow
-
-### 1d — Resolve the roles
-
-Check whether each role from 1b exists in the domain file.
-
-**If the role exists:** use it as-is.
-
-**If the role is missing from the domain file:**
-1. Check `shared/references.md` for source material relevant to this role or domain
-2. If a reference exists → read it, extract the role's key behaviors, add the role to the domain file
-3. If no reference exists:
-   - Search the web for: *"[role name] prompt guidelines"*, *"[role name] AI agent instructions"*, or *"[domain] expert behavior for AI"*
-   - If useful sources are found → add them to `shared/references.md` under a matching heading, then extract the role
-   - If nothing reliable is found → define the role from first principles: what would a human expert in this role do, and what judgment do they apply?
-4. Add the new role to the domain file before continuing
-
-### 1e — Propose to the user
-
-Present the resolved domain and roles with a one-line reason for each:
-
-> "For this workflow the domain is **Creative Arts / Digital Media**, and I'd suggest:
-> - **Generative AI Visual Creator** — owns the creative concept and AI generation step
-> - **Social Media Manager** — owns platform-specific formatting and posting
->
-> I've added **Generative AI Visual Creator** as a new role to `creative-arts.md` since it didn't exist. Does this look right, or should we adjust?"
-
-Wait for confirmation before writing the workflow file.
-
-Once confirmed → add the `**Roles**:` line at the top of the new workflow file.
+Once approved, add the `**Roles**:` line at the top of the new workflow file.
 
 ---
 
-## Step 1.5: Research and Recommend Platforms
+### Step 2: Recommend Platforms (If Distributing Content)
 
-Before writing a single step, determine which platforms are optimal for this workflow's output — independently of what the user mentioned.
+If the workflow involves publishing material to an audience (social media, newsletters, marketplaces), determine the optimal platform independently of the user's initial assumptions.
 
-This step applies whenever the workflow publishes, distributes, or reaches an audience through any channel (social media, email, marketplaces, messaging apps, etc.).
-
-### Research first
-
-For the content type this workflow produces, answer:
-- Which platforms have the highest organic reach for this content type right now?
-- Which platforms have the most relevant audience for this specific user?
-- Which platforms are easiest to get started on (algorithm friendliness for new accounts, free vs. paid reach, posting friction)?
-- Are there non-obvious platforms the user likely hasn't considered?
-
-Base this on what is actually true about platform dynamics — not generic advice. A short funny cat video and a farmer's produce post have different optimal platforms.
-
-### Validate and expand what the user said
-
-If the user named specific platforms → validate that choice:
-- If it's a good fit → confirm it and explain briefly why
-- If there's a clearly better option they missed → say so directly with a concrete reason
-
-Do not passively accept a suboptimal choice. If the user said "YouTube" for short cat videos, say:
-
-> *"YouTube is solid for building a long-term library, but for short funny cat clips, Instagram Reels and TikTok have 3–5x higher organic reach for new accounts — the algorithm actively pushes content to non-followers. I'd strongly recommend adding both. Here's what that changes in the workflow..."*
-
-If the user said nothing about platforms → propose the best 2–3 options and explain the tradeoff between them. Let the user choose, but make a clear recommendation.
-
-### Confirm before proceeding
-
-Present the final platform list with a one-line reason for each. Wait for confirmation. The platform decision affects roles, tools, and credentials — settle it before writing any steps.
+- **Research First:** Identify platforms with the highest organic reach and highest audience relevance for the specific content.
+- **Validate:** If the user named a suboptimal platform, suggest a superior alternative with concrete rationale. If no platform was named, propose 2-3 options and state the tradeoffs.
+- **Confirm:** Ask the user to confirm the final platform strategy before proceeding.
 
 ---
 
-## Step 1.6: Map the Full Process and Recommend Adjacent Workflows
+### Step 3: Map the Full User Journey
 
-Before writing the workflow, think one level wider: **what happens before this workflow starts, and what happens after it finishes?**
+Before writing the workflow, zoom out. What happens *before* this workflow starts, and what happens *after* it succeeds? Identify any missing steps (e.g., building a marketing workflow when there is no checkout system in place).
 
-A workflow that generates great content but leaves the user with no way to handle what comes next has only done half the job.
+- **If covered externally:** Document it in the boundary scope and proceed.
+- **If missing but non-blocking:** Offer to build an adjacent workflow next.
+- **If missing and blocking:** Pause building. You must recommend setups to resolve the blocker first.
 
-### Map the full user journey
-
-Sketch the end-to-end flow in plain language:
-
-- **Before:** What does the user need to have in place for this workflow to work? (inventory, source material, a storefront, a way to take payment)
-- **During:** What this workflow does (the part you're building)
-- **After:** What happens when this workflow succeeds? (someone buys, someone DMs, someone signs up, a class shows up)
-
-Identify any gaps — steps in the journey that have no workflow, no tool, and no plan.
-
-### Ask about critical gaps before proceeding
-
-If a gap is critical — meaning the workflow cannot fulfill its purpose without it — surface it to the user before writing anything:
-
-> *"Creating posts to sell your produce is great, but when someone sees the post and wants to buy — what happens? Do you have a way for them to place an order, or does everything come through DMs?"*
-
-Based on the answer, take one of these paths:
-
-**If the user has it covered** → note it in the scope boundary ("order handling is out of scope — handled separately") and proceed.
-
-**If the user doesn't have it covered but it's not blocking** → flag it and offer to create an adjacent workflow after this one:
-> *"You don't have an order-handling workflow yet. I'd recommend creating one after this — it would handle incoming DMs and turn them into confirmed orders. Want me to add that to the list?"*
-
-**If the user doesn't have it covered and it IS blocking** (e.g., no storefront, no checkout, no way to take money):
-> *"Before we build a marketing workflow, you need somewhere to actually send buyers. A few options: a simple WhatsApp Business catalog, a free Shopify store, a link-in-bio page with a form. Each takes a different amount of setup. Which direction fits you best — or would you like me to recommend one?"*
-
-Do not proceed to build a marketing workflow for a product that has no sales path. The marketing will work and produce nothing.
-
-### Log recommended adjacent workflows
-
-After resolving gaps, create a short list of workflows to recommend or create next:
-
-```
-## Adjacent Workflows (recommended)
-- [ ] order-handling.md — responds to DMs and pings, confirms orders, tracks them
-- [ ] storefront-setup.md — one-time setup of a simple sales channel
-- [ ] inventory-update.md — updates the seasonal queue when availability changes
-```
+At the bottom of the generated workflow, include an `## Adjacent Workflows (recommended)` list of the non-blocking gaps you identified.
 
 Add this list to the bottom of the workflow file under a `## Recommended Next Workflows` section. It is a living list — the user can trigger any of these by name when ready.
 
 ---
 
-## Step 2: Write It as a Human SOP First
+## Phase 2: Architecture and Setup
+
+### Step 4: Write It as a Human SOP First
 
 Before structuring anything, describe how a human would do this task from start to finish.
 Write it conversationally — what would you tell a new team member?
 
 This step surfaces the real decision points, tools, and sequence before you formalize anything.
-Discard this draft after Step 3. It is thinking material, not the final file.
+Discard this draft after Step 10. It is thinking material, not the final file.
 
 ---
 
-## Step 2a: Ask About Output Storage (If the Workflow Produces Files)
+### Step 5: Ask About Output Storage (If the Workflow Produces Files)
 
 Determine whether the workflow generates any output artifact — a document, report, lesson, summary, or other exported file.
 
@@ -252,117 +135,17 @@ Embed the resolved output path and folder-naming convention directly into the wo
 
 ---
 
-## Step 2c: Identify External Tools and Integrations
+### Step 6: Identify External Tools and Media Assets
 
-Determine whether the workflow depends on any external tool, API, service, or credential that must be configured before the workflow can run.
+Determine if the workflow depends on any external tool, API, or media content that must be configured before running.
 
-This includes **both** the tools used to create content (AI generation tools, editing tools, data sources) **and** the tools used to distribute or publish it (social platforms, CMS, email, storage).
-
-If there are no external dependencies → skip this step.
-
----
-
-### Check personal memory first
-
-Before asking the user anything: read `local/personal-memory.md` under `## Tools & Integrations`.
-
-- If the tool preference and credentials are already recorded → use them. Ask nothing.
-- If anything is missing → follow the steps below for each missing item only.
+- **Check memory first:** Read `local/personal-memory.md`. If a required tool and credential already exist, use them. Do not ask for them again.
+- **Set up missing credentials:** If a new tool is needed, research its exact authentication process (OAuth, API Key) before asking the user. Provide exact click-by-click instructions, then save the resulting token permanently in `local/personal-memory.md`.
+- **User-provided media:** If the workflow relies on the user providing their own real-world photos or videos (e.g., product photography), **never** substitute them with AI-generated alternatives. Use their authentic media, but ask if they would like you to add an AI enhancement step to improve lighting/sharpness.
 
 ---
 
-### Research the platform before asking the user
-
-For each tool or platform not already in memory:
-
-1. **Research it first.** Before asking the user for any credential or account detail, look up:
-   - What authentication model does this platform use? (API key, OAuth, bearer token, etc.)
-   - What specific permissions or scopes does posting/uploading require?
-   - What is the exact step-by-step process to obtain those credentials?
-   - Are there any free tier limits or approval requirements?
-
-2. Only after you understand the platform completely — ask the user for the minimum information needed. Give them specific, plain-language instructions: *"Go to [exact URL], click [X], copy the value labeled [Y]."* Never ask "do you have an API key?" without first knowing what that key is and how to get it.
-
----
-
-### Set up credentials (one time only)
-
-For each tool or platform that requires authentication:
-
-1. Walk the user through obtaining the credential with step-by-step instructions
-2. If the platform uses OAuth (e.g., YouTube, Twitter/X):
-   - Complete the OAuth flow once
-   - Store the resulting **access token and refresh token** in `local/personal-memory.md`
-   - On every subsequent run: check if the access token is still valid before doing anything else
-   - If expired: use the refresh token to get a new access token silently — do not ask the user to re-authenticate
-   - Only re-run the full OAuth flow if the refresh token itself is revoked or expired
-3. If the platform uses a static API key:
-   - Ask the user to paste it once
-   - Store it in `local/personal-memory.md`
-
-All credentials are stored directly in `local/personal-memory.md`. This file is gitignored — it will never be committed to version control.
-
-Format:
-```
-## Tools & Integrations
-
-- AI video generator: Runway Gen-3 — generates the daily video
-- YouTube channel: Cat Kingdom (UC...)
-- YouTube access_token: ya29.xxxx
-- YouTube refresh_token: 1//xxxx
-- Twitter/X account: @catkingdom
-- Twitter/X bearer_token: AAAAAxxxx
-```
-
----
-
-### User-provided media and AI enhancement
-
-Some workflows depend on media (photos, videos, audio) that the user produces themselves — not AI-generated content. This is common for farmers, local businesses, creators who want authenticity, or anyone whose audience expects real content over generated imagery.
-
-**Detect this pattern** when the user mentions: "I have photos", "I'll take pictures", "I'll record it myself", "I don't want fake images", or when the domain clearly implies real-world visual content (food, products, places, people).
-
-**Ask: "Will you be providing your own photos/videos, or would you prefer generated ones?"**
-
-If the user provides their own media:
-
-1. **Never substitute AI-generated content for user-provided media.** The user's own photos are the point — they carry authenticity that generated imagery cannot replicate. If a photo is missing, stop and ask for it. Do not generate a replacement silently.
-
-2. **Ask about enhancement:** *"Your photos will be used as-is. Would you like me to enhance them first — improving lighting, sharpness, color, and composition — to make them more social-media ready? The photo still looks like your actual produce/product, just at its best."*
-
-3. If the user wants enhancement:
-   - Research the best AI photo enhancement tool available (e.g., Adobe Firefly, Lightroom AI, Luminar Neo, Topaz Photo AI) — one that enhances without replacing
-   - Add it to the tools list and set it up in `local/personal-memory.md`
-   - Add an enhancement step in the workflow: run the photo through the enhancement tool before writing the post, save both originals and enhanced versions to the dated folder
-   - The enhanced version is what gets posted; the original is kept
-
-4. Add to the workflow's Prerequisites and first step: a check that the user has placed their photo(s) in the expected folder location before the workflow proceeds. If no photo is found → stop and tell the user exactly where to put it.
-
-**Anti-pattern:** Generating a polished AI image because the user's photo was "not good enough." The user's photo, enhanced, is always preferable to a generated one for content where authenticity matters.
-
----
-
-### Write the Prerequisites section into the workflow file
-
-Add a **Prerequisites** section with a concrete check for each tool:
-
-```
-## Prerequisites
-
-- Runway configured: access token present in local/personal-memory.md under Tools & Integrations
-- YouTube configured: access token and refresh token present; channel set to Cat Kingdom
-- Twitter/X configured: bearer token present; account set to @catkingdom
-```
-
-Add as the first step of the generated workflow:
-
-> Check `local/personal-memory.md` for all required credentials. If any are missing → stop and tell the user which tool needs to be set up, then run setup before proceeding.
-
-Anti-pattern: asking the user for credentials on every run, or failing mid-workflow because a tool wasn't checked upfront.
-
----
-
-## Step 2d: Identify Irreversible Actions
+### Step 7: Identify Irreversible Actions
 
 Scan the SOP draft (Step 2) for any action that cannot be undone once taken.
 
@@ -389,168 +172,31 @@ Irreversible actions must never be automated away silently, even in scheduled ru
 
 ---
 
-## Step 2b: Ask About Recurrence and Input Model
+### Step 8: Define Recurrence Strategy
 
-### Recurrence
+Determine whether the workflow runs on a repeating schedule or is triggered manually.
 
-Determine whether the workflow is meant to run on a repeating schedule.
-
-Signals that suggest recurrence: the user said "daily", "weekly", "every morning", "each week", "before every class", or the SOP draft in Step 2 implies the task happens regularly.
-
-If there is no recurrence signal → skip this entire step.
-
-If recurrence is likely:
-
-1. Ask: *"How often should this run — every day, every weekday (Mon–Fri), once a week, or something else?"*
-
-   Common patterns:
-   - **Daily** — every day at a fixed time
-   - **Weekday** — Mon–Fri, or Sun–Thu depending on the user's week
-   - **Weekly** — once a week on a specific day (e.g., every Sunday morning)
-   - **Season-triggered** — runs when something changes (new produce available, new semester starts), not on a fixed clock. If the user describes this pattern → propose checking a trigger condition on a weekly cadence rather than forcing a daily schedule.
-   - **Event-based** — tied to an external signal ("before each class", "when a new batch is ready")
-
-2. Once confirmed, determine the best trigger:
-   - For daily or weekday patterns → propose a specific time (e.g., *"I'd suggest 8:00 AM on scheduled days — does that work?"*)
-   - For weekly → propose the most natural day and time for the use case (e.g., Sunday morning for a farmer's weekly post, Monday morning for a weekly lesson)
-   - For season-triggered or event-based → ask what signal starts it; schedule a lightweight weekly check that looks for the condition rather than running the full workflow blindly
-3. Confirm with the user, then add a **Recurrence** block to the top of the workflow file:
-
-```
-**Recurrence**: [e.g., Every weekday (Sun–Thu) at 08:00]
-**Input model**: [per-run / queue — resolved below]
-```
+- **Check for signals:** Does the task imply "daily", "weekly", or "before every class"? If no recurrence is needed, skip this and Step 9.
+- **Clock-based vs Event-based:** If it repeats, ask if it runs on a fixed clock (e.g., Every Monday at 8 AM) or in response to an event/season (e.g., when new inventory arrives).
+- **Update the header:** Add the `**Recurrence**:` line to the workflow output template. If it's event-based, schedule a lightweight weekly check to trigger it.
 
 ---
 
-### Input model
+### Step 9: Define Input Model and Queues
 
-A recurring workflow can receive its inputs in two ways. Determine which applies before writing any steps.
+If the workflow is recurring, determine how it receives its data.
 
-**Per-run input** — the user provides the input each time the workflow runs (e.g., "today's topic"). Simple, but requires user action every run. Use this when inputs are unpredictable or time-sensitive.
+- **No Input Needed (Autonomous):** The workflow inherently knows what to do without external data (e.g., running a daily weather check, or executing a static cleanup script).
+- **Per-Run Input:** The user must be explicitly prompted for data each time the workflow runs. Add a block asking for input as Step 1 of the generated workflow.
+- **Batch Queue:** The user provides all inputs upfront once (e.g., a list of 50 topics, a URL, or a pasted document).
+  - The workflow automatically establishes a `queue.md` in the working folder.
+  - The queue can be **Ordered** (sequential list) or **Time-Windowed** (items have start/end availability dates).
+  - Define the **Run Mode**: Drip (one per run), Burst (N per run), Batch (all at once), or Drip + Approval (advances only after user says yes).
+  - Add standard `[ ]` (pending), `[~]` (awaiting review), and `[x]` (done) markers to track queue state.
 
-**Batch queue** — the user provides all inputs upfront once (a book, a topic list, a content calendar). The workflow auto-advances through them on each run without asking. Use this when the user said "here's everything, just work through it."
+## Phase 3: Implementation
 
-Ask: *"Will you tell me what to work on each time, or would you like to give me everything upfront and let me work through it automatically?"*
-
----
-
-**If per-run input:**
-
-Add as the first step of the workflow: prompt the user for today's input. Define exactly what to ask and what format to accept. No queue needed.
-
----
-
-**If batch queue:**
-
-1. **Accept the input upfront.** Ask: *"Share your content set — paste a topic list, give me a file path, or drop a link (URL, Google Doc, PDF, digital book). I'll read it and build the queue automatically."*
-
-   Accept any of:
-   - **URL or shareable link** (Google Doc, online PDF, webpage, digital textbook) — fetch and parse the content, extract structure (chapters, sections, topics) into queue items automatically. Do not ask the user to manually list chapters if the document already contains them.
-   - **Local file path** (PDF, Word doc, text file) — read and parse the same way
-   - **Pasted text** — parse directly
-   - **Verbal description** — ask follow-up questions to build the list
-
-   Process whatever is given into a flat, ordered list of items. Show the extracted list to the user and ask: *"I found these [N] items — does this order look right, or would you like to adjust before I start?"*
-
-2. **Determine the queue type.**
-
-   **Ordered queue** — items are processed in sequence, one after another. Use this when order matters (book chapters, a ranked content list).
-
-   **Time-windowed queue** — each item has an availability window (start date → end date). The workflow picks whichever item is currently in-window, not the next in a list. Use this when items are only relevant during specific periods (seasonal produce, a topic that's only timely for a few weeks, a lesson that must be taught before the next one).
-
-   If the user's inputs naturally have dates or seasons attached → use a time-windowed queue.
-
-   Ask: *"Do these items have specific dates or seasons when they're relevant, or should I just work through them in order?"*
-
-3. **Create the queue file.** Write a `queue.md` into the base output folder.
-
-   For an **ordered queue:**
-   ```markdown
-   # Queue
-
-   ## Pending
-   - [ ] Item 1: [title or description]
-   - [ ] Item 2: [title or description]
-
-   ## Done
-   <!-- moved here as items complete -->
-   ```
-
-   For a **time-windowed queue:**
-   ```markdown
-   # Queue — [Season / Period]
-
-   ## April
-   - [ ] Asparagus — available Apr 15 – May 15
-   - [ ] Rhubarb — available Apr 20 – Jun 1
-
-   ## May
-   - [ ] Strawberries — available May 10 – Jun 20
-
-   ## Done
-   <!-- moved here as items complete, with date -->
-   ```
-
-   For time-windowed queues, add to the workflow's "pick next item" step:
-   - Find all items where today's date falls within the availability window and status is `[ ]`
-   - If multiple items are in-window → pick the one whose window ends soonest (most urgent)
-   - If no items are in-window → tell the user and stop. Do not pick the next item out of sequence.
-
-   Status markers (both queue types):
-   - `[ ]` — not yet started
-   - `[~]` — created, awaiting user approval before advancing
-   - `[x]` — done (include date: `[x] 2026-04-10`)
-   - `[-]` — skipped by user
-
-3. **Ask the user to choose a run mode:**
-
-   | Mode | What happens each run |
-   |---|---|
-   | **Drip** | One item processed per run, auto-advances when done |
-   | **Burst** | X items per run (ask how many) |
-   | **Batch** | All items processed in one run |
-   | **Drip + Approval** | One item per run, marked `[~]` when done, only advances after user approves |
-
-   Propose the most natural mode given the workflow's purpose:
-   - Daily content creation with review → Drip + Approval
-   - Teaching material, one topic per class → Drip
-   - A one-time bulk generation → Batch
-
-4. **Add as the first two steps of the generated workflow:**
-   - Step 1: Read `queue.md`. Find the first `[ ]` item. If none → tell the user the queue is empty and ask if they want to add more. Stop.
-   - Step 2: Process that item. On completion, mark it `[x]` (Drip/Burst/Batch) or `[~]` (Drip + Approval) with today's date.
-
-5. **For Drip + Approval mode**, the final step of the generated workflow is a **refinement loop**, not a binary gate.
-
-   Present the output, then open a collaborative session:
-
-   > *"Here's today's [lesson / video concept / post]. What would you like to change, or is this ready to go?"*
-
-   The user can:
-   - Request specific edits ("make this section shorter", "add a real-world example", "change the tone")
-   - Ask for a full regeneration ("start over with a different angle")
-   - Ask for alternatives on a specific part ("give me 3 different hooks for this")
-   - Approve as-is and trigger the delivery step
-
-   The agent applies each requested change, shows the updated result, and loops until the user explicitly approves. There is no limit on the number of refinement rounds. The agent must never interpret silence or a vague positive as approval — it must receive an explicit confirmation before executing any irreversible action.
-
-   On explicit approval → execute the publishing/delivery step, mark the queue item `[x]`, advance to next.
-   On explicit skip → mark `[-]` (skipped), advance to next.
-   On "start over" → regenerate from scratch, re-enter the refinement loop.
-
-6. **For workflows that generate multiple variations** (e.g., 3 versions of a social media post):
-   - Generate all variations into the date folder: `v1/`, `v2/`, `v3/`
-   - Present them side by side: *"Here are 3 versions — which one is closest to what you want, or what would you change in any of them?"*
-   - The user can pick one as-is, pick one and request edits, or ask for a new variation based on combining elements
-   - The refinement loop applies to whichever version the user is working on
-   - Only the final chosen and approved version gets uploaded
-
-Workflows with a batch queue must be idempotent: re-running on the same day must detect the `[~]` or `[x]` status and not regenerate unless the user explicitly asks.
-
----
-
-## Step 3: Write the Scope Boundary
+### Step 10: Write the Scope Boundary
 
 Write two short lists at the top of the file:
 
@@ -564,31 +210,10 @@ Write two short lists at the top of the file:
 
 If you cannot define a clear scope boundary → the workflow may not be ready to write yet. Surface this to the user.
 
----
-
-## Step 3a: Create the Workflow Working Area
-
-After naming the workflow, create its companion working folder in `local/workspaces/` using the same slug as the workflow filename without `.md`.
-
-Example:
-- Workflow file: `local/workflows/customer-research.md`
-- Working folder: `local/workspaces/customer-research/`
-
-The companion working folder is part of the workflow itself, not a separate approval boundary. Once the workflow is being created or used, agents should freely create and update files inside that folder without asking for write permission each time.
-
-Use this folder as the workflow's default private workspace for:
-- scratch files
-- temporary assets
-- generated supporting files
-- any other workflow-specific artifacts that should stay grouped with the workflow
-
-Do not register the folder separately in `local/manifest.toml`. The workflow file remains the registry entry.
-
-If the workflow is later published to `shared/workflows/`, keep the private working folder in `local/workspaces/` unless the user explicitly asks to publish the working artifacts too.
 
 ---
 
-## Step 4: Write the Prime Directive (If a Common Failure Mode Exists)
+### Step 11: Write the Prime Directive (If a Common Failure Mode Exists)
 
 A Prime Directive is the one rule that, if ignored, causes the whole workflow to fail.
 Place it before the steps.
@@ -598,7 +223,7 @@ Not every workflow needs one. If you can't name the failure mode specifically �
 
 ---
 
-## Step 5: Write the Trigger Phrases
+### Step 12: Write the Trigger Phrases
 
 List natural phrases a user would say to invoke this workflow.
 
@@ -615,16 +240,17 @@ Trigger lists are living. Start with the phrases you know. New ones are added ov
 
 ---
 
-## Step 6: Write the Prerequisites / Entry Gate
+### Step 13: Write the Prerequisites / Entry Gate
 
 State what must be true before the workflow starts.
 If prerequisites aren't met → the agent stops and says so, not improvises.
 
-Add a prerequisites section only when starting mid-workflow causes real damage or wasted work.
+- **Tool Checks:** Always include a prerequisite check for required API keys or tokens in `local/personal-memory.md`. If missing, the agent stops and runs setup.
+- **Media Checks:** If the workflow needs user-provided media, add a prerequisite verifying the files exist in the working directory before proceeding.
 
 ---
 
-## Step 7: Write the Steps
+### Step 14: Write the Steps
 
 **One directive per step.** If a step says "do X and Y" → split it.
 
@@ -649,7 +275,7 @@ Good: "Read the stack trace. Run `git log --since='<date>' --oneline`. Check for
 
 ---
 
-## Step 7b: Enforce Workbench Conventions (Paths & Memory)
+### Step 15: Enforce Workbench Conventions (Paths & Memory)
 
 When writing the workflow, adhere strictly to these two rules:
 
@@ -658,7 +284,7 @@ When writing the workflow, adhere strictly to these two rules:
 
 ---
 
-## Step 8: Add Cross-References
+### Step 16: Add Cross-References
 
 - **Before this workflow**: if another workflow must run first, say so at the top
 - **After this workflow**: if another typically follows, say so at the end
@@ -666,7 +292,7 @@ When writing the workflow, adhere strictly to these two rules:
 
 ---
 
-## Step 9: Write the Escalation / Stop Conditions
+### Step 17: Write the Escalation / Stop Conditions
 
 When should the agent stop and surface to the user rather than continuing?
 
@@ -679,13 +305,13 @@ For this workflow specifically, escalate if:
 
 ---
 
-## Step 10: Write the Completion Criteria
+### Step 18: Write the Completion Criteria
 
 What does "done" look like? The agent should be able to check this list and know whether to stop.
 
 ---
 
-## Step 11: Add an Output Template (If the Workflow Produces a Document)
+### Step 19: Add an Output Template (If the Workflow Produces a Document)
 
 If the workflow produces a structured file, show a skeleton. See `debugging-sentry.md` for an example.
 
@@ -762,19 +388,13 @@ Stop and tell the user if:
 - [ ] [workflow-name.md] — [one line: what gap it fills and why it matters]
 ```
 
----
 
-## Length Guidelines
-
-| Workflow type | Target length |
-|---|---|
-| Simple, linear, few tools | 20–40 lines |
-| Multi-step with branching | 60–120 lines |
-| Complex with sub-steps and templates | Up to 200 lines — consider splitting |
 
 ---
 
-## Quality Check
+## Phase 4: Verification and Deployment
+
+### Step 20: Quality Check
 
 Walk through it with a real task before publishing:
 - Can you follow each step without re-reading the task description?
@@ -787,7 +407,7 @@ If any answer is no → fix it before publishing.
 
 ---
 
-## After Creating the Workflow
+### Step 21: Post-Creation Checklist
 
 1. Save the new workflow in `local/workflows/` by default
 2. Create the companion working folder in `local/workspaces/<workflow-slug>/` and treat it as pre-approved writable space for that workflow
@@ -801,7 +421,7 @@ If any answer is no → fix it before publishing.
 
 ---
 
-## Cross-References
+### Step 22: Cross-References
 
 - **Related**: `new-domain.md` — same process, different artifact
 - **For editing existing workflows**: use `improve-workbench.md` instead
