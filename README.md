@@ -21,7 +21,7 @@ The agent will automatically scan your directories, plant lightweight compatibil
 
 - **Agent Agnostic:** Works flawlessly with Claude, Gemini, ChatGPT, or any future tool.
 - **Single Source of Truth:** Shared knowledge and memory across all agents. Eliminates scattered `.md` files by replacing them with one working space.
-- **Explain Once, Execute Everywhere:** Instead of writing out a complex, multi-step prompt every time for repetetive tasks, you define that workflow once. Every agent immediately knows how to perform that exact sequence across all of your projects using a simple phrases.
+- **Explain Once, Execute Everywhere:** Instead of writing out a complex, multi-step prompt every time for repetetive tasks, you define that workflow once. Every agent immediately knows how to perform that exact sequence across all of your projects using simple phrases.
 
 ## Key Components
 
