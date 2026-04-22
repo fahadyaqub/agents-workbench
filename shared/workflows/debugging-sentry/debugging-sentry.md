@@ -1,6 +1,6 @@
 # Workflow: Debugging with Sentry
 
-**Roles**: Expert Programmer · Reproduction and Regression Tester
+**Roles**: Senior Software Engineer · Daily Sentry Analyst · Expert Programmer · Reproduction and Regression Tester
 
 **This workflow covers**: Fetching, triaging, tracking, and resolving application errors using Sentry.
 **This workflow does NOT cover**: Performance/latency issues (use `debugging-signoz.md`), general debugging without Sentry (use `debugging.md`), fixing a confirmed bug (use `bugfix.md`).
@@ -67,7 +67,7 @@ Use `local/workspaces/sentry-issues/` as this workflow's private writable area.
 
 ## Step 1: Fetch Issues
 
-Run **once, no environment filter** — all environments (rd, rd2, rd3, production) are returned in a single call:
+Run **once, no environment filter** — all environments (rd, rd2, rd3, production, and any others) are returned in a single call:
 
 ```bash
 node scripts/fetch-sentry-issues.js --since-hours <N> --include-seen
@@ -88,6 +88,19 @@ Read all files in `local/workspaces/sentry-issues/issues/` to get the history of
 
 ---
 
+## Severity Classification
+
+Use these rules to assign a priority to every issue before generating the report:
+
+| Priority | Criteria |
+|----------|---------|
+| **P0 (Critical)** | fatal/error + count > 20 + escalating, OR "crash" in title, OR count doubled since last observation |
+| **P1 (High)** | error + count > 20, OR warning + count > 50, OR fatal at any count |
+| **P2 (Medium)** | warning + count < 50, OR error + count < 20, OR new issue with unknown severity |
+| **P3 (Low)** | info level, low priority, resolving/improving issues with low counts |
+
+---
+
 ## Step 3: Generate Daily Report
 
 Create `local/workspaces/sentry-issues/daily-analysis/YYYY-MM-DD.md` with this structure:
@@ -96,9 +109,29 @@ Create `local/workspaces/sentry-issues/daily-analysis/YYYY-MM-DD.md` with this s
 # Sentry Daily Analysis — YYYY-MM-DD
 
 ## Summary
-- Tracked issues: X (individual + groups)
-- New/untracked issues: Y
-- Issues with exact fix ready: Z
+
+| Metric | Value |
+|--------|-------|
+| Total issues (all environments) | N |
+| New (first time seen) | N |
+| Recurring (tracked) | N |
+| Improving after fix | N |
+| Regressing despite fix | N |
+| Stale (no fix > 3 days) | N |
+| Exact fix ready | N |
+
+---
+
+## P0 / P1 — Priority Queue (action required)
+
+_P0: fatal/error + count > 20 + escalating, OR "crash" in title, OR count doubled since last observation_
+_P1: error + count > 20, OR warning + count > 50, OR fatal at any count_
+
+### [APP-X] Title — Env: rd — Count: 47 ↑ · **P0**
+- **Trend**: escalating | **Tracked**: yes | **Prior fix attempts**: 2
+- **Diagnosis**: <one paragraph — what is actually happening>
+- **Suggested fix**: <specific: component, change, logging to add>
+- **Permalink**: <url>
 
 ---
 
@@ -108,7 +141,7 @@ For each tracked issue or group (files in `local/workspaces/sentry-issues/issues
 observation from that file alongside the fresh counts from today's fetch.
 Keep groups together — show all members of a group under one heading.
 
-### [GROUP: Media Stall] — Total: 1010 events ↑
+### [GROUP: Media Stall] — Total: 1010 events ↑ · P1
 > Latest from tracking file: <paste most recent Timeline entry from the group file>
 
 | Member | Title | Count | Trend |
@@ -120,7 +153,7 @@ Keep groups together — show all members of a group under one heading.
 
 ---
 
-### [APP-123] Title — Env: rd2 — Count: 47 ↑
+### [APP-123] Title — Env: rd2 — Count: 47 ↑ · P1
 > Latest from tracking file: <paste most recent Timeline entry>
 
 **Today's update**: <one line — stable / improving / regressing / new spike>
@@ -132,7 +165,7 @@ Keep groups together — show all members of a group under one heading.
 Issues from the fetch that are NOT in any tracking file. These need triage.
 Sorted by count descending.
 
-### [APP-456] Title — Env: rd — Count: 23 ↑
+### [APP-456] Title — Env: rd — Count: 23 ↑ · P2
 **What's happening**: <concise description>
 **Likely cause**: <root cause hypothesis from stack trace / metadata>
 **Suggested next step**: start tracking? investigate first? ignore?
@@ -152,11 +185,22 @@ After displaying this section, ask: "Want me to apply any of these fixes?"
 
 ---
 
+## Recurring Issues — Progress Report
+
+For any issue with prior Fix Attempt entries in its tracking file:
+
+| Short ID | Title | Fix Attempted | Before | After | Status |
+|----------|-------|--------------|--------|-------|--------|
+| APP-X | ... | 2026-04-15 | 47 | 31 | improving |
+| APP-Y | ... | 2026-04-10 | 22 | 28 | regression |
+
+---
+
 ## All Issues (brief table)
-| Short ID | Title | Env | Count | Trend | Tracked | Exact Fix |
-|----------|-------|-----|-------|-------|---------|-----------|
-| APP-123 | ... | rd2 | 47 | ↑ | yes | no |
-| APP-789 | ... | rd | 12 | → | no | yes |
+| Short ID | Title | Env | Count | Trend | Priority | Tracked | Exact Fix |
+|----------|-------|-----|-------|-------|----------|---------|-----------|
+| APP-123 | ... | rd2 | 47 | ↑ | P0 | yes | no |
+| APP-789 | ... | rd | 12 | → | P2 | no | yes |
 ```
 
 **Classification rules:**
@@ -167,11 +211,53 @@ After displaying this section, ask: "Want me to apply any of these fixes?"
 
 ---
 
+## Step 3b: Post Report to Slack
+
+After writing the daily report file, immediately run:
+
+```bash
+node scripts/post-sentry-report-to-slack.js
+# (path is relative to this workflow file directory)
+```
+
+- If it prints `✅ Sentry report posted to Slack` — tell the user: **"Report posted to Slack ✅"**
+- If it prints `⚠️ Slack not reachable` — tell the user: **"⚠️ Slack not reachable — report saved locally but not posted. Say 'post the report on slack now' when ready."**
+- Do NOT block the rest of the workflow on Slack failure.
+
+---
+
+## Trigger: "post the report on slack now"
+
+Run:
+```bash
+node scripts/post-sentry-report-to-slack.js
+```
+Posts the latest daily report. Report success or failure to the user.
+
+To post a specific report by date:
+```bash
+node scripts/post-sentry-report-to-slack.js --file local/workspaces/sentry-issues/daily-analysis/YYYY-MM-DD.md
+```
+
+---
+
 ## Step 4: Update Tracked Issue Files
 
 For each file in `local/workspaces/sentry-issues/issues/`:
 - If the issue appears in today's fresh data → append a `### [YYYY-MM-DD] Sentry Observation` entry
 - If the issue is NOT in today's fresh data → append a note: "Not seen in fetch on YYYY-MM-DD — may be resolved or rate dropped below threshold"
+
+**Do NOT overwrite or delete any existing entries** — user-written Fix Attempt entries and Open Questions sections are protected. Only append.
+
+### Cross-reference: Progress and Regressions
+
+For tracked issues that have prior `Fix Attempt` entries in their Timeline:
+- Count **decreasing** → label today's entry: "improving — fix may be working"
+- Count **stable** after a fix → label: "fix had no effect — reassess"
+- Count **increasing** despite a fix → label: "regression — fix didn't hold" and escalate to P0/P1 in the report
+- **No fix attempted** and issue persists > 3 days since first tracked → flag: "stale — needs attention"
+
+Include this assessment in the "Recurring Issues — Progress Report" table in the daily report.
 
 ---
 
@@ -179,12 +265,44 @@ For each file in `local/workspaces/sentry-issues/issues/`:
 
 Update the `## Active Sentry Issues` table in `local/memory/debugging-sentry.md` with the latest P0/P1 issues (high count or fatal level).
 
+If a project-level MEMORY.md exists (e.g. `~/.claude/projects/*/memory/MEMORY.md` for the current project), also update or replace its `## Active Sentry Issues` section with the same compact P0/P1 table. Keep it under 30 lines and preserve all other sections in that file exactly as they are.
+
+---
+
+## Step 6: Session Summary (print to stdout)
+
+At the end of every full analysis pass, print:
+
+```
+=== Sentry Daily Analysis — YYYY-MM-DD ===
+Total issues analyzed: N (all environments)
+Tracking files created: N | Updated: N
+Daily report: local/workspaces/sentry-issues/daily-analysis/YYYY-MM-DD.md
+
+P0 / P1 Issues (need attention):
+  [APP-X] Title (P0 · count: N · escalating)
+  [APP-Y] Title (P1 · count: N · stable)
+
+Regressions detected:
+  [APP-Z] Title — count rose N→N despite fix on YYYY-MM-DD
+
+Stale issues (no fix > 3 days):
+  [APP-W] Title — tracked since YYYY-MM-DD, no fix attempted
+===
+```
+
 ---
 
 ## Tracking Issue Files Format & Guide
 
 ### Location
 `local/workspaces/sentry-issues/issues/APP-123.md` (one file per tracked issue)
+
+### Agent Rules
+- **Always append** — never edit or delete existing Timeline entries
+- **Fix Attempt entries** are user-authored or written only when the user explicitly requests logging recent work — do not auto-create them
+- **Open Questions** at the bottom of the file is user-written — preserve it exactly
+- When updating an existing file on a daily pass, only add the new `### [YYYY-MM-DD] Sentry Observation` row
 
 ### Format Definition
 ```markdown
@@ -213,6 +331,10 @@ context, and the likely root cause. Be specific about which component / code pat
 - **Files changed**: <list of files from git diff>
 - **What was done**: <summary of the change — what was fixed or what logging was added>
 - **Sentry logging added**: <any new captureException / addBreadcrumb / captureMessage calls>
+
+## Open Questions
+
+_None yet._
 ```
 
 ---
@@ -262,6 +384,10 @@ What is the underlying problem being investigated?>
 - **Files changed**: ...
 - **What was done**: ...
 - **Sentry logging added**: ...
+
+## Open Questions
+
+_None yet._
 ```
 
 4. Update `local/memory/debugging-sentry.md` — add a single row for the group instead of individual rows.

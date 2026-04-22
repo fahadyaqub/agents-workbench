@@ -119,6 +119,7 @@ const loadState = () => {
       version: 1,
       lastFetchedAt: null,
       seenIssues: {},
+      issueCounts: {},
     };
   }
 };
@@ -358,16 +359,27 @@ const run = async () => {
     ? filteredIssues
     : filteredIssues.filter((issue) => !state.seenIssues?.[issue.id]);
 
+  // Compute 24h delta: how many new events since the last fetch
+  const prevCounts = state.issueCounts || {};
+  filteredIssues.forEach((issue) => {
+    const prev = prevCounts[issue.id];
+    issue.count24h = (prev != null) ? Math.max(0, issue.count - prev) : null;
+  });
+
   const nextState = {
     version: 1,
     lastFetchedAt: fetchedAt,
     seenIssues: {
       ...(state.seenIssues || {}),
     },
+    issueCounts: {
+      ...(prevCounts),
+    },
   };
 
   filteredIssues.forEach((issue) => {
     nextState.seenIssues[issue.id] = cleanIssueForState(issue, fetchedAt);
+    nextState.issueCounts[issue.id] = issue.count;
   });
 
   ensureReportsDir();
