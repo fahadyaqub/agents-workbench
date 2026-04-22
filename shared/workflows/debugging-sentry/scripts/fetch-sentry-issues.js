@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // scripts/fetch-sentry-issues.js
 require('dotenv').config({ path: process.cwd() + '/.env' });
+require('dotenv').config({ path: __dirname + '/../../../../local/.env', override: false });
 
 const fs = require('fs');
 const path = require('path');

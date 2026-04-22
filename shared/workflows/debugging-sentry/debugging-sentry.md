@@ -65,20 +65,38 @@ Use `local/workspaces/sentry-issues/` as this workflow's private writable area.
 
 ---
 
-## Step 1: Fetch Issues
+## Step 1: Run The Full Analysis Command
 
-Run **once, no environment filter** — all environments (rd, rd2, rd3, production, and any others) are returned in a single call:
+Run the workflow through the orchestration script so fetch, report generation, session handoff, Slack posting, and stdout output stay in one path:
 
 ```bash
-node scripts/fetch-sentry-issues.js --since-hours <N> --include-seen
+node scripts/run-sentry-analysis.js --since-hours <N>
 # (Note: path is relative to this workflow file directory)
 ```
 
-The `--include-seen` flag ensures all active issues in the window are returned with full data (counts, levels, metadata) — not just new ones since the last fetch.
+Default window is 24 hours.
+
+All user-facing dates and report filenames should use the user's local time zone, not UTC.
+If the fetch timestamp and the local date differ, show both explicitly in the report header.
+
+This command automatically:
+- fetches unresolved Sentry issues across all environments
+- loads tracked issue history from `local/workspaces/sentry-issues/issues/`
+- writes `local/workspaces/sentry-issues/daily-analysis/YYYY-MM-DD.md`
+- creates a session handoff package in `local/workspaces/session-handoff/YYYY-MM-DD-sentry/`
+- posts the report to Slack
+- prints the final report to stdout so it can also be shown in the parent chat
+
+Useful flags:
+
+```bash
+node scripts/run-sentry-analysis.js --since-hours 48
+node scripts/run-sentry-analysis.js --skip-slack
+node scripts/run-sentry-analysis.js --skip-fetch
+node scripts/run-sentry-analysis.js --skip-handoff
+```
 
 Print to the user: `"Fetching Sentry issues from the last N hours across all environments..."`
-
-Output is saved automatically to `local/workspaces/sentry-issues/latest-issues.json`.
 
 ---
 
@@ -211,18 +229,57 @@ For any issue with prior Fix Attempt entries in its tracking file:
 
 ---
 
-## Step 3b: Post Report to Slack
+## Step 3b: Split The Report Into Child-Agent Tasks
+
+After writing the daily report file, automatically create a session handoff package using the `session-handoff.md` workflow shape.
+
+Write the package to:
+
+```text
+local/workspaces/session-handoff/YYYY-MM-DD-sentry/
+```
+
+The package must contain:
+- `README.md`
+- one handoff file per active stream
+- `launch-prompts.md`
+
+Use 2 to 5 streams.
+Prefer tracked groups first.
+If there are meaningful untracked issues, give them their own `new-issues.md` stream.
+Do not open new tabs automatically unless the current tool supports it. Preparing the package is enough.
+
+The orchestration script handles this automatically.
+
+---
+
+## Step 3c: Post Report to Slack
 
 After writing the daily report file, immediately run:
 
 ```bash
-node scripts/post-sentry-report-to-slack.js
-# (path is relative to this workflow file directory)
+node scripts/post-sentry-report-to-slack.js --file local/workspaces/sentry-issues/daily-analysis/YYYY-MM-DD.md
 ```
 
 - If it prints `✅ Sentry report posted to Slack` — tell the user: **"Report posted to Slack ✅"**
 - If it prints `⚠️ Slack not reachable` — tell the user: **"⚠️ Slack not reachable — report saved locally but not posted. Say 'post the report on slack now' when ready."**
 - Do NOT block the rest of the workflow on Slack failure.
+
+The orchestration script handles this automatically.
+
+---
+
+## Step 3d: Show The Report In The Parent Chat
+
+After the report file is written and Slack posting is attempted, print the markdown report to stdout and show the same report in the current chat.
+
+The order is:
+1. write report
+2. create session handoff package
+3. post to Slack
+4. show report here
+
+The orchestration script handles this automatically.
 
 ---
 

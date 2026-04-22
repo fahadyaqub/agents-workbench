@@ -21,6 +21,7 @@ if (fs.existsSync(ENV_FILE)) {
 
 const WEBHOOK_URL = process.env.SLACK_WEBHOOK_URL;
 const BOT_TOKEN = process.env.SLACK_BOT_TOKEN;
+const LOCAL_TIME_ZONE = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
 if (!WEBHOOK_URL) {
   console.error('⚠️  Slack not configured — SLACK_WEBHOOK_URL missing from local/.env');
   process.exit(1);
@@ -136,14 +137,29 @@ const parseDate = (content) => {
 
 const formatDate = (iso) => {
   try {
-    return new Date(iso).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+    return new Date(iso).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: LOCAL_TIME_ZONE });
   } catch { return iso; }
+};
+
+const formatLocalDateKey = (iso) => {
+  try {
+    const parts = new Intl.DateTimeFormat('en-CA', {
+      timeZone: LOCAL_TIME_ZONE,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }).formatToParts(new Date(iso));
+    const values = Object.fromEntries(parts.filter((part) => part.type !== 'literal').map((part) => [part.type, part.value]));
+    return `${values.year}-${values.month}-${values.day}`;
+  } catch {
+    return iso;
+  }
 };
 
 // ─── Block builders ──────────────────────────────────────────────────────────
 
 const shortMonth = (iso) => {
-  try { return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); }
+  try { return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: LOCAL_TIME_ZONE }); }
   catch { return ''; }
 };
 
@@ -433,7 +449,7 @@ const post = (payload) => new Promise((resolve, reject) => {
   if (fs.existsSync(LATEST_JSON)) {
     try {
       const raw = JSON.parse(fs.readFileSync(LATEST_JSON, 'utf8'));
-      const jsonDate = (raw.fetchedAt || '').slice(0, 10);
+      const jsonDate = formatLocalDateKey(raw.fetchedAt || '');
       if (jsonDate === reportDate) jsonData = raw;
     } catch {}
   }
