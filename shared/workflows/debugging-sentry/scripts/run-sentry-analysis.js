@@ -6,6 +6,7 @@ require('dotenv').config({ path: process.cwd() + '/.env' });
 const fs = require('fs');
 const path = require('path');
 const { execFileSync } = require('child_process');
+const { resolveExecutionContext } = require('./sentry-worktree');
 
 const ROOT_DIR = path.join(__dirname, '..', '..', '..', '..');
 const LOCAL_DIR = path.join(ROOT_DIR, 'local');
@@ -49,6 +50,8 @@ const parseArgs = (argv) => {
     skipFetch: false,
     skipSlack: false,
     skipHandoff: false,
+    branch: null,
+    projectDir: process.cwd(),
   };
 
   for (let i = 0; i < argv.length; i += 1) {
@@ -70,16 +73,29 @@ const parseArgs = (argv) => {
       options.skipHandoff = true;
       continue;
     }
+    if (arg === '--branch') {
+      options.branch = argv[i + 1] || null;
+      i += 1;
+      continue;
+    }
+    if (arg === '--project-dir') {
+      options.projectDir = path.resolve(argv[i + 1] || process.cwd());
+      i += 1;
+      continue;
+    }
     if (arg === '--help' || arg === '-h') {
       console.log(`Usage:
-  node scripts/run-sentry-analysis.js [--since-hours <n>] [--skip-fetch] [--skip-slack] [--skip-handoff]
+  node scripts/run-sentry-analysis.js [--since-hours <n>] [--branch <name>] [--project-dir <path>] [--skip-fetch] [--skip-slack] [--skip-handoff]
 
 This command:
   1. fetches unresolved Sentry issues
-  2. writes the daily markdown report
-  3. creates a session-handoff package for child agents
-  4. posts the report to Slack
-  5. prints the report to stdout`);
+  2. selects the execution repo/branch for fixes
+  3. writes the daily markdown report
+  4. creates a session-handoff package for child agents
+  5. posts the report to Slack
+  6. prints the report to stdout
+
+If the current branch is not rd2 and you do not pass --branch, the script stops and tells you to ask the user which branch to use.`);
       process.exit(0);
     }
   }
@@ -359,7 +375,7 @@ const buildGroupedStreams = (issues) => {
 
 const formatIssueRow = (issue) => `| ${issue.shortId} | ${issue.cleanTitle} | ${issue.environment || 'unknown'} | ${formatCount(issue.count)} | ${issue.trendLabel} | ${issue.priorityLabel} | ${issue.tracker ? 'yes' : 'no'} | no |`;
 
-const buildReport = ({ issues, streams, fetchedAt }) => {
+const buildReport = ({ issues, streams, fetchedAt, executionContext, sinceHours }) => {
   const date = formatLocalDate(fetchedAt);
   const localRunTime = formatLocalDateTime(fetchedAt);
   const trackedIssues = issues.filter((issue) => !!issue.tracker);
@@ -369,9 +385,11 @@ const buildReport = ({ issues, streams, fetchedAt }) => {
 
   const summaryLines = [
     `- Tracked issues: ${streams.filter((stream) => !!stream.tracker).length} stream${streams.filter((stream) => !!stream.tracker).length === 1 ? '' : 's'}`,
-    `- Issues in ${DEFAULT_SINCE_HOURS}h window: ${issues.length}`,
+    `- Issues in ${sinceHours}h window: ${issues.length}`,
     `- New/untracked: ${newIssues.length}`,
     `- Issues with exact fix ready: ${exactFixes.length}`,
+    `- Fix branch: ${executionContext.targetBranch}`,
+    `- Fix location: ${executionContext.executionDir}`,
   ];
 
   const trackedSections = streams
@@ -439,6 +457,9 @@ const buildReport = ({ issues, streams, fetchedAt }) => {
     `Local run time: ${localRunTime}`,
     `Fetched at (UTC): ${fetchedAt}`,
     `Time zone: ${LOCAL_TIME_ZONE}`,
+    `Fix branch: ${executionContext.targetBranch}`,
+    `Fix repository: ${executionContext.executionDir}`,
+    `Fix execution mode: ${executionContext.usesWorktree ? `dedicated worktree (${executionContext.worktreeStatus})` : 'current repository'}`,
     '',
     '## Summary',
     ...summaryLines,
@@ -481,8 +502,13 @@ const buildReport = ({ issues, streams, fetchedAt }) => {
   return { date, content: report, localRunTime };
 };
 
-const buildLaunchPrompt = (stream, reportPath, handoffDir) => {
+const buildLaunchPrompt = (stream, reportPath, handoffDir, executionContext) => {
   const lines = [
+    'Do code changes from this repo path:',
+    executionContext.executionDir,
+    '',
+    `Use branch \`${executionContext.targetBranch}\`.`,
+    '',
     `Read this handoff file completely before doing anything else:`,
     path.join(handoffDir, `${stream.slug}.md`).replace(`${ROOT_DIR}/`, ''),
     '',
@@ -499,7 +525,7 @@ const buildLaunchPrompt = (stream, reportPath, handoffDir) => {
   return lines.join('\n');
 };
 
-const buildStreamFiles = ({ reportPath, reportDate, streams }) => {
+const buildStreamFiles = ({ reportPath, reportDate, streams, executionContext }) => {
   if (!streams.length) {
     return null;
   }
@@ -521,6 +547,13 @@ const buildStreamFiles = ({ reportPath, reportDate, streams }) => {
     '## Why This Was Split',
     '',
     `${streams.length} independent bug stream${streams.length === 1 ? '' : 's'} are active in the latest Sentry window, and each one needs a different investigation path or fix strategy.`,
+    '',
+    '## Fix Execution Context',
+    '',
+    `- Branch for fixes: \`${executionContext.targetBranch}\``,
+    `- Repo path for fixes: \`${executionContext.executionDir}\``,
+    `- Mode: ${executionContext.usesWorktree ? `dedicated worktree (${executionContext.worktreeStatus})` : 'current repository'}`,
+    `- Current branch at analysis start: \`${executionContext.currentBranch}\``,
     '',
     '## Streams',
     '',
@@ -549,6 +582,11 @@ const buildStreamFiles = ({ reportPath, reportDate, streams }) => {
       '## Scope',
       stream.summary,
       '',
+      '## Code Changes',
+      `- Work from: \`${executionContext.executionDir}\``,
+      `- Branch: \`${executionContext.targetBranch}\``,
+      `- Mode: ${executionContext.usesWorktree ? `dedicated worktree (${executionContext.worktreeStatus})` : 'current repository'}`,
+      '',
       '## Do Not Touch',
       ...stream.ignore.map((item) => `- ${item}`),
       '',
@@ -576,7 +614,7 @@ const buildStreamFiles = ({ reportPath, reportDate, streams }) => {
     promptBlocks.push(`## ${stream.label} Stream`);
     promptBlocks.push('');
     promptBlocks.push('```');
-    promptBlocks.push(buildLaunchPrompt(stream, reportPath, handoffDir));
+    promptBlocks.push(buildLaunchPrompt(stream, reportPath, handoffDir, executionContext));
     promptBlocks.push('```');
     promptBlocks.push('');
     promptBlocks.push('---');
@@ -624,9 +662,9 @@ const buildHandoffStreams = (streams) => {
   });
 };
 
-const runNodeScript = (scriptPath, args) => {
+const runNodeScript = (scriptPath, args, cwd = ROOT_DIR) => {
   return execFileSync(process.execPath, [scriptPath, ...args], {
-    cwd: ROOT_DIR,
+    cwd,
     encoding: 'utf8',
     stdio: ['ignore', 'pipe', 'pipe'],
   });
@@ -646,10 +684,23 @@ const run = () => {
   const options = parseArgs(process.argv.slice(2));
   ensureDir(SENTRY_DIR);
   ensureDir(REPORTS_DIR);
+  const executionContext = resolveExecutionContext({
+    projectDir: options.projectDir,
+    targetBranch: options.branch,
+  });
+
+  if (executionContext.needsBranchSelection) {
+    throw new Error(executionContext.prompt);
+  }
 
   if (!options.skipFetch) {
     console.log(`Fetching Sentry issues from the last ${options.sinceHours} hours across all environments...`);
-    const fetchOutput = runNodeScript(FETCH_SCRIPT, ['--since-hours', String(options.sinceHours), '--include-seen']);
+    console.log(`Fixes will run from ${executionContext.executionDir} on branch ${executionContext.targetBranch}.`);
+    const fetchOutput = runNodeScript(
+      FETCH_SCRIPT,
+      ['--since-hours', String(options.sinceHours), '--include-seen'],
+      executionContext.executionDir
+    );
     if (fetchOutput.trim()) {
       console.log(fetchOutput.trim());
     }
@@ -665,7 +716,13 @@ const run = () => {
     .map((issue) => buildIssueContext(issue, issueToTracker))
     .sort((a, b) => Number(b.count || 0) - Number(a.count || 0));
   const streams = buildGroupedStreams(issues);
-  const report = buildReport({ issues, streams, fetchedAt: latest.fetchedAt });
+  const report = buildReport({
+    issues,
+    streams,
+    fetchedAt: latest.fetchedAt,
+    executionContext,
+    sinceHours: options.sinceHours,
+  });
   const reportPath = path.join(REPORTS_DIR, `${report.date}.md`);
 
   writeFile(reportPath, report.content);
@@ -675,6 +732,7 @@ const run = () => {
     reportPath,
     reportDate: report.date,
     streams: handoffStreams,
+    executionContext,
   });
 
   const slackResult = options.skipSlack ? { ok: false, output: 'Slack skipped by flag.' } : postToSlack(reportPath);
@@ -682,6 +740,8 @@ const run = () => {
   console.log('');
   console.log(`=== Sentry Daily Analysis — ${report.date} ===`);
   console.log(`Total issues analyzed: ${issues.length} (all environments)`);
+  console.log(`Fix branch: ${executionContext.targetBranch}`);
+  console.log(`Fix repo: ${executionContext.executionDir}`);
   console.log(`Daily report: ${reportPath}`);
   if (handoffDir) {
     console.log(`Session handoff package: ${handoffDir}`);

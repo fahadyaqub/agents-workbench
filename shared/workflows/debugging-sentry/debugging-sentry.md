@@ -65,12 +65,50 @@ Use `local/workspaces/sentry-issues/` as this workflow's private writable area.
 
 ---
 
+## Step 0: Choose The Fix Branch And Repo
+
+Before the fetch starts, inspect the current git branch of the project repo you are analyzing.
+
+- If the current branch is `rd2` → continue there by default
+- Otherwise → ask the user which branch the Sentry workflow should run on
+- If the user chooses the current branch → continue in the current repo
+- If the user chooses a different branch → prepare a dedicated worktree at the current project's parent directory:
+
+```text
+<project-parent>/sentry-issues-worktree
+```
+
+Example:
+
+```text
+/Users/fahadyaqub/work/roll/roll-web
+→ /Users/fahadyaqub/work/roll/sentry-issues-worktree
+```
+
+Use the requested branch in that worktree, fetch the latest code there, and do the fixes from that worktree instead of the original repo.
+
+The session handoff package must include:
+- the branch chosen for fixes
+- the repo path where fixes should be made
+- a note telling child agents to work from that repo path
+
+Helper command:
+
+```bash
+node scripts/prepare-sentry-worktree.js --branch <name>
+# (Note: path is relative to this workflow file directory)
+```
+
+If the current branch is not `rd2` and no `--branch` is supplied, the helper should stop and tell the agent to ask the user first.
+
+---
+
 ## Step 1: Run The Full Analysis Command
 
 Run the workflow through the orchestration script so fetch, report generation, session handoff, Slack posting, and stdout output stay in one path:
 
 ```bash
-node scripts/run-sentry-analysis.js --since-hours <N>
+node scripts/run-sentry-analysis.js --since-hours <N> [--branch <name>]
 # (Note: path is relative to this workflow file directory)
 ```
 
@@ -91,6 +129,7 @@ Useful flags:
 
 ```bash
 node scripts/run-sentry-analysis.js --since-hours 48
+node scripts/run-sentry-analysis.js --branch rd2
 node scripts/run-sentry-analysis.js --skip-slack
 node scripts/run-sentry-analysis.js --skip-fetch
 node scripts/run-sentry-analysis.js --skip-handoff
