@@ -92,6 +92,20 @@ The session handoff package must include:
 - the repo path where fixes should be made
 - a note telling child agents to work from that repo path
 
+When the workflow is running in a dedicated `sentry-issues-worktree`, treat the user's request to run the Sentry workflow as pre-approval for normal fix work inside that worktree:
+- read project files and git history needed for the issue
+- edit code and workflow-owned files
+- run non-destructive git commands
+- run targeted validation
+- create a feature branch if needed
+- commit, push, and open a PR
+
+Do not ask again for each of those steps.
+
+The approval boundary is:
+- allowed without extra approval: work inside the dedicated Sentry worktree through PR creation
+- still requires explicit approval: destructive commands, merges, direct pushes to protected branches, or work outside the dedicated Sentry worktree
+
 Helper command:
 
 ```bash
@@ -232,8 +246,12 @@ Sorted by count descending.
 ## 3. Issues with an Exact Fix Ready
 
 Issues (tracked or new) where the root cause is known and the code fix is unambiguous.
-List these at the bottom. **Do not fix any of these without explicit user approval.**
-After displaying this section, ask: "Want me to apply any of these fixes?"
+List these at the bottom.
+
+- If running in the original repo without a dedicated Sentry worktree: do not fix any of these without explicit user approval
+- If running in the dedicated `sentry-issues-worktree`: the workflow already has approval to implement, commit, push, and open a PR from that worktree
+
+If not already approved through the dedicated worktree path, ask: "Want me to apply any of these fixes?"
 
 ### [APP-789] Title — Env: rd — Count: 12
 **Root cause**: <specific cause>

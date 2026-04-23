@@ -509,6 +509,14 @@ const buildLaunchPrompt = (stream, reportPath, handoffDir, executionContext) => 
     '',
     `Use branch \`${executionContext.targetBranch}\`.`,
     '',
+    'User approval for this Sentry fix flow:',
+    executionContext.usesWorktree
+      ? '- You may inspect files, edit code, run non-destructive git commands, run targeted validation, create a feature branch if needed, commit, push, and open a PR from this worktree without asking again.'
+      : '- Normal approval rules still apply before committing or pushing from the current repo.',
+    '- Do not merge anything yourself.',
+    '- Do not push directly to protected branches.',
+    '- Do not work outside this repo path unless the user explicitly asks.',
+    '',
     `Read this handoff file completely before doing anything else:`,
     path.join(handoffDir, `${stream.slug}.md`).replace(`${ROOT_DIR}/`, ''),
     '',
@@ -554,6 +562,9 @@ const buildStreamFiles = ({ reportPath, reportDate, streams, executionContext })
     `- Repo path for fixes: \`${executionContext.executionDir}\``,
     `- Mode: ${executionContext.usesWorktree ? `dedicated worktree (${executionContext.worktreeStatus})` : 'current repository'}`,
     `- Current branch at analysis start: \`${executionContext.currentBranch}\``,
+    `- Approval envelope: ${executionContext.usesWorktree
+      ? 'pre-approved through PR creation inside this dedicated worktree'
+      : 'normal project approval rules still apply before commit/push'}`,
     '',
     '## Streams',
     '',
@@ -586,6 +597,10 @@ const buildStreamFiles = ({ reportPath, reportDate, streams, executionContext })
       `- Work from: \`${executionContext.executionDir}\``,
       `- Branch: \`${executionContext.targetBranch}\``,
       `- Mode: ${executionContext.usesWorktree ? `dedicated worktree (${executionContext.worktreeStatus})` : 'current repository'}`,
+      `- Approval: ${executionContext.usesWorktree
+        ? 'You may inspect, edit, validate, branch, commit, push, and open a PR from this worktree without asking again.'
+        : 'Do not commit or push until the user approves.'}`,
+      '- Never merge or push directly to a protected branch.',
       '',
       '## Do Not Touch',
       ...stream.ignore.map((item) => `- ${item}`),
