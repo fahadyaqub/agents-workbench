@@ -360,11 +360,11 @@ const run = async () => {
     ? filteredIssues
     : filteredIssues.filter((issue) => !state.seenIssues?.[issue.id]);
 
-  // Compute 24h delta: how many new events since the last fetch
+  // Compute delta since the previous fetch snapshot when available.
   const prevCounts = state.issueCounts || {};
   filteredIssues.forEach((issue) => {
     const prev = prevCounts[issue.id];
-    issue.count24h = (prev != null) ? Math.max(0, issue.count - prev) : null;
+    issue.countSinceLastFetch = (prev != null) ? Math.max(0, issue.count - prev) : null;
   });
 
   const nextState = {
@@ -390,6 +390,17 @@ const run = async () => {
     status: 'success',
     fetchedAt,
     since: sinceIso,
+    window: {
+      startedAt: sinceIso,
+      source: sinceSource,
+      label: (!options.sinceHoursExplicit && Number.isFinite(lastFetchTs))
+        ? 'since last fetch'
+        : `last ${options.sinceHours} hours`,
+    },
+    delta: {
+      source: Number.isFinite(lastFetchTs) ? 'since last fetch' : 'unavailable',
+      previousLastFetchedAt: state.lastFetchedAt || null,
+    },
     filters: {
       environment: options.environment || null,
       domain: options.domain || null,

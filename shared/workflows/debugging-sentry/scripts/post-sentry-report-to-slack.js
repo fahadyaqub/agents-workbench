@@ -109,11 +109,24 @@ const parseAllIssuesTable = (content) => {
   const match = content.match(/## All Issues[^\n]*\n\n([\s\S]*?)(?=\n---|\n## |$)/);
   if (!match) return {};
   const result = {};
-  for (const row of match[1].split('\n')) {
+  const rows = match[1].split('\n').filter((row) => row.startsWith('|'));
+  const headerRow = rows.find((row) => row.includes('Short ID'));
+  if (!headerRow) return result;
+  const headerCols = headerRow.split('|').map((c) => c.trim()).filter(Boolean);
+  const getIndex = (name) => headerCols.findIndex((col) => col.toLowerCase() === name.toLowerCase());
+  const idIndex = getIndex('Short ID');
+  const trendIndex = getIndex('Trend');
+  const trackedIndex = getIndex('Tracked');
+  const exactFixIndex = getIndex('Exact Fix');
+
+  for (const row of rows) {
     if (!row.startsWith('|') || /^\|[-| ]+\|$/.test(row)) continue;
     const cols = row.split('|').map(c => c.trim()).filter(Boolean);
-    if (cols.length < 7) continue;
-    const [id, , , , trend, tracked, exactFix] = cols;
+    if (cols.length < headerCols.length) continue;
+    const id = cols[idIndex];
+    const trend = cols[trendIndex];
+    const tracked = cols[trackedIndex];
+    const exactFix = cols[exactFixIndex];
     if (id && id !== 'Short ID') {
       result[id] = {
         trend: trend || '',
@@ -128,6 +141,12 @@ const parseAllIssuesTable = (content) => {
 const parseKeySignal = (content) => {
   const m = content.match(/## Key Signal[^\n]*\n\n([\s\S]*?)(?=\n---|\n## |$)/);
   return m ? m[1].trim().slice(0, 600) : '';
+};
+
+const parseLineValue = (content, label) => {
+  const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const match = content.match(new RegExp(`^${escaped}:\\s+(.+)$`, 'm'));
+  return match ? match[1].trim() : '';
 };
 
 const parseDate = (content) => {
@@ -172,8 +191,13 @@ const issueBlock = (issue, meta) => {
 
   // Count display: lead with 24h if available, total as quiet context
   let countStr;
-  if (issue.count24h != null) {
-    countStr = `*${issue.count24h} times today*`;
+  if (issue.countSinceLastFetch != null) {
+    countStr = `*${issue.countSinceLastFetch} since last fetch*`;
+    const since = issue.firstSeen ? shortMonth(issue.firstSeen) : null;
+    const totalNote = since ? `${issue.count.toLocaleString()} total since ${since}` : `${issue.count.toLocaleString()} total`;
+    countStr += `  _(${totalNote})_`;
+  } else if (issue.count24h != null) {
+    countStr = `*${issue.count24h} since prior snapshot*`;
     const since = issue.firstSeen ? shortMonth(issue.firstSeen) : null;
     const totalNote = since ? `${issue.count.toLocaleString()} total since ${since}` : `${issue.count.toLocaleString()} total`;
     countStr += `  _(${totalNote})_`;
@@ -229,6 +253,7 @@ const buildPayload = (reportPath, reportContent, jsonData, filePermalink) => {
   const date = parseDate(reportContent);
   const issueMeta = parseAllIssuesTable(reportContent);
   const keySignal = parseKeySignal(reportContent);
+  const windowLabel = jsonData?.window?.label || parseLineValue(reportContent, 'Fetch window') || 'active fetch window';
 
   // Use JSON issues if available, else try to hint from markdown
   const issues = jsonData ? jsonData.issues || [] : [];
@@ -262,7 +287,7 @@ const buildPayload = (reportPath, reportContent, jsonData, filePermalink) => {
     },
     {
       type: 'context',
-      elements: [{ type: 'mrkdwn', text: `*${formatDate(date)}*  ·  All environments  ·  Last 24 hours` }],
+      elements: [{ type: 'mrkdwn', text: `*${formatDate(date)}*  ·  All environments  ·  ${windowLabel}` }],
     },
   ];
 
@@ -309,10 +334,10 @@ const buildPayload = (reportPath, reportContent, jsonData, filePermalink) => {
   // No issues in window
   if (!issues.length) {
     blocks.push({ type: 'divider' });
-    blocks.push({
-      type: 'section',
-      text: { type: 'mrkdwn', text: `✅  *All quiet!*  No issues active in the last 24 hours.` },
-    });
+      blocks.push({
+        type: 'section',
+        text: { type: 'mrkdwn', text: `✅  *All quiet!*  No issues active in the ${windowLabel}.` },
+      });
   }
 
   // Footer

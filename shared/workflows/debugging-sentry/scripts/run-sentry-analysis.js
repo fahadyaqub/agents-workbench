@@ -163,11 +163,27 @@ const sanitizeTitle = (title) => (title || '')
 
 const formatCount = (count) => Number(count || 0).toLocaleString();
 
+const getDeltaCount = (issue) => {
+  if (issue.countSinceLastFetch != null) {
+    return Number(issue.countSinceLastFetch || 0);
+  }
+  if (issue.count24h != null) {
+    return Number(issue.count24h || 0);
+  }
+  return null;
+};
+
+const formatDeltaCount = (issue) => {
+  const delta = getDeltaCount(issue);
+  return delta == null ? 'n/a' : formatCount(delta);
+};
+
 const issuePriority = (issue) => {
   const level = issue.level || '';
   const title = issue.title || '';
   const count = Number(issue.count || 0);
-  const previousCount = count - Number(issue.count24h || 0);
+  const delta = getDeltaCount(issue);
+  const previousCount = count - Number(delta || 0);
   const doubled = previousCount > 0 && count >= (previousCount * 2);
 
   if ((level === 'fatal') || /crash/i.test(title) || ((level === 'error') && count > 20 && doubled)) {
@@ -186,16 +202,17 @@ const issueTrend = (issue) => {
   if (issue.substatus === 'new') {
     return 'new';
   }
-  if (issue.count24h == null) {
+  const delta = getDeltaCount(issue);
+  if (delta == null) {
     return 'ongoing';
   }
-  if (issue.count24h === 0) {
+  if (delta === 0) {
     return 'quiet';
   }
-  if (issue.count24h <= 3) {
+  if (delta <= 3) {
     return 'slow';
   }
-  if (issue.count24h <= 10) {
+  if (delta <= 10) {
     return 'steady';
   }
   return 'spiking';
@@ -373,20 +390,26 @@ const buildGroupedStreams = (issues) => {
     });
 };
 
-const formatIssueRow = (issue) => `| ${issue.shortId} | ${issue.cleanTitle} | ${issue.environment || 'unknown'} | ${formatCount(issue.count)} | ${issue.trendLabel} | ${issue.priorityLabel} | ${issue.tracker ? 'yes' : 'no'} | no |`;
+const formatIssueRow = (issue) => `| ${issue.shortId} | ${issue.cleanTitle} | ${issue.environment || 'unknown'} | ${formatCount(issue.count)} | ${formatDeltaCount(issue)} | ${issue.trendLabel} | ${issue.priorityLabel} | ${issue.tracker ? 'yes' : 'no'} | no |`;
 
-const buildReport = ({ issues, streams, fetchedAt, executionContext, sinceHours }) => {
+const buildReport = ({ issues, streams, fetchedAt, executionContext, fetchMeta, sinceHours }) => {
   const date = formatLocalDate(fetchedAt);
   const localRunTime = formatLocalDateTime(fetchedAt);
   const trackedIssues = issues.filter((issue) => !!issue.tracker);
   const newIssues = issues.filter((issue) => !issue.tracker);
   const exactFixes = [];
   const keySignals = [];
+  const windowLabel = fetchMeta?.window?.label || `last ${sinceHours} hours`;
+  const windowStartedAt = fetchMeta?.window?.startedAt || fetchMeta?.since || null;
+  const deltaPreviousFetchAt = fetchMeta?.delta?.previousLastFetchedAt || fetchMeta?.state?.previousLastFetchedAt || null;
+  const deltaAvailable = !!deltaPreviousFetchAt;
 
   const summaryLines = [
     `- Tracked issues: ${streams.filter((stream) => !!stream.tracker).length} stream${streams.filter((stream) => !!stream.tracker).length === 1 ? '' : 's'}`,
-    `- Issues in ${sinceHours}h window: ${issues.length}`,
+    `- Issues in fetch window (${windowLabel}): ${issues.length}`,
+    `- Window started at (UTC): ${windowStartedAt || 'unknown'}`,
     `- New/untracked: ${newIssues.length}`,
+    `- Per-issue delta basis: ${deltaAvailable ? `since previous fetch at ${deltaPreviousFetchAt}` : 'unavailable on first snapshot'}`,
     `- Issues with exact fix ready: ${exactFixes.length}`,
     `- Fix branch: ${executionContext.targetBranch}`,
     `- Fix location: ${executionContext.executionDir}`,
@@ -396,8 +419,9 @@ const buildReport = ({ issues, streams, fetchedAt, executionContext, sinceHours 
     .filter((stream) => !!stream.tracker)
     .map((stream) => {
       const totalCount = stream.issues.reduce((sum, issue) => sum + Number(issue.count || 0), 0);
+      const totalDelta = stream.issues.reduce((sum, issue) => sum + Number(getDeltaCount(issue) || 0), 0);
       const header = stream.tracker.isGroup
-        ? `### [GROUP: ${stream.tracker.title}] — Total: ${formatCount(totalCount)} events`
+        ? `### [GROUP: ${stream.tracker.title}] — Lifetime total: ${formatCount(totalCount)} events${deltaAvailable ? ` · Since last fetch: ${formatCount(totalDelta)}` : ''}`
         : `### [${stream.issues[0].shortId}] ${stream.issues[0].cleanTitle}`;
 
       const block = [
@@ -407,10 +431,10 @@ const buildReport = ({ issues, streams, fetchedAt, executionContext, sinceHours 
       ];
 
       if (stream.issues.length > 1 || stream.tracker.isGroup) {
-        block.push('| Member | Title | Count | Trend |');
-        block.push('|--------|-------|-------|-------|');
+        block.push('| Member | Title | Lifetime Total | Since Last Fetch | Trend |');
+        block.push('|--------|-------|----------------|------------------|-------|');
         stream.issues.forEach((issue) => {
-          block.push(`| ${issue.shortId} | ${issue.cleanTitle} | ${formatCount(issue.count)} | ${issue.trendLabel} |`);
+          block.push(`| ${issue.shortId} | ${issue.cleanTitle} | ${formatCount(issue.count)} | ${formatDeltaCount(issue)} | ${issue.trendLabel} |`);
         });
         block.push('');
       }
@@ -426,7 +450,7 @@ const buildReport = ({ issues, streams, fetchedAt, executionContext, sinceHours 
   const newIssueSections = newIssues
     .sort((a, b) => Number(b.count || 0) - Number(a.count || 0))
     .map((issue) => [
-      `### [${issue.shortId}] ${issue.cleanTitle} — Env: ${issue.environment || 'unknown'} — Count: ${formatCount(issue.count)} · ${issue.priorityLabel}`,
+      `### [${issue.shortId}] ${issue.cleanTitle} — Env: ${issue.environment || 'unknown'} — Lifetime total: ${formatCount(issue.count)}${deltaAvailable ? ` · Since last fetch: ${formatDeltaCount(issue)}` : ''} · ${issue.priorityLabel}`,
       `**What's happening**: ${issue.causeSummary}.`,
       `**Likely cause**: ${issue.latestEvent?.context?.likelyCauses?.slice(0, 3).join(', ') || 'Needs event inspection.'}`,
       `**Suggested next step**: ${issue.nextStep}`,
@@ -439,14 +463,15 @@ const buildReport = ({ issues, streams, fetchedAt, executionContext, sinceHours 
 
   const recurringSection = trackedIssues.length
     ? [
-      '| Short ID | Title | Fix Attempted | Before | After | Status |',
-      '|----------|-------|---------------|--------|-------|--------|',
+      '| Short ID | Title | Fix Attempted | Previous Lifetime Total | Current Lifetime Total | Since Last Fetch | Status |',
+      '|----------|-------|---------------|-------------------------|------------------------|------------------|--------|',
       ...streams
         .filter((stream) => !!stream.tracker)
         .flatMap((stream) => stream.issues.map((issue) => {
-          const before = issue.count24h != null ? Math.max(0, issue.count - issue.count24h) : 'n/a';
+          const delta = getDeltaCount(issue);
+          const before = delta != null ? Math.max(0, issue.count - delta) : 'n/a';
           const attempted = stream.tracker.fixAttempts ? `${stream.tracker.fixAttempts} prior attempts` : 'none logged';
-          return `| ${issue.shortId} | ${issue.cleanTitle} | ${attempted} | ${before} | ${formatCount(issue.count)} | ${issue.trendLabel} |`;
+          return `| ${issue.shortId} | ${issue.cleanTitle} | ${attempted} | ${before === 'n/a' ? before : formatCount(before)} | ${formatCount(issue.count)} | ${formatDeltaCount(issue)} | ${issue.trendLabel} |`;
         })),
     ].join('\n')
     : 'No tracked issues in this window.';
@@ -457,6 +482,9 @@ const buildReport = ({ issues, streams, fetchedAt, executionContext, sinceHours 
     `Local run time: ${localRunTime}`,
     `Fetched at (UTC): ${fetchedAt}`,
     `Time zone: ${LOCAL_TIME_ZONE}`,
+    `Fetch window: ${windowLabel}`,
+    `Fetch window started at (UTC): ${windowStartedAt || 'unknown'}`,
+    `Per-issue delta basis: ${deltaAvailable ? `since previous fetch at ${deltaPreviousFetchAt}` : 'unavailable on first snapshot'}`,
     `Fix branch: ${executionContext.targetBranch}`,
     `Fix repository: ${executionContext.executionDir}`,
     `Fix execution mode: ${executionContext.usesWorktree ? `dedicated worktree (${executionContext.worktreeStatus})` : 'current repository'}`,
@@ -488,8 +516,8 @@ const buildReport = ({ issues, streams, fetchedAt, executionContext, sinceHours 
     '',
     '## All Issues (brief table)',
     '',
-    '| Short ID | Title | Env | Count | Trend | Priority | Tracked | Exact Fix |',
-    '|----------|-------|-----|-------|-------|----------|---------|-----------|',
+    '| Short ID | Title | Env | Lifetime Total | Since Last Fetch | Trend | Priority | Tracked | Exact Fix |',
+    '|----------|-------|-----|----------------|------------------|-------|----------|---------|-----------|',
     ...issues.map(formatIssueRow),
     '',
     '---',
@@ -736,6 +764,7 @@ const run = () => {
     streams,
     fetchedAt: latest.fetchedAt,
     executionContext,
+    fetchMeta: latest,
     sinceHours: options.sinceHours,
   });
   const reportPath = path.join(REPORTS_DIR, `${report.date}.md`);
