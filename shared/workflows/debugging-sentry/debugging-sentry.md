@@ -581,6 +581,33 @@ One round → re-deploy → check results. If still inconclusive after one round
 
 ---
 
+## Helper Scripts
+
+Reusable diagnostic scripts live in `shared/workflows/debugging-sentry/scripts/` so multiple projects can share them. Each script should solve a problem that recurs across investigations and that browser/in-app telemetry cannot answer alone.
+
+### `check-cdn-cors.sh` — server-side ground truth for CORS / signed URLs
+
+When a Sentry event labels something as a CORS failure (e.g. `hls_network_fatal_cors`, `cdn_cors_probe_failed`, or any `code === 0` network error), the browser may be lying about *why* the request failed. Browsers hide blocked CORS response headers from JS, and `Access-Control-Allow-Origin` is not on the CORS-safelisted-response-headers list — so even an in-app `fetch(..., { mode: 'cors' })` probe that returns `r.ok` will report `r.headers.get('access-control-allow-origin') === null` on healthy responses unless the server sends `Access-Control-Expose-Headers`. CloudFront does not by default.
+
+This script bypasses the browser. It runs `curl` with the iOS Safari User-Agent and the right `Origin` header, in three modes (GET, OPTIONS preflight, HEAD), and prints every response header CloudFront actually returned. Decode `Expires=` from the URL to check signed-URL freshness.
+
+**Usage:**
+```bash
+shared/workflows/debugging-sentry/scripts/check-cdn-cors.sh "<full-signed-url>" [origin]
+```
+Default origin is `https://rd2.app.roll.ai`. The script auto-redacts `Signature=`, `Key-Pair-Id=`, and `Policy=` in the URL it echoes back, so output is safe to paste into docs/Slack.
+
+**When to use it:** any time a project's Sentry event tags it as CORS but you cannot rule out an iOS abort, expired signed URL, or response without CORS headers on a 4xx. In-app HEAD probes can confirm "fetch worked" or "fetch failed" but cannot confirm "header X was present" — this script can.
+
+**Interpretation hint cheat-sheet** (also printed at bottom of script output):
+- 200 with `access-control-allow-origin` matching origin → backend CORS is fine; failure is iOS Safari abort, NOT CORS.
+- 2xx but no `access-control-allow-origin` → real CORS misconfig.
+- 403 with no `access-control-allow-origin` → signed URL expired or perms changed; CloudFront isn't sending CORS headers on errors, which converts a 403 into a code-0 in the browser.
+- `*` for ACAO with `access-control-allow-credentials: true` → invalid combo; browsers reject per spec.
+- ACAO matches but `vary: Origin` missing → CDN may serve cached responses keyed for the wrong origin.
+
+---
+
 ## When to Stop and Escalate
 
 Stop and tell the user if:
