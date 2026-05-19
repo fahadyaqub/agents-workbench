@@ -38,6 +38,10 @@ Before starting, you must have:
 
 If neither is clear, ask the user before proceeding.
 
+> **Do not accept "commit X is wrong, fix it" as a sufficient problem statement.** A commit hash and an assertion that it is wrong tells you nothing about what behavior is broken or what the correct behavior should be. Without those two things you cannot form a hypothesis, and without a hypothesis you cannot debug. Ask for the symptom first.
+
+Even with a symptom and a commit in hand: **do not assume the commit is the cause.** Read the diff, trace the data path, and ask whether the changed code actually produces the symptom. A plausible-sounding explanation is not a confirmed bug. If you cannot find a code path that demonstrably produces the wrong output, say so — do not invent one. The user can be wrong about whether there is a bug at all, not just about the cause.
+
 ---
 
 ## Local Workflow Area
