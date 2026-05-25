@@ -1,184 +1,485 @@
 # Workflow: Debugging with SigNoz
 
-**Roles**: Expert Programmer · Reproduction and Regression Tester
+**Roles**: Senior Software Engineer . Product Telemetry Analyst . Expert Programmer . Reproduction and Regression Tester
 
-**This workflow covers**: Investigating latency, performance degradation, service errors, and distributed trace analysis using SigNoz.
-**This workflow does NOT cover**: Application exceptions and error tracking (use `debugging-sentry.md`), general code-level debugging (use `debugging.md`), fixing a confirmed issue (use `bugfix.md`).
+**This workflow covers**: Fetching, grouping, tracking, and interpreting product behavior logs, delay logs, performance traces, and operational telemetry using SigNoz.
+**This workflow does NOT cover**: Application exceptions and crash/error tracking (use `debugging-sentry/debugging-sentry.md`), general code-level debugging without telemetry (use `debugging.md`), or implementing a confirmed code fix (use `bugfix.md`).
 
-> SigNoz is an open-source APM: traces, metrics, and logs. It covers what Sentry doesn't — latency, distributed traces, service maps, and infrastructure metrics.
+> SigNoz is the source of truth for what users are doing, where workflows slow down, and whether added behavioral instrumentation is producing useful signal.
+> Sentry remains the source of truth for application exceptions and error reporting.
 
-> **Project-specific overrides**: If the project has its own SigNoz docs, read them first.
+---
+
+## Reminder (always print this first)
+
+Before doing anything else, always print this to the user:
+
+```text
+SigNoz commands:
+  - "fetch signoz logs" / "fetch signoz logs from the last X hours"
+  - "check [point of interest]" - reviews tracked logs and gives a verdict
+  - "start tracking [point of interest]" OR "group [events/logs] as [point of interest]"
+  - "add what we did to [point of interest] logs"
+```
 
 ---
 
 ## Trigger Phrases
 
+When the user says any of the following, run the SigNoz analysis workflow:
+
+- "fetch signoz logs"
+- "pull signoz logs"
 - "check signoz"
+- "run signoz analysis"
+- "check signose"
+- "pull signore logs"
+- "setup a workflow for signose"
+- "what are users doing in [area]"
+- "check [point of interest] logs"
+- "check [point of interest] with history"
 - "what's slow in signoz"
-- "check traces for [service]"
-- "why is [endpoint/feature] slow"
-- "check error rate in signoz"
-- "look at the service map"
+- "why is [flow/endpoint/feature] slow"
 - "latency is spiking"
 - "something is slow since the deploy"
+- "group [events/logs] as [point of interest]"
+- "start tracking [point of interest]"
+
+**Default window**: 24 hours. If the user specifies a time (for example "last 10 hours", "since the deploy", or "today"), use that value. If ambiguous, use 24h.
 
 ---
 
 ## Prime Directive
 
-**Form a hypothesis before drilling into traces.**
+**Behavior logging must answer a question.**
 
-SigNoz has deep data. It is easy to spend an hour exploring traces without getting closer to the cause.
-Start wide (service map, metrics), narrow to one service, then one operation, then form a hypothesis — before reading any trace in detail.
-If you are exploring traces without a specific question, stop and restate what you are trying to confirm.
+Do not add logs just because visibility feels nice. Every new log must have:
+- a point of interest
+- a hypothesis or decision it will test
+- expected fields and IDs
+- a review window
+- a removal, promotion, or follow-up condition
+
+If the tracking file is growing with more logs but no decision, stop and tell the user. The next step should be a sharper hypothesis, not more instrumentation.
 
 ---
 
 ## When to Use SigNoz vs Sentry
 
-| Symptom | Tool |
+| Symptom or question | Tool |
 |---|---|
 | App threw an exception | Sentry |
-| Endpoint is slow | SigNoz |
-| Service is down or degraded | SigNoz |
+| User behavior, click/path/flow observation | SigNoz |
+| Delay, latency, duration, stalled step | SigNoz |
+| Product funnel or workflow drop-off | SigNoz |
+| Backend/service degradation | SigNoz |
 | High error rate on an API | Both |
-| DB query taking too long | SigNoz |
 | User reported a crash | Sentry |
-| Deploy caused latency spike | SigNoz |
-| Memory or CPU spike | SigNoz |
+| Need searchable diagnostic IDs around behavior | SigNoz |
 
 ---
 
 ## Prerequisites
 
 Before starting:
-- SigNoz instance URL (check project `AGENTS.md` or `.env`)
-- Access credentials or API token
-- Service names as registered in SigNoz (check `List Services` in the UI or API)
-- OpenTelemetry instrumentation must be in the codebase — if it isn't, traces won't exist
+- SigNoz query URL is known. For Roll Web, check `.env` for `SIGNOZ_API_URL`.
+- SigNoz API key is available. For Roll Web, check `.env` for `SIGNOZ_API_TOKEN`.
+- Use the `SIGNOZ-API-KEY` request header for query API reads.
+- Service names are known or discoverable from logs. For Roll Web, common service names are `roll-web-prod`, `roll-web-staging`, and `roll-web-dev`.
+- For browser/client logs, OpenTelemetry log ingestion must be active. If no rows appear for a service, stop and say the behavior may not be instrumented yet.
 
-If traces don't exist for the affected service → stop and tell the user. Instrumentation needs to be added first as a separate task.
+Never print API keys or raw secrets. When showing query output, prefer counts, field names, grouped summaries, and short redacted examples.
 
 ---
 
 ## Local Workflow Area
 
-Use `local/workspaces/debugging-signoz/` as this workflow's private writable area.
+Use `local/workspaces/signoz-logs/` as this workflow's private writable area.
 
-- If the folder does not exist yet → create it before writing workflow-owned notes, latency snapshots, or temporary artifacts.
-- Treat it as pre-approved writable space for this workflow. Do not ask for extra permission for writes inside it.
-- Use it for trace notes, exported screenshots, and hypothesis logs unless the project already has a native performance-report location.
+- If the folder does not exist yet, create it before writing workflow-owned notes, exported log snapshots, or tracking files.
+- Treat this folder as pre-approved writable space for this workflow.
+- Keep project-specific implementation changes in the project repo; keep workflow tracking and analysis state in the workbench.
 
----
+Expected structure:
 
-## Step 1: Identify the Signal
-
-Set the time range to match the incident window. If unknown, start with the last 1 hour.
-
-Check in this order:
-1. **Service map** — which services show elevated error rate or latency?
-2. **Metrics dashboard** — are there anomalies in the incident window?
-3. **Top operations** — which endpoints or operations are slowest or most errored?
-
-If no anomaly is visible in SigNoz → tell the user. The issue may not be instrumented or may be in a layer SigNoz doesn't cover.
-
----
-
-## Step 2: Isolate the Service
-
-Pick the single service with the highest error rate or worst latency.
-
-Note these metrics (not just averages):
-- **P99 / P95 latency** — average hides outliers
-- **Error rate** — errors per total requests
-- **Throughput** — a drop may indicate an upstream problem, not this service
-
-Compare against the 7-day average as a baseline if no other baseline exists.
-
-If multiple services are equally affected → check the service map for dependencies. Start with the service that others call, not the one at the edge.
-
----
-
-## Step 3: Drill Into Traces
-
-Filter traces for the affected service and operation:
-- Sort by duration descending → find the slowest traces
-- Filter by `status = error` → find failing traces
-
-For each suspicious trace:
-1. Expand the span tree — identify which span is slow or errored
-2. Check span attributes: DB query text, external call URL, request params
-3. Look for the pattern — same DB table? Same downstream service? Same user type?
-
-Once you see the pattern → state the hypothesis before going further.
-
----
-
-## Step 4: Form a Hypothesis
-
-Write down before touching any code:
-- Which service and operation is affected
-- What the span tree shows (where time is being spent)
-- The likely root cause (examples: missing index, N+1 query, downstream timeout, retry storm)
-
-If you cannot write this clearly → go back to Step 3 and look for more signal.
-Do not touch code until the hypothesis is specific enough to test.
-
----
-
-## Step 5: Correlate With Code and Deploys
-
-1. Check when the issue started — correlate with deploy timestamps in SigNoz or git
-2. Run `git log --since="<start-time>" --oneline` — find commits that coincide
-3. Read the specific code path identified in the trace
-
-Based on the hypothesis:
-- **Slow DB query** → check for missing indexes, unintended full-table scans, N+1 patterns
-- **External call timeout** → check for missing timeouts, retry storms, dependency outages
-- **High CPU/memory** → check for large allocations, unbounded loops, or cache misses in hot paths
-
----
-
-## Step 6: Fix and Verify
-
-Hand off to `bugfix.md` for the fix itself.
-
-After the fix is deployed:
-- Re-check SigNoz after sufficient traffic (minimum 15–30 minutes)
-- Verify P99 latency and error rate have improved
-- If metrics have not improved → the hypothesis was wrong. Return to Step 3.
-
----
-
-## What to Record
-
-After resolving, add a note to the project's `MEMORY.md`:
-
-```markdown
-## [YYYY-MM-DD] Performance Fix — <service/operation>
-- **Root cause**: <one sentence>
-- **Fix**: <what changed>
-- **Verified**: P99 dropped from Xms to Yms
+```text
+local/workspaces/signoz-logs/
+  latest-logs.json
+  fetch-state.json
+  daily-analysis/
+    YYYY-MM-DD.md
+  points-of-interest/
+    <poi-slug>.md
+  queries/
+    <poi-slug>.json
 ```
 
-This prevents the same issue being re-investigated later.
+Use `local/memory/debugging-signoz.md` for compact durable memory about active points of interest. Keep it under 40 lines unless the user asks for a longer record.
+
+---
+
+## Step 1: Fetch Recent Logs
+
+Fetch recent logs through the SigNoz query API.
+
+For Roll Web, read `SIGNOZ_API_URL` and `SIGNOZ_API_TOKEN` from `.env`.
+
+The query API shape is:
+
+```json
+{
+  "start": 1700734490000,
+  "end": 1700738090000,
+  "requestType": "raw",
+  "variables": {},
+  "compositeQuery": {
+    "queries": [
+      {
+        "type": "builder_query",
+        "spec": {
+          "name": "A",
+          "signal": "logs",
+          "filter": { "expression": "" },
+          "order": [
+            { "key": { "name": "timestamp" }, "direction": "desc" },
+            { "key": { "name": "id" }, "direction": "desc" }
+          ],
+          "offset": 0,
+          "limit": 100
+        }
+      }
+    ]
+  }
+}
+```
+
+Useful filter expressions:
+
+```text
+service.name = 'roll-web-prod'
+service.name = 'roll-web-staging'
+body CONTAINS 'upload'
+body CONTAINS 'delay'
+body CONTAINS 'collab'
+```
+
+Write the raw API response, redacted if needed, to `local/workspaces/signoz-logs/latest-logs.json`.
+
+Print to the user:
+
+```text
+Fetching SigNoz logs from the last N hours...
+```
+
+Then summarize:
+- time window
+- services queried
+- rows scanned
+- rows returned
+- top event names / log names / body patterns
+- fields available for grouping
+
+---
+
+## Step 2: Group by Points of Interest
+
+A point of interest is a workflow, feature area, delay, user action, or product question that needs real-world telemetry.
+
+Examples:
+- Collab editor playback start
+- Media load and stall recovery
+- Upload start to upload complete
+- Export creation to export ready
+- Auth bootstrap and auto-login
+- Video player asset open
+- Transcript/caption generation
+
+Group logs by the most specific stable key available, in this order:
+1. explicit `poi`, `pointOfInterest`, `flow`, or `featureArea`
+2. `context + group + name`
+3. log `name`
+4. known message/body prefix
+5. service + route + operation
+6. manually selected query
+
+For each group, compute:
+- count in window
+- first seen and last seen
+- affected users, sessions, calls, edits, files, recordings, or videos when IDs are present
+- durations or delay fields if present
+- P50/P95/P99 when numeric duration fields exist
+- missing IDs that would make the group more useful
+- representative redacted examples
+
+Do not group unrelated logs just because they share the same service. Group around product questions.
+
+---
+
+## Step 3: Generate Daily Report
+
+Create `local/workspaces/signoz-logs/daily-analysis/YYYY-MM-DD.md` with this structure:
+
+```markdown
+# SigNoz Behavior Analysis - YYYY-MM-DD
+
+## Summary
+
+| Metric | Value |
+|--------|-------|
+| Window | last N hours |
+| Services queried | roll-web-prod, ... |
+| Rows scanned | N |
+| Logs returned | N |
+| Points of interest seen | N |
+| Tracked points updated | N |
+| New candidate points | N |
+| Instrumentation concerns | N |
+
+---
+
+## Priority Points of Interest
+
+### <Point of Interest> - <status>
+- **Question**: <what we are trying to learn>
+- **Signal**: <what the logs show>
+- **Counts**: <count / users / sessions / affected IDs>
+- **Delay**: <p50/p95/p99 or not available>
+- **Verdict**: improving | stable | regressing | inconclusive | needs instrumentation
+- **Next step**: <specific action>
+
+---
+
+## Grouped Logs
+
+| Point of Interest | Count | Users | Sessions | IDs present | Delay fields | Status |
+|-------------------|-------|-------|----------|-------------|--------------|--------|
+| Media load | 55 | 12 | 18 | fileId, editId | loadMs | tracked |
+
+---
+
+## New Candidate Points
+
+### <Candidate>
+- **Why it matters**: <product/debugging value>
+- **Existing signal**: <what is already visible>
+- **Missing signal**: <what IDs/fields/logs are missing>
+- **Recommendation**: track | ignore | add instrumentation | investigate code
+
+---
+
+## Instrumentation Concerns
+
+List logs that are noisy, missing IDs, hard to group, duplicated, or better suited to Sentry.
+
+---
+
+## All Logs Brief Table
+
+| Timestamp | Service | Name/Pattern | Severity | IDs | Notes |
+|-----------|---------|--------------|----------|-----|-------|
+```
+
+Show the same report summary in the current chat. Do not paste large raw log bodies unless the user asks.
+
+---
+
+## Step 4: Update Point-of-Interest Tracking Files
+
+Tracking files live at:
+
+```text
+local/workspaces/signoz-logs/points-of-interest/<poi-slug>.md
+```
+
+Agent rules:
+- Always append timeline entries.
+- Preserve user-written sections exactly.
+- Do not overwrite old findings.
+- Do not add instrumentation entries unless logs were actually added or the user explicitly asks to record planned instrumentation.
+
+Tracking file format:
+
+```markdown
+# <Point of Interest>
+
+- **Status**: active | monitoring | resolved | paused
+- **Tracking Started**: YYYY-MM-DD
+- **Owner Question**: <what the user wants to learn or improve>
+- **Primary Query**: <SigNoz filter expression or query file path>
+- **Services**: roll-web-prod, roll-web-staging, ...
+- **Expected IDs**: userId, sessionId, callId, editId, fileId, videoId, recordingSessionId
+
+## Why We Care
+
+<Product or engineering reason. What decision this telemetry should help make.>
+
+## Current Hypotheses
+
+- <Hypothesis 1>
+
+## Expected Signal
+
+- <What should appear in logs if the hypothesis is true>
+- <What would rule it out>
+
+## Current Instrumentation
+
+| Log/Event | Location | Fields | Purpose | Added |
+|-----------|----------|--------|---------|-------|
+
+## Timeline
+
+### [YYYY-MM-DD] SigNoz Observation
+- **Window**: last N hours
+- **Counts**: N logs, N users/sessions if known
+- **Durations**: p50/p95/p99 if available
+- **Findings**: <what the logs show>
+- **Concerns**: <missing IDs, noisy fields, ambiguous naming>
+- **Verdict**: <confirmed / ruled out / inconclusive / needs more signal>
+
+### [YYYY-MM-DD] Instrumentation Added
+- **Files changed**: <list>
+- **Logs added**: <event names>
+- **Why added**: <hypothesis or question>
+- **Expected signal**: <what we expect to find>
+- **Review window**: <when/how to check>
+- **Removal or promotion condition**: <remove debug log, promote to durable behavior event, or keep>
+
+## Open Questions
+
+_None yet._
+```
+
+---
+
+## Step 5: Review a Tracked Point of Interest
+
+When the user says "check [point of interest]" or "review [point of interest] with history":
+
+1. Read the tracking file from `points-of-interest/`.
+2. Read `latest-logs.json` and any saved query file for that point.
+3. Run a fresh SigNoz query for the relevant window.
+4. Evaluate every hypothesis and every instrumentation entry from the latest timeline entry.
+
+Answer these directly:
+- Did the log fire?
+- Did the expected fields appear?
+- Are the required IDs present?
+- What does the signal prove, rule out, or leave inconclusive?
+- Can we improve the product/code now?
+- If not, what single additional signal is needed?
+
+Append a `### [YYYY-MM-DD] Diagnostic Review` entry to the tracking file.
+
+Lead the user response with the verdict, not the history.
+
+---
+
+## Step 6: Add or Record New Instrumentation
+
+Only add behavior logs after the tracking file contains a clear reason.
+
+Before editing code, update or create the point-of-interest file with:
+- the question
+- the hypothesis
+- the exact log names to add
+- expected IDs and fields
+- what the logs should prove or rule out
+
+Implementation guidance:
+- Put behavior, action, duration, and delay logs in SigNoz.
+- Put exceptions and real error reports in Sentry.
+- Include every reachable ID already in scope: `id`, `callId`, `fileId`, `videoId`, `audioId`, `editId`, `recordingSessionId`, `recSesId`, `rsid`, `sessionId`, `participantId`, `userId`, `deviceId`, `segmentId`, `takeId`, `clipId`.
+- Prefer stable event names: `<area>.<action>.<phase>` or existing local conventions.
+- Include duration fields as numbers in milliseconds, not formatted strings.
+- Include environment, route, service, and feature area when available.
+- Avoid logging raw user content, transcript text, tokens, signed URLs, or secrets.
+
+After code changes, append an `Instrumentation Added` entry to the tracking file.
+
+---
+
+## Step 7: Update Memory
+
+Update `local/memory/debugging-signoz.md` with only compact durable state:
+
+```markdown
+# SigNoz Active Points of Interest
+
+_Last updated: YYYY-MM-DD_
+
+| Point | Status | Signal | Concern | Next Review |
+|-------|--------|--------|---------|-------------|
+| Media load | active | loadMs p95 high | missing fileId on failure | after next rd deploy |
+```
+
+If a project-level memory file exists and the finding is project-specific and durable, add a compact note there too. Keep workbench tracking files as the detailed source of truth.
+
+---
+
+## "Start Tracking <Point of Interest>"
+
+When the user asks to start tracking:
+
+1. Search `latest-logs.json` and fresh SigNoz data for matching event names, body patterns, or service fields.
+2. Propose the grouping key in one sentence.
+3. Create `points-of-interest/<poi-slug>.md`.
+4. Save the query to `queries/<poi-slug>.json` if it is non-trivial.
+5. Add the point to `local/memory/debugging-signoz.md`.
+
+If no useful logs exist yet, still create the tracking file with `Status: active` and a `Current Instrumentation` section showing what needs to be added.
+
+---
+
+## "Group <Logs> as <Point of Interest>"
+
+When grouping existing logs:
+
+1. Resolve candidate logs from `latest-logs.json` or a fresh query.
+2. Show the matched patterns and counts to the user.
+3. Create or update the point-of-interest tracking file.
+4. Append a `SigNoz Observation` entry with the grouped counts.
+5. Update memory with one row for the group.
+
+The group file is the tracking unit. Do not create separate files for every event unless they answer different product questions.
+
+---
+
+## "Add What We Did to <Point of Interest> Logs"
+
+When the user asks to record recent work:
+
+1. Read the tracking file.
+2. Find the date of the last timeline entry.
+3. Inspect git changes since that date only for relevant files.
+4. Look for SigNoz behavior logs, duration logs, event names, fields, and ID coverage.
+5. Append an `Instrumentation Added` or `Fix Attempt` entry explaining:
+   - what changed
+   - what logs were added or adjusted
+   - why they were added
+   - expected signal
+   - when to review
+
+Do not infer intent if the diff is ambiguous. Say what the code changed and mark the expected signal as unknown.
 
 ---
 
 ## When to Stop and Escalate
 
 Stop and tell the user if:
-- No anomaly is visible in SigNoz but the user is reporting slowness — the issue may not be instrumented
-- The trace analysis is pointing to a dependency outside your control (third-party API, managed DB)
-- The fix has been deployed and verified but latency is not improving
-- The investigation has required changes to more than 3 services without a clear fix
+- No logs exist for the point of interest and instrumentation is required first.
+- A point has gone through two rounds of added logs without a decision.
+- Required IDs are missing and the logs cannot be correlated to users/sessions/files/edits.
+- The signal belongs in Sentry because it is really an exception or crash.
+- The query returns too much noise to interpret safely.
 
 ---
 
 ## Completion Criteria
 
 A SigNoz session is complete when:
-- The root cause is identified and confirmed in the trace data
-- A fix has been deployed and verified against the SigNoz metrics
-- The finding is recorded in `MEMORY.md`
-- All temporary instrumentation added during investigation is removed or scheduled for removal
+- Recent logs have been fetched or a clear instrumentation gap has been identified.
+- Logs are grouped by points of interest, not just dumped chronologically.
+- Tracking files are updated for active points.
+- Any new instrumentation has a documented reason and expected signal.
+- `local/memory/debugging-signoz.md` reflects current active points of interest.
