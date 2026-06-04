@@ -151,6 +151,11 @@ If `local/manifest.toml` is missing → create it from `templates/local/manifest
 If it exists → confirm it defines private sections for memory, domains, agents, and workflows.
 Then mark `local_manifest` as `complete` in `local/setup.toml`.
 
+**`agent_runner_setup` is pending:**
+Run `shared/workflows/agent-runner-setup.md` in full before continuing.
+Do not skip this — the agent-runner pre-flight fires for execution-heavy tasks and will be blocked without it.
+If the user explicitly refuses → mark `ignored`. Do not prompt again.
+
 Once a setup item is marked `complete` or `ignored` → do not prompt for it again unless the user resets it manually in `local/setup.toml`.
 
 ---
@@ -246,6 +251,7 @@ Stop and ask the user if:
 ## Completion Criteria
 
 Bootstrap is complete when:
+- `agent_runner_setup` in `local/setup.toml` is `complete` or `ignored`
 - All three workspace root pointer files exist
 - `local/manifest.toml`, `local/setup.toml`, `local/who-i-am.md`, and `local/personal-memory.md` exist
 - All setup items in `local/setup.toml` are marked `complete` or `ignored`

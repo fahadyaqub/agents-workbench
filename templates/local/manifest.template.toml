@@ -2,7 +2,9 @@ version = 1
 
 [memory]
 private_dir = "local/memory"
-entries = []
+entries = [
+  "agent-runner-learnings.md",
+]
 
 [domains]
 private_dir = "local/domains"

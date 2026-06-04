@@ -21,3 +21,12 @@ migrated_files = []
 status = "pending"
 projects_with_branches_defined = []
 projects_using_defaults = []
+
+[agent_runner_setup]
+status = "pending"
+providers = []
+username = ""
+user_hash = ""
+configured_at = ""
+mode = "suggest"
+post_remote_evals = false

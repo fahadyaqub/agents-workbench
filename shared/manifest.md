@@ -8,7 +8,7 @@ This manifest is an execution checklist, not background reference material.
 As soon as you load it, inspect `local/manifest.toml` and `local/setup.toml` before doing normal task routing.
 
 If `local/manifest.toml` or `local/setup.toml` is missing, initialize local files from `templates/local/`.
-If any setup item is `pending`, stop regular task flow and follow `shared/workflows/bootstrap.md`.
+If any setup item has `status = "pending"` on a real TOML value line, stop regular task flow and follow `shared/workflows/bootstrap.md`.
 
 ## Always Load
 
@@ -32,7 +32,7 @@ Then read:
 
 If `local/manifest.toml` or `local/setup.toml` is missing, initialize local files from `templates/local/`.
 
-If any setup item in `local/setup.toml` is `pending`, follow `shared/workflows/bootstrap.md` before any domain or workflow routing.
+If any setup item in `local/setup.toml` has `status = "pending"` on a real TOML value line, follow `shared/workflows/bootstrap.md` before any domain or workflow routing.
 
 Setup items may be marked:
 - `pending`
@@ -63,6 +63,25 @@ Suggested domain routing:
 - Short-form video content, social media creative content, YouTube/TikTok production: `domains/creative-arts.md`
 - Creative direction, visual identity, style-consistent content production: `domains/creative-arts.md`
 
+## Default Pre-flight: Agent Runner
+
+**Before execution-heavy tasks, run the agent-runner pre-flight check.**
+
+This applies to execution tasks that may decompose into parallel subtasks. It does not apply to simple questions, advisory reviews, clarification, setup checks, or tasks that are obviously faster inline. The user can also explicitly skip it ("just do it", "do this inline", "skip the agent runner", "don't delegate").
+
+Steps:
+1. Check `local/setup.toml` for `[agent_runner_setup]` — if missing or `status = "pending"`, run `shared/workflows/agent-runner-setup.md` first
+2. Read `shared/memory/agent-runner/seed.md` — structural rules and model guidance
+3. Read all other `shared/memory/agent-runner/<username>.md` files — teammates' promoted lessons
+4. Read `local/memory/agent-runner-learnings.md` — your personal run history (skip if missing)
+5. Run the delegate-only-if gate from `shared/workflows/agent-runner.md` Step 0c
+6. If delegation applies → follow `shared/workflows/agent-runner.md` for the full run
+7. If bypassing → proceed to normal workflow inference below, then record the bypass only when the task reached a meaningful runner decision
+
+The pre-flight check should take under a minute. If applying the runner would add noise, bypass immediately.
+
+---
+
 ## Workflow Inference
 
 Check `local/workflows/` first for user-private workflows. Use `shared/workflows/` for workflows that are meant to be shared across users and projects.
@@ -85,6 +104,8 @@ Load relevant workflow docs based on the task:
 - Workbench health checks, drift repair, and post-update sync: `shared/workflows/workbench-doctor.md`
 - Adding support for a new AI agent tool: `shared/workflows/new-agent.md`
 - Splitting tasks into separate AI windows/sessions: `shared/workflows/session-handoff.md`
+- Delegating atomic tasks to free/cheap OpenRouter models in parallel: `shared/workflows/agent-runner.md`
+- First-time agent-runner provider and key setup: `shared/workflows/agent-runner-setup.md`
 
 ## Trigger Learning
 

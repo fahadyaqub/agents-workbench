@@ -50,6 +50,13 @@ Each Sentry session should produce either a fix, a tracked hypothesis, or a conf
 ## Prerequisites
 
 Before starting:
+
+**Workbench preflight — run this first:**
+```bash
+grep -n '^[[:space:]]*status = "pending"' /path/to/agents-workbench/local/setup.toml
+```
+Replace `/path/to/agents-workbench` with the path from `~/.agents-workbench`. If any pending items are found, follow `shared/workflows/bootstrap.md` before continuing. Do not start Sentry analysis with unresolved setup items.
+
 - Sentry project slug and organization are known (check project `AGENTS.md` or `.env`)
 - Access to Sentry is available (API token or CLI auth)
 

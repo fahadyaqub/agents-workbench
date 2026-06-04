@@ -13,7 +13,15 @@ Complete these steps before writing any response or starting any task:
 If you were sent here by a workspace pointer or compatibility stub, do not stop at the redirect.
 Treat this file as active instructions and immediately inspect `local/manifest.toml` and `local/setup.toml`.
 
-If `local/manifest.toml` or `local/setup.toml` is missing, or any setup item is marked `pending`, pause normal task work and follow `shared/workflows/bootstrap.md` before continuing.
+**Pending-item check — do this explicitly, do not skim:**
+
+```bash
+grep -n '^[[:space:]]*status = "pending"' local/setup.toml
+```
+
+If this command produces ANY output, stop immediately and follow `shared/workflows/bootstrap.md` before continuing. Do not proceed with the user's task until every pending item is resolved or explicitly marked `ignored` by the user.
+
+If `local/manifest.toml` or `local/setup.toml` is missing entirely, also follow `shared/workflows/bootstrap.md`.
 
 ## Load Order
 
