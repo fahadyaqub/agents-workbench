@@ -47,6 +47,39 @@ Each Sentry session should produce either a fix, a tracked hypothesis, or a conf
 
 ---
 
+## Sentry vs SigNoz — where to log and where to look
+
+**Sentry** is for errors and exceptions — things that went wrong in a specific user session. Use it for:
+- Uncaught exceptions, crashes, fatal errors
+- Auth failures, media errors, network failures
+- Events you need to triage, track counts, and resolve
+
+**SigNoz** is for user flow and sequence logging — understanding what happened and in what order. Use it for:
+- Tracking the timeline of events within a flow (auth bootstrap sequence, video load steps)
+- Frequency and latency data (how long does X take? how often does Y fire?)
+- High-frequency events that are not errors (every `onAuthStateChanged`, every seek, every load step)
+- Correlating events across a session by `bootstrapId`, `callId`, `recordingSessionId`
+
+**Rule: if you're adding logging to understand a user flow, use SigNoz (`datadogLogEntry`). If you're tracking an error or exception, use Sentry.**
+
+Do NOT add extensive user-flow breadcrumbs to Sentry. Sentry is not a time-series log store — it's an error tracker. High-frequency event logging belongs in SigNoz where it can be queried, aggregated, and graphed.
+
+### Checking SigNoz during a Sentry investigation
+
+When a Sentry event shows a sequence-dependent failure (auth state changes, load order, timing-dependent race), check SigNoz for the timeline:
+
+1. Note the `bootstrapId`, `callId`, or `recordingSessionId` from the Sentry event tags
+2. Query SigNoz: `service.name='roll-web-prod' AND bootstrapId='<value>'` — this shows all log entries for that session in time order
+3. Look at `auth.firebase.state_changed` events for the auth sequence and `timeSinceLastFireMs` for timing gaps
+4. Look at `group='LoadTiming'` for video/audio load durations
+
+Trigger phrases for the user:
+- **"fetch signoz logs"** — runs the SigNoz log fetch workflow (`debugging-signoz.md`)
+- **"check signoz for [bootstrapId]"** — fetch logs filtered to that session ID
+- **"check signoz for [issue]"** — extract the correlation ID from the Sentry event and query SigNoz
+
+---
+
 ## Prerequisites
 
 Before starting:
@@ -540,6 +573,18 @@ When the user asks to check, review, or investigate a tracked issue, do ALL of t
 - Read the tracking file(s): `local/workspaces/sentry-issues/issues/*.md`
 - Read `local/workspaces/sentry-issues/latest-issues.json` for current counts
 - The tracking file is the source of truth for what was tried. **Do not check git unless** the user references something (e.g. "the audio logging we added") that has no corresponding entry in the tracking file. Only then, check git to find what changed and understand it.
+
+### Step 1b: Check SigNoz for timeline context (when relevant)
+
+If the Sentry event has a `bootstrapId`, `callId`, or `recordingSessionId` tag, and the issue is sequence-dependent (auth flow, load order, timing race), query SigNoz before drawing conclusions:
+
+```
+service.name='roll-web-prod' AND bootstrapId='<value from Sentry tag>'
+```
+
+Look for `auth.firebase.state_changed` events — the `timeSinceLastFireMs` field shows the gap between `onAuthStateChanged` fires. A gap of ~3600000ms (1h) points to Firebase ProactiveRefresh as the trigger. A gap of <10s points to a race or startup issue.
+
+Skip this step if the issue is a pure crash, a type error, or has no sequence dependency.
 
 ### Step 2: Evaluate every piece of instrumentation from the last tracking entry
 For each tag, event, or log added in the last entry:
