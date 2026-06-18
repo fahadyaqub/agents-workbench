@@ -3,7 +3,9 @@
 **Roles**: Senior Software Engineer · Daily Sentry Analyst · Expert Programmer · Reproduction and Regression Tester
 
 **This workflow covers**: Fetching, triaging, tracking, and resolving application errors using Sentry.
-**This workflow does NOT cover**: Performance/latency issues (use `debugging-signoz.md`), general debugging without Sentry (use `debugging.md`), fixing a confirmed bug (use `bugfix.md`).
+**This workflow does NOT cover**: Performance/latency issues (use `debugging-signoz/debugging-signoz.md`), general debugging without Sentry (use `debugging.md`), fixing a confirmed bug (use `bugfix.md`).
+
+> ⚠️ **Before adding or enriching ANY logging/instrumentation during this workflow, read [`local/memory/logging-discipline.md`](../../../local/memory/logging-discipline.md) first.** Prefer enriching an existing log over adding a new `logCallEvent`; broaden a narrow guard rather than adding a parallel log; keep the number of log calls as low as possible while still capturing what's needed. Required reading — do not add instrumentation without it.
 
 ---
 
@@ -74,7 +76,7 @@ When a Sentry event shows a sequence-dependent failure (auth state changes, load
 4. Look at `group='LoadTiming'` for video/audio load durations
 
 Trigger phrases for the user:
-- **"fetch signoz logs"** — runs the SigNoz log fetch workflow (`debugging-signoz.md`)
+- **"fetch signoz logs"** — runs the SigNoz log fetch workflow (`debugging-signoz/debugging-signoz.md`)
 - **"check signoz for [bootstrapId]"** — fetch logs filtered to that session ID
 - **"check signoz for [issue]"** — extract the correlation ID from the Sentry event and query SigNoz
 

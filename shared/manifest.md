@@ -90,7 +90,7 @@ Use `local/manifest.toml` as the private registry of which local workflows and a
 Load relevant workflow docs based on the task:
 - Debugging and bug triage (general): `shared/workflows/debugging.md`
 - Debugging with Sentry: `shared/workflows/debugging-sentry/debugging-sentry.md`
-- Debugging with SigNoz (performance, traces, latency): `shared/workflows/debugging-signoz.md`
+- Debugging with SigNoz (logs, traces, latency, stuck processing, upload/session timelines): `shared/workflows/debugging-signoz/debugging-signoz.md`
 - Bug fixes: `shared/workflows/bugfix.md`
 - Reviews and audit work: `shared/workflows/code-review.md`
 - Planning and architecture: `shared/workflows/planning.md`

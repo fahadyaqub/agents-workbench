@@ -33,6 +33,22 @@ If you agree with them after that check, say so and say why. That confirmation i
 
 **This applies everywhere:** bug reports, proposed fixes, architecture decisions, feature designs. Everywhere.
 
+## Root-Cause Fixes, Not Suppression
+
+When you find an issue, the fix is **not** to gracefully handle it at the location where it fails — a `try/catch`, a null guard, a `|| fallback`, or a default that swallows the bad state is suppression, not a fix. Suppression hides the symptom and lets the real defect keep happening (and often produces a *new* wrong-but-quiet behaviour, e.g. a fabricated value that silently diverges from what the rest of the system expects).
+
+Keep digging until you reach **one of two endpoints**:
+
+1. **The real, actual, fixable cause.** Not a guard, not a catch — the actual reason the bad state arises. Then fix *that*. Example: if a button pressed before some data is available makes the system fail, disable the button until that data is available — do not catch the resulting error. If a value is undefined because a module-global was never set on this code path, derive the value deterministically from data that *is* available at the point of use — do not `|| fallback` it.
+
+2. **Genuinely ambiguous / multiple possible causes, and you don't yet know which one is firing.** In that case:
+   - **(a)** Add better logging and instrumentation so the *next* occurrence tells you exactly which cause it was (keep it minimal and purposeful — see "Never lose the thread").
+   - **(b)** Patch each of the underlying areas that could lead to this point.
+
+A fallback or guard is acceptable only as a *secondary* safety net **after** the real cause is fixed, and only when you can state plainly why the guarded case can still legitimately occur. If you cannot, the guard is masking a bug — find it.
+
+When you report a fix, say which endpoint you reached. "I added a guard so it stops crashing" is not an acceptable stopping point on its own.
+
 ## Bug Investigation Discipline
 
 When investigating a reported bug:
