@@ -37,6 +37,8 @@ If you agree with them after that check, say so and say why. That confirmation i
 
 When you find an issue, the fix is **not** to gracefully handle it at the location where it fails — a `try/catch`, a null guard, a `|| fallback`, or a default that swallows the bad state is suppression, not a fix. Suppression hides the symptom and lets the real defect keep happening (and often produces a *new* wrong-but-quiet behaviour, e.g. a fabricated value that silently diverges from what the rest of the system expects).
 
+When working on a system we own, the first instinct must be to fix the source-of-truth defect, not to hide, normalize, relabel, or route around it in a consuming layer. If admin data, logs, diagnostics, metrics, or API responses expose bad state, treat that as a product/backend/data-quality issue to investigate and fix with the fewest changes. Use a workaround only after consciously deciding that the real fix is too large, too risky, or outside our control (for example, a browser/platform bug we cannot patch), and document that decision.
+
 Keep digging until you reach **one of two endpoints**:
 
 1. **The real, actual, fixable cause.** Not a guard, not a catch — the actual reason the bad state arises. Then fix *that*. Example: if a button pressed before some data is available makes the system fail, disable the button until that data is available — do not catch the resulting error. If a value is undefined because a module-global was never set on this code path, derive the value deterministically from data that *is* available at the point of use — do not `|| fallback` it.
