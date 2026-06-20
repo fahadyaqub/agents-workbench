@@ -1,8 +1,17 @@
 # Agents Workbench
 
-Agents Workbench is a zero-install, markdown-native operating layer for AI agents. It acts as a single, unified brain — instructions, memory, and workflows — that all your agents share across all your projects.
+This project started off as an attempt to have different agents, working across multiple sessions, share a unified memory. To not have to re-explain what I'm working on, what I'd already tried, what some rough future plans are, and what the overall intent for the work is.
 
-Instead of restating your rules, scattering memory across chat logs, or fighting setup friction every time you start a new task, you explain it once. Every agent you use derives its behavior from this shared knowledge base.
+It grew, and continues to grow, in many different — yet related — ways.
+
+It now stores:
+
+1. Who I am, and how I like to work.
+2. How the agents should behave — their tone, how they communicate, what they're allowed to do, and the principles behind it all.
+3. How the workbench itself runs — how workflows get triggered, where each kind of memory gets saved, and the conventions that keep everything consistent across tools.
+4. Historical tracking and future planning.
+5. A personal/professional knowledgebase — project details.
+6. Common workflows and skills.
 
 ## How to Set It Up
 
@@ -42,6 +51,12 @@ Anything new lives in `local/` first. Promote it to `shared/` only when it's wor
 Workflows are multi-step, repetitive tasks you perform regularly — codified once so agents execute them consistently every time.
 
 The workbench ships with a useful default set — debugging, code review, planning, bugfix, commit-and-push, research, session-handoff, and more. See `shared/workflows/` for the full list.
+
+A few of the newer additions:
+- **Agent runner** — breaks a big, splittable job into pieces and runs them across free models (Groq, OpenRouter) in parallel, then reviews the results and keeps the good ones.
+- **SigNoz / Sentry debugging** — pulls logs and errors directly, groups them by what matters, and keeps tracking those across sessions.
+- **Session handoff** — splits one oversized task into a few focused sessions, each with its own short brief.
+- **Promotion** — moves a proven workflow from your private `local/` into `shared/` so a team can use it too.
 
 If no workflow fits, create one with a single phrase:
 > *"Create a new workflow for [Task]"*
